@@ -111,6 +111,35 @@ public:
     first = true;
   }
 
+  bool exists(vector<char> t) {
+
+    // follow labels from root down, edge labels.
+
+    int current_node = store[0].children[t[0]];
+ 
+    if(current_node == -1) return false;
+
+    cout << "0navigating to: " << current_node << endl;
+    int search_string_position = 0;
+
+    for(;search_string_position < t.size();) {
+      // follow edge label
+      cout << "label is: " << store[current_node].label_start << ":" << store[current_node].get_label_end() << endl;
+      for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
+        if(s[position] != t[search_string_position]) return false;
+        else {
+          cout << "comparison to position: " << position << endl;
+          search_string_position++;
+          if(search_string_position == t.size()) return true;
+        }
+      }
+
+      current_node = store[current_node].children[t[search_string_position]];
+      cout << "1navigating to: " << current_node << endl;
+      if(current_node == -1) return false;
+    }
+  }
+
   void insert_first(char current_symbol) {
     SuffixNode n;
 
@@ -143,10 +172,15 @@ public:
     int c_split_point_node = split_point_node;
     int last_split_point_label_start = store[store[split_point_node].suffix_link].label_start;
 
-
     int link     = store[current_node].suffix_link;
     int position = abs(((store[link].label_start - split_distance))-last_split_point_label_start);
-    int test     = extend(link,current_symbol,s.size()-1,insertion,position,true);
+    // int position = split_distance; 
+
+    cout << "test position is: " << position << endl;
+//    int test     = extend(link,current_symbol,s.size()-1,insertion,position,true);
+    if(s[store[split_point_node].label_start+split_distance] != current_symbol) {
+      insertion = true;
+    }
 
     if(insertion) {
       current_node = split_point_node;
@@ -154,12 +188,12 @@ public:
     }
 
     insertion = true;
+    cout << "split_distance: " << split_distance << endl;
     for(;(position>=0) && insertion;) {
 
-      cout << "split_distance: " << split_distance << endl;
       int link = store[current_node].suffix_link;
 
-      cout << "insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << split_distance << " insertion: " << insertion << " split_dist: " << split_distance << endl;
+      cout << "insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position << " insertion: " << insertion << " split_dist: " << split_distance << endl;
 
       cout << "split_distance             : " << split_distance << endl;
       cout << "label                      : " << store[link].label_start << endl;
@@ -189,6 +223,10 @@ public:
       if(insertion) {
         split_point_node = current_node;
         position--;
+// following is try
+        split_point_node=current_node;
+        split_point_position=0;
+        split_distance=0;
       }
       cout << "*************************************************************************************************************** DUMP BETA BEGIN" << endl;
       dump();
@@ -226,17 +264,26 @@ public:
     if(position == 0) {
       cout << "extend condition 0.1" << endl;
 
+      cout << "insertion point: " << insertion_point << endl;
       if(store[insertion_point].label_start != -1) {
 
-        if(s[store[insertion_point].label_start] == symbol) {
+        if(s[store[insertion_point].label_start+position] == symbol) {
           // match at position 0
+          cout << "extend condition 0.1a" << endl;
           cout << "**************************************************** match at position 0 good times" << endl;
           insertion = false;
           return insertion_point;
         } else {
           // mismatch at position 0, need to jump to parent
           cout << "**************************************************** get label end, require validation of new position please" << endl;
-          return extend(store[insertion_point].parent,symbol,symbol_index,insertion,store[store[insertion_point].parent].get_label_end(),test);
+          cout << "extend condition 0.1b" << endl;
+          //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,store[store[insertion_point].parent].get_label_end(),test);
+          //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
+
+          if(store[store[insertion_point].parent].children[symbol] != -1) return extend(store[store[insertion_point].parent].children[symbol],symbol,symbol_index,insertion,position,test);
+                                                                     else return extend(store[insertion_point].parent                        ,symbol,symbol_index,insertion,position,test);
+
+//          return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
         }
 
       } else {
@@ -250,14 +297,15 @@ public:
             store.push_back(newnode);
             store[insertion_point].children[symbol] = store.size()-1;
           }
+          cout << "extend condition 0.1c" << endl;
           return store.size()-1;
         } else {
           insertion = false;
-          return store[insertion_point].children[symbol];
+          cout << "extend condition 0.1d" << endl;
+          return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test);
+          // return store[insertion_point].children[symbol];
         }
       }
-
-
     }
 
     // 1. If the edge label is length 0, but a child with this symbol exists, return that child
@@ -265,9 +313,11 @@ public:
 
       insertion = false;
       cout << "extend condition 1" << endl;
-      cout << "insertion child contained: " << store[insertion_point].children[symbol] << endl;
-      cout << "returning: " << store[insertion_point].children[symbol] << endl;
-      return store[insertion_point].children[symbol];
+      cout << "extend condition 1 position: " << position << endl;
+      // cout << "insertion child contained: " << store[insertion_point].children[symbol] << endl;
+      // cout << "returning: " << store[insertion_point].children[symbol] << endl;
+      return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test);
+      // return store[insertion_point].children[symbol];
     }
 
     // 2. If the edge label is length 0 and there are no children, extend the edge label.
@@ -294,6 +344,7 @@ public:
     // 4. If the edge label is length >0 and the edge label matches at this start+position, return this node.
     if((store[insertion_point].edge_label_length() > 0) && (s[store[insertion_point].label_start+position] == symbol)) {
       insertion = false;
+      cout << "extend condition 4: position: " << position << endl;
       cout << "extend condition 4" << endl;
       return insertion_point;
     }
@@ -320,6 +371,14 @@ public:
    
 	int n3_label_start = symbol_index;
 	int n3_label_end   = SuffixNode::end_marker;
+
+       if((n1_label_end != -1) && (n1_label_start > n1_label_end)) cout << "******************************************************************************************************************************** N1 LABEL ERR" << endl;
+       if((n2_label_end != -1) && (n2_label_start > n2_label_end)) cout << "******************************************************************************************************************************** N2 LABEL ERR" << endl;
+       if((n3_label_end != -1) && (n3_label_start > n3_label_end)) cout << "******************************************************************************************************************************** N3 LABEL ERR" << endl;
+
+        cout << "original_label_start: " << original_label_start << endl;
+        cout << "original_label_end  : " << original_label_end   << endl;
+        cout << "position            : " << position             << endl;
 
 
 	char mismatch_symbol = s[original_label_start+position];
