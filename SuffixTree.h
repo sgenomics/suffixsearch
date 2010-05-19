@@ -336,6 +336,14 @@ public:
 	store.push_back(n2);
 	int n2_idx = store.size()-1;
 
+        // update parenthood of children
+        for(int n=0;n<symbol_size;n++) {
+          if(n2.children[n] != -1) {
+            store[n2.children[n]].parent = n2_idx;
+          }
+        }
+
+
 	SuffixNode n3(insertion_point);
 	n3.label_start = n3_label_start;
 	n3.label_end   = n3_label_end;

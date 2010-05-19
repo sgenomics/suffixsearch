@@ -99,11 +99,11 @@ int main() {
   s.dump();
   s.insert('a');
   s.dump();
-//  s.insert('n');
-//  s.dump();
-//  s.insert('a');
-//  s.dump();
-//  s.insert('$');
-//  s.dump();
+  s.insert('n');
+  s.dump();
+  s.insert('a');
+  s.dump();
+  s.insert('$');
+  s.dump();
 */
 }
