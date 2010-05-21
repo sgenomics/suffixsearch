@@ -95,6 +95,7 @@ public:
   int next_left_leaf;
   int next_right_leaf;
   int olink;
+  int olink_off;
 
   static int end_marker;
   static int end_marker_value;
@@ -222,11 +223,16 @@ public:
     for(;position>=0;) {
 
       int link;
+      int link_off;
 
-      if(store[current_node].olink == -1) store[current_node].olink = store[current_node].suffix_link;
-      link = store[current_node].olink; 
-      if(store[link].olink == -1) store[link].olink = store[link].suffix_link;
+      if(store[current_node].olink == -1) { store[current_node].olink = store[current_node].suffix_link; store[current_node].olink_off = store[current_node].suffix_offset; }
+      link     = store[current_node].olink; 
+      link_off = store[current_node].olink_off; 
+      if(store[link].olink == -1) { store[link].olink = store[link].suffix_link; store[link].olink_off = store[link].suffix_offset; }
     //  link = store[current_node].suffix_link; 
+      int link_off_r;
+      if(link_off == -1) link_off_r = 0;
+      if(link_off >=  0) link_off_r =  SuffixNode::end_marker_value-link_off+1; // +1 because marker not updated correctly
       
       cout << "split_distance             : " << split_distance << endl;
       cout << "label                      : " << store[link].label_start << endl;
@@ -235,14 +241,14 @@ public:
 
       int newnode;
 
-      cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+store[current_node].get_suffix_offset() << " insertion: " << insertion << " split_dist: " << split_distance << endl;
+      cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+link_off_r << " insertion: " << insertion << " split_dist: " << split_distance << endl;
   
       int posrem=0;
-      newnode = extend(link,current_symbol,s.size()-1,insertion,position+store[current_node].get_suffix_offset(),false,posrem);
+      newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posrem);
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
 posrem=0;
       if(posrem == 0) store[current_node].suffix_offset = -1;
-                 else store[current_node].suffix_offset = store[current_node].suffix_offset; // SOMETHINGS ELESES
+                 else store[current_node].suffix_offset = s.size()-1-posrem;//link_off;//store[current_node].suffix_offset; // SOMETHINGS ELESES
 
       current_node = link; // newnode; // something...
 
@@ -300,7 +306,11 @@ posrem=0;
     posrem = 0;
 
     if(insertion_point == 0) {
-      insertion_point = store[0].children[s[symbol_index-position]];
+      cout << "extend condition -0a, symbol_index is: " << symbol_index << endl;
+      cout << "extend condition -0a, position is: " << position << endl;
+      cout << "extend condition -0a" << endl;
+      insertion_point = store[0].children[s[symbol_index-position]];//+1
+//      insertion_point = store[0].children[s[symbol_index-position+1]];//+1
 
       if(insertion_point == -1) {
 
@@ -352,6 +362,7 @@ posrem=0;
        if(store[insertion_point].children[symbol] != -1) {
          cout << "extend condition 0c" << endl;
          cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
+         position = position - store[insertion_point].edge_label_length()+1; ////////////////////////////////////////////////////
          return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);
        } else {
          // there is no child with this symbol, add one!
@@ -464,6 +475,9 @@ posrem=0;
     }
 
     // 5. If the edge label if length >0 and the edge label mismatches at start_position, split the node
+    cout << "pre extend condition 5, label length: " << store[insertion_point].edge_label_length() << endl;
+    cout << "pre extend condition 5, label start : " << store[insertion_point].label_start << endl;
+    cout << "pre extend condition 5, label end   : " << store[insertion_point].label_end << endl;
     if(store[insertion_point].label_start+position <= symbol_index)
     if((store[insertion_point].edge_label_length() > 0) && (s[store[insertion_point].label_start+position] != symbol)) {
 

@@ -17,6 +17,37 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-7 || runall) {
+//rand str: BBAABB$
+//s2str: *BBB*
+    cout << "RUN -7" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -7 FAILURE" << endl;
+  }
+
   if(runonly==-6 || runall) {
 //rand str: BBABCB$
 //s2str: *BCB*
