@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc,char ** argv) {
 
   int runonly=-4;
-  bool runall=false;
+  bool runall=true;
 
   if(argc > 1) {
     if(argv[1][0] == 'A') {runall=true; cout << "runall" << endl; }
@@ -19,6 +19,11 @@ int main(int argc,char ** argv) {
 
 //rand str: CCCCBB$
 //s2str: *CBB*
+
+//rand str: BBABCB$
+//s2str: *BCB*
+
+
   if(runonly==-5 || runall) {
     cout << "RUN -5" << endl;
     SuffixTree s1;

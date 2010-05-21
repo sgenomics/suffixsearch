@@ -122,6 +122,7 @@ public:
     split_point_position = 0;
 
     first = true;
+    SuffixNode::end_marker_value = 0;
   }
 
   bool exists(vector<char> t) {
