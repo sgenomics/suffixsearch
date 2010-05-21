@@ -45,7 +45,7 @@ int main(int argc,char ** argv) {
     bool res1;
 
     res1 = s1.exists(chkstr1);
-    if(res1 == false) cout << "******************************* TEST -5a FAILURE" << endl;
+    if(res1 == false) cout << "******************************* TEST -6 FAILURE" << endl;
   }
 
 
