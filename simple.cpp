@@ -6,10 +6,224 @@
 
 using namespace std;
 
-int main() {
+int main(int argc,char ** argv) {
 
-  int runonly=1;
+  int runonly=-4;
   bool runall=false;
+
+  if(argc > 1) {
+    if(argv[1][0] == 'A') {runall=true; cout << "runall" << endl; }
+    else { runonly = atoi(argv[1]); cout << "runonly " << runonly << endl; }
+     
+  }
+
+//rand str: CCCCBB$
+//s2str: *CBB*
+  if(runonly==-5 || runall) {
+    SuffixTree s1;
+
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -5a FAILURE" << endl;
+  }
+
+
+  if(runonly==-4 || runall) {
+//rand str: AAACBB$
+//s2str: *CBB*
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -4a FAILURE" << endl;
+
+  }
+
+//rand str: BBCCB$
+//s2str: *BBB*
+  if(runonly==-3 || runall) {
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -3a FAILURE" << endl;
+
+    vector<char> chkstr2;
+    chkstr2.push_back('b');
+    chkstr2.push_back('$');
+    bool res2;
+
+    res2 = s1.exists(chkstr2);
+    if(res2 == false) cout << "******************************* TEST -3b FAILURE" << endl;
+  }
+
+
+//tr: CCCACACABC$
+//chk  str: CCCAC
+  if(runonly==-2 || runall) {
+    SuffixTree s1;
+
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('c');
+    chkstr1.push_back('c');
+    chkstr1.push_back('c');
+    chkstr1.push_back('a');
+    chkstr1.push_back('c');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -2 FAILURE" << endl;
+  }
+
+  if(runonly==-1 || runall) {
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('a');
+    chkstr1.push_back('a');
+    chkstr1.push_back('a');
+    chkstr1.push_back('c');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -1 FAILURE" << endl;
+  }
+
+
+  if(runonly==0 || runall) {
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('a');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST 0 FAILURE" << endl;
+  }
 
   if(runonly==1 || runall) {
     SuffixTree s1;
@@ -30,6 +244,7 @@ int main() {
     s1.dump();
     s1.insert('a');
     s1.dump();
+
     s1.insert('$');
     s1.dump();
 
@@ -42,6 +257,7 @@ int main() {
 
     res1 = s1.exists(chkstr1);
     if(res1 == false) cout << "******************************* TEST 1 FAILURE" << endl;
+
   }
 //rand str: CBCBBCBA$
 //chk  str: CBBC
@@ -98,6 +314,7 @@ int main() {
     res3 = s3.exists(chkstr3);
     if(res3 == false) cout << "************************** TEST 3 FAILURE" << endl;
   }
+
 /*
   s.insert('a');
   s.dump();
@@ -106,6 +323,7 @@ int main() {
   s.insert('$');
   s.dump();
 */
+
   if(runonly==4 || runall) {
     SuffixTree s4;
     s4.insert('a');
@@ -120,9 +338,19 @@ int main() {
     bool res4;
 
     res4 = s4.exists(chkstr4);
-    if(res4 == false) cout << "************************** TEST 4 FAILURE" << endl;
-  }
+    if(res4 == false) cout << "************************** TEST 4a FAILURE" << endl;
 
+    chkstr4.clear();
+    chkstr4.push_back('a');
+    chkstr4.push_back('$');
+    res4 = s4.exists(chkstr4);
+    if(res4 == false) cout << "************************** TEST 4b FAILURE" << endl;
+
+    chkstr4.clear();
+    chkstr4.push_back('$');
+    res4 = s4.exists(chkstr4);
+    if(res4 == false) cout << "************************** TEST 4c FAILURE" << endl;
+  }
 
   if(runonly==5 || runall) {
     SuffixTree s5;
@@ -141,7 +369,19 @@ int main() {
     bool res5;
 
     res5 = s5.exists(chkstr5);
-    if(res5 == false) cout << "************************** TEST 5 FAILURE" << endl;
+    if(res5 == false) cout << "************************** TEST 5a FAILURE" << endl;
+
+    chkstr5.clear();
+    chkstr5.push_back('a');
+    chkstr5.push_back('n');
+    chkstr5.push_back('a');
+    res5 = s5.exists(chkstr5);
+    if(res5 == false) cout << "************************** TEST 5b FAILURE" << endl;
+
+    chkstr5.clear();
+    chkstr5.push_back('a');
+    res5 = s5.exists(chkstr5);
+    if(res5 == false) cout << "************************** TEST 5c FAILURE" << endl;
   }
 
 

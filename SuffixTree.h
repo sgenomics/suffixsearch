@@ -21,10 +21,12 @@ public:
     clear_children();
 
     suffix_link = 0;
+    suffix_offset = -1;
 
     label_end       = -1;
     next_left_leaf  = -1;
     next_right_leaf = -1;
+    olink=-1;
   }
 
   SuffixNode() {
@@ -32,12 +34,14 @@ public:
     clear_children();
 
     suffix_link = 0;
+    suffix_offset = -1;
 
     label_start     = -1;
     label_end       = -1;
     next_left_leaf  = -1;
     next_right_leaf = -1;
     parent          = -1;
+    olink=-1;
   }
 
   int edge_label_length() {
@@ -75,13 +79,20 @@ public:
     return label_end;
   }
 
+  int get_suffix_offset() {
+    if(suffix_offset == -1) return 0;
+    if(suffix_offset >=  0) return SuffixNode::end_marker_value-suffix_offset+1; // +1 because marker not updated correctly
+  }
+
   int label_start;
   int label_end  ;
   int children   [symbol_size];
   int parent;
   int suffix_link;
+  int suffix_offset;
   int next_left_leaf;
   int next_right_leaf;
+  int olink;
 
   static int end_marker;
   static int end_marker_value;
@@ -166,86 +177,111 @@ public:
     s.push_back(current_symbol);
     if(first) return insert_first(current_symbol);
 
-    bool insertion=true;
+    bool insertion=false;
     cout << "split_distance: " << split_distance << endl;
 
-    int c_split_point_node = split_point_node;
-    int last_split_point_label_start = store[store[split_point_node].suffix_link].label_start;
-
-    int link     = store[current_node].suffix_link;
-    int position = abs(((store[link].label_start - split_distance))-last_split_point_label_start);
-    // int position = split_distance; 
+    int position = split_distance; 
 
     cout << "test position is: " << position << endl;
-//    int test     = extend(link,current_symbol,s.size()-1,insertion,position,true);
-    if(s[store[split_point_node].label_start+split_distance] != current_symbol) {
-      insertion = true;
-    }
+    cout << "TEST split_point_node: " << split_point_node << endl;
+    //cout << "TEST node            : " << store[split_point_node].suffix_link << endl;
+    cout << "TEST node            : " << store[store[split_point_node].suffix_link].suffix_link << endl;
+    cout << "TEST split_distance  : " << split_distance << endl;
 
-    if(insertion) {
-      current_node = split_point_node;
+    int testnode     = store[store[split_point_node].suffix_link].suffix_link;
+    int testnode_off = store[store[split_point_node].suffix_link].get_suffix_offset();
+    cout << "TEST OFFSET RETURNED: " << testnode_off << endl;
+    if(s[store[testnode].label_start+split_distance+testnode_off] != current_symbol) {
+//////////////////////////    if(s[store[store[split_point_node].suffix_link].label_start+split_distance] != current_symbol) {
+      cout << "TEST comparison mismatched" << endl;
+      current_node = store[split_point_node].suffix_link;
       position     = split_distance;
-    }
+    } else {cout << "TEST comparison matched" << endl;}
 
     insertion = true;
     cout << "split_distance: " << split_distance << endl;
-    for(;(position>=0) && insertion;) {
+    bool first=true;
 
-      int link = store[current_node].suffix_link;
+  /////////////////////////////////////  current_node = split_point_node;
+    current_node = store[split_point_node].suffix_link;
+    bool any_insert=false;
+    bool first_insertion=true;
+    //for(;(position>=0) && insertion;) {
+    //position = store[current_node].edge_label_length()-position;
+    //if(current_symbol == '$') position++;
 
-      cout << "insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position << " insertion: " << insertion << " split_dist: " << split_distance << endl;
+    for(int n=0;n<store.size();n++) store[n].olink = -1; // AAAAAAAAAAAARRRRGGGHHHH NON LINEAR!
 
+    for(;position>=0;) {
+
+      int link;
+
+      if(store[current_node].olink == -1) store[current_node].olink = store[current_node].suffix_link;
+      link = store[current_node].olink; 
+      if(store[link].olink == -1) store[link].olink = store[link].suffix_link;
+    //  link = store[current_node].suffix_link; 
+      
       cout << "split_distance             : " << split_distance << endl;
       cout << "label                      : " << store[link].label_start << endl;
-      cout << "split_point_node           : " << c_split_point_node << endl;
-      cout << "split_point_node.label     : " << store[c_split_point_node].label_start << endl;
-      cout << "split_point_node.link      : " << store[c_split_point_node].suffix_link << endl;
-      cout << "split_point_node.link.label: " << store[store[c_split_point_node].suffix_link].label_start << endl;
 
-//      cout << "position is: abs(" << store[link].label_start << "-" << split_distance << ")-" << last_split_point_label_start << ")" << endl;
-      //int position = split_distance; // abs(((store[link].label_start - split_distance))-last_split_point_label_start);
       cout << "insaneoflex position: " << position << endl;
 
       int newnode;
 
-      //newnode = extend(link,current_symbol,s.size()-1,insertion,split_distance);
-      newnode = extend(link,current_symbol,s.size()-1,insertion,position);
+      cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+store[current_node].get_suffix_offset() << " insertion: " << insertion << " split_dist: " << split_distance << endl;
+  
+      int n2;
+      newnode = extend(link,current_symbol,s.size()-1,insertion,position+store[current_node].get_suffix_offset(),false,&n2);
 
-      store[current_node].suffix_link = newnode;
-      current_node = newnode;
+      int oldlink = link;
+      store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
+      store[current_node].suffix_offset = -1;
+
 
       cout << "new current_node is : " << current_node << endl;
 
       if(!insertion) {
-         cout << "************************************************** insertion was false" << endl;
+         cout << "************************************************** insertion was false, incremented split_distance" << endl;
       }
 
-      if(insertion) {
-        split_point_node = current_node;
-        position--;
-// following is try
+      position--;
+ /////     current_node = oldlink;
+      if(insertion && first_insertion) {
         split_point_node=current_node;
         split_point_position=0;
         split_distance=0;
+        any_insert=true;
+        first_insertion=false;
       }
       cout << "*************************************************************************************************************** DUMP BETA BEGIN" << endl;
       dump();
       cout << "*************************************************************************************************************** DUMP BETA END" << endl;
-
+      first=false;
     }
 
-    if(insertion) {
-      split_point_node=current_node;
-      split_point_position=0;
-      split_distance=0;
-    } else split_distance++;
-    cout << "split_distance: " << split_distance << endl;
+    split_distance++;
+    if(any_insert) split_distance=0;
 
+    // insert single character.
+    if(store[0].children[current_symbol] == -1) {
+      SuffixNode newnode(0,s.size()-1);
+      store.push_back(newnode);
+      store[0].children[current_symbol] = store.size()-1;
+ 
+      //
+      store[current_node].suffix_link = store.size()-1;
+      current_node = store.size()-1;
+    }
+
+    // store[current_node].suffix_link = ?!?
+ ////   if(any_insert) split_distance=0;
+
+    cout << "split_distance: " << split_distance << endl;
     SuffixNode::end_marker_value++;
   }
 
 
-  int extend(int insertion_point,int symbol,int symbol_index,bool &insertion,int position=0,bool test=false) {
+  int extend(int insertion_point,int symbol,int symbol_index,bool &insertion,int position=0,bool test=false,int *n2=0) {
 
     cout << "performing extension" << endl;
 
@@ -253,8 +289,74 @@ public:
     cout << "label length : " << store[insertion_point].edge_label_length() << endl;
     cout << "position     : " << position << endl;
 
+    if(insertion_point == 0) {
+      insertion_point = store[0].children[s[symbol_index-position]];
+
+      if(insertion_point == -1) {
+
+       //  if(position == 0) position = 1;
+
+         // there is no child with this symbol, add one!
+         SuffixNode newnode(0,(symbol_index-position)); // -position (make this generalise was +1
+         store.push_back(newnode);
+         int nidx = store.size()-1;
+         store[0].children[s[(symbol_index-position)]] = nidx; // was +1
+         //store[insertion_point].children[symbol] = nidx;
+         cout << "extend condition -0b" << endl;
+         cout << "extend condition -0b, insertion_point: " << 0 << endl;
+         cout << "extend condition -0b, symbol: " << symbol << endl;
+         cout << "extend condition -0b, symbol_index: " << symbol_index << endl;
+         cout << "extend condition -0b, position: " << position << endl;
+         cout << "extend condition -0b, insertion node: " << s[(symbol_index-position)] << endl;
+         cout << "extend condition -0b, insertion node idx: " << (symbol_index-position) << endl;
+
+         return nidx;
+      }
+    }
+
     // 0. validation check
     if(position > store[insertion_point].edge_label_length()) {
+
+      position = position - store[insertion_point].edge_label_length();
+      if(position == 0) {
+        
+        // there is a child here at symbol?
+       if(store[insertion_point].children[symbol] != -1) {
+         cout << "extend condition 0a" << endl;
+         return store[insertion_point].children[symbol];
+       } else {
+         // there is no child with this symbol, add one!
+         SuffixNode newnode(insertion_point,symbol_index);
+         store.push_back(newnode);
+         int nidx = store.size()-1;
+         store[insertion_point].children[symbol] = nidx;
+         cout << "extend condition 0b" << endl;
+         return nidx;
+       }
+      }
+
+      if(position >= 1) {
+        // there is a child here at symbol?
+       //if(store[insertion_point].children[s[symbol_index-1]] != -1) {
+       if(store[insertion_point].children[symbol] != -1) {
+         cout << "extend condition 0c" << endl;
+         cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
+         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,n2);
+       } else {
+         // there is no child with this symbol, add one!
+         SuffixNode newnode(insertion_point,symbol_index-position+1); // -position (make this generalise
+         store.push_back(newnode);
+         int nidx = store.size()-1;
+         store[insertion_point].children[s[symbol_index-position+1]] = nidx;
+         //store[insertion_point].children[symbol] = nidx;
+         cout << "extend condition 0d" << endl;
+         cout << "extend condition 0d, insertion_point: " << insertion_point << endl;
+         cout << "extend condition 0d, symbol: " << symbol << endl;
+         return nidx;
+       }
+         
+      }
+
       cout << "didn't take this in to account, how does it happen?" << endl;
       cout << "extend condition 0" << endl;
       // Could account for this by following children past edge label
@@ -359,6 +461,7 @@ public:
 
 	cout << "splitting at position (offset): " << position << endl;
 	cout << "in real string terms this is  : " << store[insertion_point].label_start+position << endl;
+        cout << "insertion_point is            : " << insertion_point << endl;
 
 	int original_label_start = store[insertion_point].label_start;
 	int original_label_end   = store[insertion_point].label_end;
@@ -407,12 +510,17 @@ public:
 	n3.label_start = n3_label_start;
 	n3.label_end   = n3_label_end;
 	n3.suffix_link = 0;//root
+        n3.suffix_offset = symbol_index;//position;//symbol_index;
+	// n3.suffix_link = store[insertion_point].suffix_link; /// WEIRDNESS TRY
 	store.push_back(n3);
 	int n3_idx = store.size()-1;
+
+	store[n2_idx].suffix_link = n3_idx; // WEIRDNESS TRY
 
 	store[insertion_point].clear_children();
 	store[insertion_point].children[mismatch_symbol] = n2_idx;
 	store[insertion_point].children[symbol] = n3_idx;
+        return n2_idx;//insertion_point; //return n2_idx;// was n3_idx
       }
       return insertion_point;
     }
@@ -425,8 +533,9 @@ public:
       cout << "label: " << store[n].label_start << " ";
       if(store[n].label_end == SuffixNode::end_marker) cout << store[n].label_end << "(" << SuffixNode::end_marker_value << ")" << endl;
                                                   else cout << store[n].label_end << endl;
-      cout << "suffix_link: " << store[n].suffix_link << endl;
-      cout << "parent     : " << store[n].parent << endl;
+      cout << "suffix_link  : " << store[n].suffix_link   << endl;
+      cout << "suffix_offset: " << store[n].suffix_offset << "(" << store[n].get_suffix_offset() << ")" << endl;
+      cout << "parent       : " << store[n].parent        << endl;
       for(int i=0;i<symbol_size;i++) {
         if(store[n].children[i] != -1) { cout << "children[" << i << "]:" << store[n].children[i] << endl; }
       }

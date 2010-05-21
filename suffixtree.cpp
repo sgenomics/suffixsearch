@@ -54,12 +54,12 @@ int main() {
 */
   // randomised tests
 
-  for(int i=0;i<1000;i++) {
+  for(int i=0;i<500;i++) {
     vector<char> str2;
     vector<char> chkstr2;
 
     cout << "randomised string: ";
-    for(int n=0;n<6;n++) {
+    for(int n=0;n<20;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
       cout << c;
@@ -68,7 +68,7 @@ int main() {
     cout << endl;
 
     cout << "check string: ";
-    for(int n=1+(rand()%2);n<(4+rand()%1);n++) {
+    for(int n=0+(rand()%2);n<(3+rand()%1);n++) {
       chkstr2.push_back(str2[n]);
       cout << str2[n];
     }
@@ -88,9 +88,37 @@ int main() {
     chkstr3.push_back('z');
     chkstr3.push_back('z');
     chkstr3.push_back('z');
-    chkstr3.push_back('z');
     res = s2.exists(chkstr3);
     if(res == false) cout << "rand 2 passed" << endl; else cout << "rand 2 failed" << endl;
+
+    string s3;
+    string s2str;
+    for(int n=0;n<str2.size();n++) {
+      s3 += str2[n];
+    }
+
+    vector<char> chkstr4;
+    for(int n=0;n<3;n++) {
+      char c = (rand()%3)+65;
+      s2str += c;
+      chkstr4.push_back(c);
+    }
+
+    bool findit = false;
+    size_t p = s3.find(s2str);
+    if(p == string::npos) {
+      findit = false;
+    } else {
+      findit = true;
+    }
+ 
+    res = s2.exists(chkstr4);
+    cout << "rand str: "; for(int n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
+    cout << "s2str: *" << s2str << "*" << endl;
+    if(findit == false) cout << "shouldn't find it" << endl;
+    if(findit == true ) cout << "should    find it" << endl;
+    if(res == findit) cout << "rand 3 passed" << endl; else cout << "rand 3 failed" << endl;
+
   }
 
 }
