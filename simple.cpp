@@ -9,7 +9,7 @@ using namespace std;
 int main(int argc,char ** argv) {
 
   int runonly=-4;
-  bool runall=true;
+  bool runall=false;
 
   if(argc > 1) {
     if(argv[1][0] == 'A') {runall=true; cout << "runall" << endl; }
@@ -17,14 +17,41 @@ int main(int argc,char ** argv) {
      
   }
 
-//rand str: CCCCBB$
-//s2str: *CBB*
-
+  if(runonly==-6 || runall) {
 //rand str: BBABCB$
 //s2str: *BCB*
+    cout << "RUN -6" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('b');
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -5a FAILURE" << endl;
+  }
 
 
   if(runonly==-5 || runall) {
+//rand str: CCCCBB$
+//s2str: *CBB*
     cout << "RUN -5" << endl;
     SuffixTree s1;
 
