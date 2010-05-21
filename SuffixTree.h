@@ -189,6 +189,7 @@ public:
     cout << "test position is: " << position << endl;
     cout << "TEST split_point_node: " << split_point_node << endl;
     //cout << "TEST node            : " << store[split_point_node].suffix_link << endl;
+    cout << "TEST node   PRE      : " << store[split_point_node].suffix_link << endl;
     cout << "TEST node            : " << store[store[split_point_node].suffix_link].suffix_link << endl;
     cout << "TEST split_distance  : " << split_distance << endl;
 
@@ -236,11 +237,13 @@ public:
 
       cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+store[current_node].get_suffix_offset() << " insertion: " << insertion << " split_dist: " << split_distance << endl;
   
-      int n2;
-      newnode = extend(link,current_symbol,s.size()-1,insertion,position+store[current_node].get_suffix_offset(),false,&n2);
-
+      int posrem=0;
+      newnode = extend(link,current_symbol,s.size()-1,insertion,position+store[current_node].get_suffix_offset(),false,posrem);
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
-      store[current_node].suffix_offset = -1;
+posrem=0;
+      if(posrem == 0) store[current_node].suffix_offset = -1;
+                 else store[current_node].suffix_offset = store[current_node].suffix_offset; // SOMETHINGS ELESES
+
       current_node = link; // newnode; // something...
 
       cout << "new current_node is : " << current_node << endl;
@@ -286,13 +289,15 @@ public:
   }
 
 
-  int extend(int insertion_point,int symbol,int symbol_index,bool &insertion,int position=0,bool test=false,int *n2=0) {
+  int extend(int insertion_point,int symbol,int symbol_index,bool &insertion,int position,bool test,int &posrem) {
 
     cout << "performing extension" << endl;
 
     cout << "insertion p  : " << insertion_point << endl;
     cout << "label length : " << store[insertion_point].edge_label_length() << endl;
     cout << "position     : " << position << endl;
+
+    posrem = 0;
 
     if(insertion_point == 0) {
       insertion_point = store[0].children[s[symbol_index-position]];
@@ -303,6 +308,7 @@ public:
 
          // there is no child with this symbol, add one!
          SuffixNode newnode(0,(symbol_index-position)); // -position (make this generalise was +1
+ //        newnode.suffix_offset = symbol_index; // THIS IS WHAT I DONE ADDED
          store.push_back(newnode);
          int nidx = store.size()-1;
          store[0].children[s[(symbol_index-position)]] = nidx; // was +1
@@ -346,7 +352,7 @@ public:
        if(store[insertion_point].children[symbol] != -1) {
          cout << "extend condition 0c" << endl;
          cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
-         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,n2);
+         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);
        } else {
          // there is no child with this symbol, add one!
          SuffixNode newnode(insertion_point,symbol_index-position+1); // -position (make this generalise
@@ -387,8 +393,8 @@ public:
           //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,store[store[insertion_point].parent].get_label_end(),test);
           //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
 
-          if(store[store[insertion_point].parent].children[symbol] != -1) return extend(store[store[insertion_point].parent].children[symbol],symbol,symbol_index,insertion,position,test);
-                                                                     else return extend(store[insertion_point].parent                        ,symbol,symbol_index,insertion,position,test);
+          if(store[store[insertion_point].parent].children[symbol] != -1) return extend(store[store[insertion_point].parent].children[symbol],symbol,symbol_index,insertion,position,test,posrem);
+                                                                     else return extend(store[insertion_point].parent                        ,symbol,symbol_index,insertion,position,test,posrem);
 
 //          return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
         }
@@ -409,7 +415,7 @@ public:
         } else {
           insertion = false;
           cout << "extend condition 0.1d" << endl;
-          return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test);
+          return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test,posrem);
           // return store[insertion_point].children[symbol];
         }
       }
@@ -423,7 +429,7 @@ public:
       cout << "extend condition 1 position: " << position << endl;
       // cout << "insertion child contained: " << store[insertion_point].children[symbol] << endl;
       // cout << "returning: " << store[insertion_point].children[symbol] << endl;
-      return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test);
+      return extend(store[insertion_point].children[symbol],symbol,symbol_index,insertion,position,test,posrem);
       // return store[insertion_point].children[symbol];
     }
 
@@ -453,6 +459,7 @@ public:
       insertion = false;
       cout << "extend condition 4: position: " << position << endl;
       cout << "extend condition 4" << endl;
+      posrem = position;
       return insertion_point;
     }
 
@@ -531,6 +538,7 @@ public:
       return insertion_point;
     }
 
+    cout << "************************* VERY BAD GOT HERE BAD" << endl;
     cout << "insertion point: " << insertion_point << endl;
     cout << "symbol_index was: " << symbol_index << endl;
     cout << "position was: " << position << endl;
