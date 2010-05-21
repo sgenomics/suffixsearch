@@ -82,12 +82,14 @@ public:
   int get_suffix_offset() {
     if(suffix_offset == -1) return 0;
     if(suffix_offset >=  0) return SuffixNode::end_marker_value-suffix_offset+1; // +1 because marker not updated correctly
+
+    return 0;
   }
 
+  int parent;
   int label_start;
   int label_end  ;
   int children   [symbol_size];
-  int parent;
   int suffix_link;
   int suffix_offset;
   int next_left_leaf;
@@ -131,7 +133,7 @@ public:
     if(current_node == -1) return false;
 
     cout << "0navigating to: " << current_node << endl;
-    int search_string_position = 0;
+    size_t search_string_position = 0;
 
     for(;search_string_position < t.size();) {
       // follow edge label
@@ -149,6 +151,7 @@ public:
       cout << "1navigating to: " << current_node << endl;
       if(current_node == -1) return false;
     }
+    return false;
   }
 
   void insert_first(char current_symbol) {
@@ -191,6 +194,8 @@ public:
     int testnode     = store[store[split_point_node].suffix_link].suffix_link;
     int testnode_off = store[store[split_point_node].suffix_link].get_suffix_offset();
     cout << "TEST OFFSET RETURNED: " << testnode_off << endl;
+    if(testnode == -1) { current_node = 0; position = 0;} else
+    if(store[testnode].label_start == -1) { current_node = 0; position = 0;} else
     if(s[store[testnode].label_start+split_distance+testnode_off] != current_symbol) {
 //////////////////////////    if(s[store[store[split_point_node].suffix_link].label_start+split_distance] != current_symbol) {
       cout << "TEST comparison mismatched" << endl;
@@ -210,7 +215,7 @@ public:
     //position = store[current_node].edge_label_length()-position;
     //if(current_symbol == '$') position++;
 
-    for(int n=0;n<store.size();n++) store[n].olink = -1; // AAAAAAAAAAAARRRRGGGHHHH NON LINEAR!
+    for(size_t n=0;n<store.size();n++) store[n].olink = -1; // AAAAAAAAAAAARRRRGGGHHHH NON LINEAR!
 
     for(;position>=0;) {
 
@@ -233,10 +238,9 @@ public:
       int n2;
       newnode = extend(link,current_symbol,s.size()-1,insertion,position+store[current_node].get_suffix_offset(),false,&n2);
 
-      int oldlink = link;
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
       store[current_node].suffix_offset = -1;
-
+      current_node = link; // newnode; // something...
 
       cout << "new current_node is : " << current_node << endl;
 
@@ -247,7 +251,7 @@ public:
       position--;
  /////     current_node = oldlink;
       if(insertion && first_insertion) {
-        split_point_node=current_node;
+        split_point_node=newnode; //current_node;
         split_point_position=0;
         split_distance=0;
         any_insert=true;
@@ -442,8 +446,8 @@ public:
       cout << "extend condition 3" << endl;
       return store.size()-1;
     }
-
     // 4. If the edge label is length >0 and the edge label matches at this start+position, return this node.
+    if(store[insertion_point].label_start+position <= symbol_index)
     if((store[insertion_point].edge_label_length() > 0) && (s[store[insertion_point].label_start+position] == symbol)) {
       insertion = false;
       cout << "extend condition 4: position: " << position << endl;
@@ -452,6 +456,7 @@ public:
     }
 
     // 5. If the edge label if length >0 and the edge label mismatches at start_position, split the node
+    if(store[insertion_point].label_start+position <= symbol_index)
     if((store[insertion_point].edge_label_length() > 0) && (s[store[insertion_point].label_start+position] != symbol)) {
 
       insertion = true;
@@ -524,6 +529,12 @@ public:
       }
       return insertion_point;
     }
+
+    cout << "insertion point: " << insertion_point << endl;
+    cout << "symbol_index was: " << symbol_index << endl;
+    cout << "position was: " << position << endl;
+    exit(0);
+    return -1000000;
   }
 
   void dump() {

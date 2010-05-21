@@ -20,6 +20,7 @@ int main(int argc,char ** argv) {
 //rand str: CCCCBB$
 //s2str: *CBB*
   if(runonly==-5 || runall) {
+    cout << "RUN -5" << endl;
     SuffixTree s1;
 
     s1.insert('c');
@@ -51,6 +52,7 @@ int main(int argc,char ** argv) {
   if(runonly==-4 || runall) {
 //rand str: AAACBB$
 //s2str: *CBB*
+    cout << "RUN -4" << endl;
     SuffixTree s1;
 
     s1.insert('a');
@@ -82,6 +84,7 @@ int main(int argc,char ** argv) {
 //rand str: BBCCB$
 //s2str: *BBB*
   if(runonly==-3 || runall) {
+    cout << "RUN -3" << endl;
     SuffixTree s1;
 
     s1.insert('b');
@@ -119,6 +122,7 @@ int main(int argc,char ** argv) {
 //tr: CCCACACABC$
 //chk  str: CCCAC
   if(runonly==-2 || runall) {
+    cout << "RUN -2" << endl;
     SuffixTree s1;
 
     s1.insert('c');
@@ -157,6 +161,7 @@ int main(int argc,char ** argv) {
   }
 
   if(runonly==-1 || runall) {
+    cout << "RUN -1" << endl;
     SuffixTree s1;
 
     s1.insert('a');
@@ -203,6 +208,7 @@ int main(int argc,char ** argv) {
 
 
   if(runonly==0 || runall) {
+    cout << "RUN 0" << endl;
     SuffixTree s1;
 
     s1.insert('a');
@@ -226,6 +232,7 @@ int main(int argc,char ** argv) {
   }
 
   if(runonly==1 || runall) {
+    cout << "RUN 1" << endl;
     SuffixTree s1;
 
     s1.insert('c');
@@ -263,6 +270,7 @@ int main(int argc,char ** argv) {
 //chk  str: CBBC
 
   if(runonly==2 || runall) {
+    cout << "RUN 2" << endl;
     SuffixTree s2;
     s2.insert('b');
     s2.dump();
@@ -293,6 +301,7 @@ int main(int argc,char ** argv) {
   }
 
   if(runonly==3 || runall) {
+    cout << "RUN 3" << endl;
     SuffixTree s3;
     s3.insert('a');
     s3.dump();
@@ -325,6 +334,7 @@ int main(int argc,char ** argv) {
 */
 
   if(runonly==4 || runall) {
+    cout << "RUN 4" << endl;
     SuffixTree s4;
     s4.insert('a');
     s4.dump();
@@ -353,6 +363,7 @@ int main(int argc,char ** argv) {
   }
 
   if(runonly==5 || runall) {
+    cout << "RUN 5" << endl;
     SuffixTree s5;
     s5.insert('a');
     s5.dump();
@@ -386,6 +397,7 @@ int main(int argc,char ** argv) {
 
 
   if(runonly==6 || runall) {
+    cout << "RUN 6" << endl;
     SuffixTree s6;
     s6.insert('a');
     s6.dump();
@@ -426,6 +438,7 @@ int main(int argc,char ** argv) {
 
 
   if(runonly==7 || runall) {
+    cout << "RUN 7" << endl;
     SuffixTree s7;
     s7.insert('a');
     s7.dump();
@@ -449,6 +462,7 @@ int main(int argc,char ** argv) {
   }
 
   if(runonly==8 || runall) {
+    cout << "RUN 8" << endl;
     SuffixTree s8;
     s8.insert('z');
     s8.dump();
@@ -496,6 +510,7 @@ int main(int argc,char ** argv) {
 
  
   if(runonly==9 || runall) {
+    cout << "RUN 9" << endl;
     SuffixTree s9;
     s9.insert('b');
     s9.dump();

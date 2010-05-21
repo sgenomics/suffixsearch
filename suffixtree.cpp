@@ -59,7 +59,7 @@ int main() {
     vector<char> chkstr2;
 
     cout << "randomised string: ";
-    for(int n=0;n<20;n++) {
+    for(int n=0;n<6;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
       cout << c;
@@ -75,13 +75,13 @@ int main() {
     cout << endl;
     
     SuffixTree s2;
-    for(int n=0;n<str2.size();n++) {
+    for(size_t n=0;n<str2.size();n++) {
       s2.insert(str2[n]);
     }
 
     res = s2.exists(chkstr2);
-    cout << "rand str: "; for(int n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
-    cout << "chk  str: "; for(int n=0;n<chkstr2.size();n++) cout << chkstr2[n]; cout << endl;
+    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
+    cout << "chk  str: "; for(size_t n=0;n<chkstr2.size();n++) cout << chkstr2[n]; cout << endl;
     if(res == true) cout << "rand 1 passed" << endl; else cout << "rand 1 failed" << endl;
 
     vector<char> chkstr3;
@@ -93,7 +93,7 @@ int main() {
 
     string s3;
     string s2str;
-    for(int n=0;n<str2.size();n++) {
+    for(size_t n=0;n<str2.size();n++) {
       s3 += str2[n];
     }
 
@@ -113,7 +113,7 @@ int main() {
     }
  
     res = s2.exists(chkstr4);
-    cout << "rand str: "; for(int n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
+    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
     cout << "s2str: *" << s2str << "*" << endl;
     if(findit == false) cout << "shouldn't find it" << endl;
     if(findit == true ) cout << "should    find it" << endl;
