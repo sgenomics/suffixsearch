@@ -124,6 +124,7 @@ public:
 
     first = true;
     SuffixNode::end_marker_value = 0;
+    posrem=0;
   }
 
   bool exists(vector<char> t) {
@@ -185,7 +186,7 @@ public:
     bool insertion=false;
     cout << "split_distance: " << split_distance << endl;
 
-    int position = split_distance; 
+    int position = split_distance+posrem; 
 
     cout << "test position is: " << position << endl;
     cout << "TEST split_point_node: " << split_point_node << endl;
@@ -201,7 +202,7 @@ public:
 //////////////////////////    if(s[store[store[split_point_node].suffix_link].label_start+split_distance] != current_symbol) {
       cout << "TEST comparison mismatched" << endl;
       current_node = split_point_node;
-      position     = split_distance;
+      position     = split_distance+posrem;
     } else {cout << "TEST comparison matched" << endl;}
 
     insertion = true;
@@ -242,16 +243,16 @@ public:
 
       cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+link_off_r << " insertion: " << insertion << " split_dist: " << split_distance << endl;
   
-      int posrem=0;
-      newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posrem);
+      int posremin=0;
+      newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posremin);
 //      store[link].suffix_link = newnode;///////////////////////////////////////////////////////////
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
       cout << "GAMMA currentnode: " << current_node << endl;
       cout << "GAMMA link       : " << link << endl;
       cout << "GAMMA newnode    : " << newnode << endl;
-posrem=0;
-      if(posrem == 0) store[current_node].suffix_offset = -1;
-                 else store[current_node].suffix_offset = s.size()-1-posrem;//link_off;//store[current_node].suffix_offset; // SOMETHINGS ELESES
+
+//      if(posrem == 0) store[current_node].suffix_offset = -1;
+//                 else store[current_node].suffix_offset = s.size()-1-posrem;//link_off;//store[current_node].suffix_offset; // SOMETHINGS ELESES
 
       current_node = link; // newnode; // something...
 
@@ -264,7 +265,12 @@ posrem=0;
       position--;
  /////     current_node = oldlink;
       if(insertion && first_insertion) {
+        cout << "DELTA UPDATING SPLIT LOCATION" << endl;
+        cout << "position was: " << position+1 << endl;
+        cout << "posrem: " << posremin << endl;
+        cout << "splitnode: " << newnode << endl;
         split_point_node=newnode; //current_node;
+        posrem=posremin;
         split_point_position=0;
         split_distance=0;
         any_insert=true;
@@ -312,7 +318,8 @@ posrem=0;
       cout << "extend condition -0a, symbol_index is: " << symbol_index << endl;
       cout << "extend condition -0a, position is: " << position << endl;
       cout << "extend condition -0a" << endl;
-      insertion_point = store[0].children[s[symbol_index-position]];//+1
+      insertion_point = store[0].children[s[symbol_index]];//bork change
+      //insertion_point = store[0].children[s[symbol_index-position]];//+1
 //      insertion_point = store[0].children[s[symbol_index-position+1]];//+1
 
       if(insertion_point == -1) {
@@ -334,7 +341,8 @@ posrem=0;
          cout << "extend condition -0b, insertion node: " << s[(symbol_index-position)] << endl;
          cout << "extend condition -0b, insertion node idx: " << (symbol_index-position) << endl;
 
-         return nidx;
+         return 0;// here be dragoons
+///         return nidx;
       }
     }
 
@@ -365,8 +373,9 @@ posrem=0;
        if(store[insertion_point].children[symbol] != -1) {
          cout << "extend condition 0c" << endl;
          cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
-         position = position - store[insertion_point].edge_label_length()+1; ////////////////////////////////////////////////////
-         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);
+         position = position - store[insertion_point].edge_label_length(); //////////////////////////////////////////////////// bork change removed +1
+//         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);//krob
+         return extend(store[insertion_point].children[s[symbol_index]],symbol,symbol_index,insertion,position,test,posrem); // bork change was krob above
        } else {
          // there is no child with this symbol, add one!
          SuffixNode newnode(insertion_point,symbol_index-position+1); // -position (make this generalise
@@ -408,7 +417,15 @@ posrem=0;
           //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
 
           if(store[store[insertion_point].parent].children[symbol] != -1) return extend(store[store[insertion_point].parent].children[symbol],symbol,symbol_index,insertion,position,test,posrem);
-                                                                     else return extend(store[insertion_point].parent                        ,symbol,symbol_index,insertion,position,test,posrem);
+                                                                     else {
+cout << "extend condition 0.1b1 going to parent: " << store[insertion_point].parent << endl;
+//return extend(store[insertion_point].parent                        ,symbol,symbol_index,insertion,position,test,posrem);
+         SuffixNode newnode(store[insertion_point].parent,(symbol_index-position)); // -position (make this generalise was +1
+         store.push_back(newnode);
+         int nidx = store.size()-1;
+         store[store[insertion_point].parent].children[symbol] = nidx;
+         return nidx;//ok to return this?
+}
 
 //          return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
         }
@@ -473,7 +490,7 @@ posrem=0;
       insertion = false;
       cout << "extend condition 4: position: " << position << endl;
       cout << "extend condition 4" << endl;
-      posrem = position;
+ ////////////////////////     posrem = position;
       return insertion_point;
     }
 
@@ -551,7 +568,9 @@ posrem=0;
 	store[insertion_point].children[mismatch_symbol] = n2_idx;
 	store[insertion_point].children[symbol] = n3_idx;
   /////////////////////      return n2_idx;//insertion_point; //return n2_idx;// was n3_idx
-        return n3_idx;//insertion_point; //return n2_idx;// was n3_idx
+ //       return n3_idx;//insertion_point; //return n2_idx;// was n3_idx
+ //       if(position == 1) posrem=1; else posrem=0;//probably not 1
+        return insertion_point; //return n2_idx;// was n3_idx borkb
       }
       return insertion_point;
     }
@@ -590,6 +609,7 @@ posrem=0;
   int split_point_position;  ///< Point of last insertion/split in tree (label position)
   int split_distance;    ///< distance to last split point
   int current_node;      ///< Current node in tree (active point?)
+  int posrem;
 };
 
 #endif
