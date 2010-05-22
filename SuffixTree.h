@@ -189,29 +189,28 @@ public:
 
     cout << "test position is: " << position << endl;
     cout << "TEST split_point_node: " << split_point_node << endl;
-    //cout << "TEST node            : " << store[split_point_node].suffix_link << endl;
-    cout << "TEST node   PRE      : " << store[split_point_node].suffix_link << endl;
-    cout << "TEST node            : " << store[store[split_point_node].suffix_link].suffix_link << endl;
+    cout << "TEST node        : " << store[split_point_node].suffix_link << endl;
     cout << "TEST split_distance  : " << split_distance << endl;
 
-    int testnode     = store[store[split_point_node].suffix_link].suffix_link;
-    int testnode_off = store[store[split_point_node].suffix_link].get_suffix_offset();
+    int testnode     = store[split_point_node].suffix_link;
+    int testnode_off = store[split_point_node].get_suffix_offset();
     cout << "TEST OFFSET RETURNED: " << testnode_off << endl;
-    if(testnode == -1) { current_node = 0; position = 0;} else
-    if(store[testnode].label_start == -1) { current_node = 0; position = 0;} else
+    if(testnode == -1) { current_node = 0; position = 0 ; cout << "BETA I MADE POSITION 0B" << endl;} else
+    if(store[testnode].label_start == -1) { current_node = 0; position = 0;     cout << "BETA I MADE POSITION 0A" << endl; } else
     if(s[store[testnode].label_start+split_distance+testnode_off] != current_symbol) {
 //////////////////////////    if(s[store[store[split_point_node].suffix_link].label_start+split_distance] != current_symbol) {
       cout << "TEST comparison mismatched" << endl;
-      current_node = store[split_point_node].suffix_link;
+      current_node = split_point_node;
       position     = split_distance;
     } else {cout << "TEST comparison matched" << endl;}
 
     insertion = true;
     cout << "split_distance: " << split_distance << endl;
+    cout << "BETA position      : " << position << endl;
     bool first=true;
 
   /////////////////////////////////////  current_node = split_point_node;
-    current_node = store[split_point_node].suffix_link;
+    current_node = split_point_node;
     bool any_insert=false;
     bool first_insertion=true;
     //for(;(position>=0) && insertion;) {
@@ -231,7 +230,7 @@ public:
       if(store[link].olink == -1) { store[link].olink = store[link].suffix_link; store[link].olink_off = store[link].suffix_offset; }
     //  link = store[current_node].suffix_link; 
       int link_off_r;
-      if(link_off == -1) link_off_r = 0;
+      if(link_off == -1) link_off_r = 0; else
       if(link_off >=  0) link_off_r =  SuffixNode::end_marker_value-link_off+1; // +1 because marker not updated correctly
       
       cout << "split_distance             : " << split_distance << endl;
@@ -245,7 +244,11 @@ public:
   
       int posrem=0;
       newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posrem);
+//      store[link].suffix_link = newnode;///////////////////////////////////////////////////////////
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
+      cout << "GAMMA currentnode: " << current_node << endl;
+      cout << "GAMMA link       : " << link << endl;
+      cout << "GAMMA newnode    : " << newnode << endl;
 posrem=0;
       if(posrem == 0) store[current_node].suffix_offset = -1;
                  else store[current_node].suffix_offset = s.size()-1-posrem;//link_off;//store[current_node].suffix_offset; // SOMETHINGS ELESES
@@ -547,7 +550,8 @@ posrem=0;
 	store[insertion_point].clear_children();
 	store[insertion_point].children[mismatch_symbol] = n2_idx;
 	store[insertion_point].children[symbol] = n3_idx;
-        return n2_idx;//insertion_point; //return n2_idx;// was n3_idx
+  /////////////////////      return n2_idx;//insertion_point; //return n2_idx;// was n3_idx
+        return n3_idx;//insertion_point; //return n2_idx;// was n3_idx
       }
       return insertion_point;
     }

@@ -17,6 +17,39 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-8 || runall) {
+//rand str: BBABCB$
+//s2str: *BCB*
+    cout << "RUN -8" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('b');
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('$');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -8 FAILURE" << endl;
+  }
+
+
   if(runonly==-7 || runall) {
 //rand str: BBAABB$
 //s2str: *BBB*
@@ -73,10 +106,33 @@ int main(int argc,char ** argv) {
     chkstr1.push_back('b');
     chkstr1.push_back('c');
     chkstr1.push_back('b');
+    chkstr1.push_back('$');
     bool res1;
 
     res1 = s1.exists(chkstr1);
-    if(res1 == false) cout << "******************************* TEST -6 FAILURE" << endl;
+    if(res1 == false) cout << "******************************* TEST -6a FAILURE" << endl;
+
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('$');
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -6b FAILURE" << endl;
+
+    chkstr1.clear();
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    chkstr1.push_back('a');
+    chkstr1.push_back('b');
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -6b FAILURE" << endl;
+
+    chkstr1.clear();
+    chkstr1.push_back('b');
+    chkstr1.push_back('a');
+    chkstr1.push_back('b');
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -6b FAILURE" << endl;
   }
 
 
@@ -487,16 +543,41 @@ int main(int argc,char ** argv) {
     bool res6;
 
     res6 = s6.exists(chkstr6);
-    if(res6 == false) cout << "************************** TEST 6 FAILURE" << endl;
+    if(res6 == false) cout << "************************** TEST 6a FAILURE" << endl;
 
-    vector<char> chkstr6a;
-    chkstr6a.push_back('b');
-    chkstr6a.push_back('c');
-    chkstr6a.push_back('a');
-    bool res6a;
+    chkstr6.clear();
+    chkstr6.push_back('b');
+    chkstr6.push_back('c');
+    chkstr6.push_back('a');
+    res6 = s6.exists(chkstr6);
+    if(res6 == false) cout << "************************** TEST 6b FAILURE" << endl;
 
-    res6a = s6.exists(chkstr6a);
-    if(res6a == false) cout << "************************** TEST 6a FAILURE" << endl;
+    chkstr6.clear();
+    chkstr6.push_back('a');
+    chkstr6.push_back('$');
+    res6 = s6.exists(chkstr6);
+    if(res6 == false) cout << "************************** TEST 6c FAILURE" << endl;
+
+    chkstr6.clear();
+    chkstr6.push_back('a');
+    chkstr6.push_back('b');
+    chkstr6.push_back('c');
+    chkstr6.push_back('a');
+    chkstr6.push_back('$');
+    res6 = s6.exists(chkstr6);
+    if(res6 == false) cout << "************************** TEST 6d FAILURE" << endl;
+
+    chkstr6.clear();
+    chkstr6.push_back('a');
+    chkstr6.push_back('b');
+    chkstr6.push_back('c');
+    chkstr6.push_back('a');
+    chkstr6.push_back('b');
+    chkstr6.push_back('c');
+    chkstr6.push_back('a');
+    chkstr6.push_back('$');
+    res6 = s6.exists(chkstr6);
+    if(res6 == false) cout << "************************** TEST 6e FAILURE" << endl;
   }
 
 
