@@ -17,6 +17,77 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-10 || runall) {
+//rand str: AAACAC$
+//s2str: *CAC*
+    cout << "RUN -10" << endl;
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('a');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('c');
+    chkstr1.push_back('a');
+    chkstr1.push_back('c');
+    chkstr1.push_back('$');
+    bool res1;
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -10a FAILURE" << endl;
+
+    chkstr1.clear();
+    chkstr1.push_back('a');
+    chkstr1.push_back('a');
+    chkstr1.push_back('a');
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -10b FAILURE" << endl;
+  }
+
+
+  if(runonly==-9 || runall) {
+//rand str: BCBBCB$
+//s2str: *BCB*
+    cout << "RUN -9" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('c');
+    s1.dump();
+    s1.insert('b');
+    s1.dump();
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.push_back('b');
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('$');
+    bool res1;
+
+    res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -9 FAILURE" << endl;
+  }
+
   if(runonly==-8 || runall) {
 //rand str: BBABCB$
 //s2str: *BCB*

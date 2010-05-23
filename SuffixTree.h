@@ -186,32 +186,40 @@ public:
     bool insertion=false;
     cout << "split_distance: " << split_distance << endl;
 
-    int position = split_distance+posrem; 
+    int position = split_distance; 
 
     cout << "test position is: " << position << endl;
     cout << "TEST split_point_node: " << split_point_node << endl;
     cout << "TEST node        : " << store[split_point_node].suffix_link << endl;
     cout << "TEST split_distance  : " << split_distance << endl;
-
+    cout << "TEST POSREM: " << posrem << endl;
     int testnode     = store[split_point_node].suffix_link;
     int testnode_off = store[split_point_node].get_suffix_offset();
     cout << "TEST OFFSET RETURNED: " << testnode_off << endl;
-    if(testnode == -1) { current_node = 0; position = 0 ; cout << "BETA I MADE POSITION 0B" << endl;} else
+/*    if(testnode == -1) { current_node = 0; position = 0 ; cout << "BETA I MADE POSITION 0B" << endl;} else
     if(store[testnode].label_start == -1) { current_node = 0; position = 0;     cout << "BETA I MADE POSITION 0A" << endl; } else
     if(s[store[testnode].label_start+split_distance+testnode_off] != current_symbol) {
 //////////////////////////    if(s[store[store[split_point_node].suffix_link].label_start+split_distance] != current_symbol) {
       cout << "TEST comparison mismatched" << endl;
-      current_node = split_point_node;
-      position     = split_distance+posrem;
+      position     = split_distance;
     } else {cout << "TEST comparison matched" << endl;}
 
     insertion = true;
+*/
     cout << "split_distance: " << split_distance << endl;
-    cout << "BETA position      : " << position << endl;
-    bool first=true;
-
   /////////////////////////////////////  current_node = split_point_node;
     current_node = split_point_node;
+    if((posrem==1)  && (store[split_point_node].edge_label_length() == 0)) {
+      cout << "USING POSREM, origianl node: " << split_point_node << endl;
+      cout << "pos-1 is: " << s[s.size()-2] << endl;
+      cout << "label+1 is: " << s[store[split_point_node].label_start+1] << endl;
+      current_node = store[split_point_node].children[   s[    s.size()-2     ]         ];
+      current_node = store[split_point_node].children[   s[ store[split_point_node].label_start+1     ]         ];
+      cout << "USING POSREM, new node: " << current_node << endl;
+      position = position;//+posrem?!?
+    }
+    cout << "BETA position      : " << position << endl;
+
     bool any_insert=false;
     bool first_insertion=true;
     //for(;(position>=0) && insertion;) {
@@ -220,20 +228,22 @@ public:
 
     for(size_t n=0;n<store.size();n++) store[n].olink = -1; // AAAAAAAAAAAARRRRGGGHHHH NON LINEAR!
 
+    bool firsta=true;
     for(;position>=0;) {
 
       int link;
       int link_off;
 
       if(store[current_node].olink == -1) { store[current_node].olink = store[current_node].suffix_link; store[current_node].olink_off = store[current_node].suffix_offset; }
-      link     = store[current_node].olink; 
+ if(!firsta)     link     = store[current_node].olink; else link=current_node;
+    link     = store[current_node].olink; 
       link_off = store[current_node].olink_off; 
       if(store[link].olink == -1) { store[link].olink = store[link].suffix_link; store[link].olink_off = store[link].suffix_offset; }
     //  link = store[current_node].suffix_link; 
-      int link_off_r;
+      int link_off_r=0;
       if(link_off == -1) link_off_r = 0; else
       if(link_off >=  0) link_off_r =  SuffixNode::end_marker_value-link_off+1; // +1 because marker not updated correctly
-      
+      link_off_r=0;
       cout << "split_distance             : " << split_distance << endl;
       cout << "label                      : " << store[link].label_start << endl;
 
@@ -242,15 +252,16 @@ public:
       int newnode;
 
       cout << "*** insertion: link: " << link << " current_symbol: " << current_symbol << " position: " << position+link_off_r << " insertion: " << insertion << " split_dist: " << split_distance << endl;
-  
       int posremin=0;
-      newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posremin);
+      newnode = extend(link,current_symbol,s.size()-1,insertion,position,false,posremin);
+//      newnode = extend(link,current_symbol,s.size()-1,insertion,position+link_off_r,false,posremin);
 //      store[link].suffix_link = newnode;///////////////////////////////////////////////////////////
       store[current_node].suffix_link = newnode;///////////////////////////////////////////////////////////
       cout << "GAMMA currentnode: " << current_node << endl;
       cout << "GAMMA link       : " << link << endl;
       cout << "GAMMA newnode    : " << newnode << endl;
 
+///////////  if(first) position-=posrem;
 //      if(posrem == 0) store[current_node].suffix_offset = -1;
 //                 else store[current_node].suffix_offset = s.size()-1-posrem;//link_off;//store[current_node].suffix_offset; // SOMETHINGS ELESES
 
@@ -270,8 +281,9 @@ public:
         cout << "posrem: " << posremin << endl;
         cout << "splitnode: " << newnode << endl;
         split_point_node=newnode; //current_node;
+position-=posrem;//BORKTOWN
         posrem=posremin;
-        split_point_position=0;
+        split_point_position=s.size()-1;
         split_distance=0;
         any_insert=true;
         first_insertion=false;
@@ -281,7 +293,6 @@ public:
       cout << "*************************************************************************************************************** DUMP BETA END" << endl;
       first=false;
     }
-
     split_distance++;
     if(any_insert) split_distance=0;
 
@@ -341,6 +352,7 @@ public:
          cout << "extend condition -0b, insertion node: " << s[(symbol_index-position)] << endl;
          cout << "extend condition -0b, insertion node idx: " << (symbol_index-position) << endl;
 
+         return nidx;// here be dragoons BETABORK
          return 0;// here be dragoons
 ///         return nidx;
       }
@@ -374,6 +386,7 @@ public:
          cout << "extend condition 0c" << endl;
          cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
          position = position - store[insertion_point].edge_label_length(); //////////////////////////////////////////////////// bork change removed +1
+         position--; //NAVBORKALPHA
 //         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);//krob
          return extend(store[insertion_point].children[s[symbol_index]],symbol,symbol_index,insertion,position,test,posrem); // bork change was krob above
        } else {
@@ -415,7 +428,7 @@ public:
           cout << "extend condition 0.1b" << endl;
           //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,store[store[insertion_point].parent].get_label_end(),test);
           //return extend(store[insertion_point].parent,symbol,symbol_index,insertion,position,test);
-
+insertion = true;
           if(store[store[insertion_point].parent].children[symbol] != -1) return extend(store[store[insertion_point].parent].children[symbol],symbol,symbol_index,insertion,position,test,posrem);
                                                                      else {
 cout << "extend condition 0.1b1 going to parent: " << store[insertion_point].parent << endl;
@@ -540,7 +553,7 @@ cout << "extend condition 0.1b1 going to parent: " << store[insertion_point].par
 	SuffixNode n2(insertion_point);
 	n2.label_start = n2_label_start;
 	n2.label_end   = n2_label_end;
-	n2.suffix_link = store[insertion_point].suffix_link;
+	n2.suffix_link = 0;//store[insertion_point].suffix_link; BORK0
 	n2.copy_children(store[insertion_point]);
 	store.push_back(n2);
 	int n2_idx = store.size()-1;
@@ -562,14 +575,18 @@ cout << "extend condition 0.1b1 going to parent: " << store[insertion_point].par
 	store.push_back(n3);
 	int n3_idx = store.size()-1;
 
-	store[n2_idx].suffix_link = n3_idx; // WEIRDNESS TRY
+//BORK0	store[n2_idx].suffix_link = n3_idx; // WEIRDNESS TRY
 
 	store[insertion_point].clear_children();
 	store[insertion_point].children[mismatch_symbol] = n2_idx;
 	store[insertion_point].children[symbol] = n3_idx;
   /////////////////////      return n2_idx;//insertion_point; //return n2_idx;// was n3_idx
  //       return n3_idx;//insertion_point; //return n2_idx;// was n3_idx
- //       if(position == 1) posrem=1; else posrem=0;//probably not 1
+ //       return insertion_point; //return n2_idx;// was n3_idx borkb
+        if(position == 1) {posrem=1; return insertion_point; } else // BORKCHANGEN!!!!!!!!!!!!
+        if(position == 2) {posrem=2; return insertion_point; } else  // GAMMABORK
+        // if(position == 2) {posrem=0; return n3_idx; } else  // GAMMABORK
+        { posrem=0; return insertion_point;}//probably not 1
         return insertion_point; //return n2_idx;// was n3_idx borkb
       }
       return insertion_point;
