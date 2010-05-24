@@ -183,10 +183,20 @@ public:
     s.push_back(current_symbol);
     if(first) return insert_first(current_symbol);
 
+    for(int n=s.size()-1;n>=0;n--) {
+      int posremin;
+      bool insertion;
+      int newnode = extend(0,current_symbol,s.size()-1,insertion,n,false,posremin);
+      dump();
+    }
+    SuffixNode::end_marker_value++;
+
+/*
     bool insertion=false;
     cout << "split_distance: " << split_distance << endl;
 
     int position = split_distance; 
+
 
     cout << "preloop" << endl;
     cout << "position is: " << position << endl;
@@ -202,7 +212,7 @@ public:
 //      current_node = store[split_point_node].children[   s[    s.size()-2     ]         ];
 //      current_node = store[split_point_node].children[   s[ store[split_point_node].label_start+1     ]         ];
       cout << "USING POSREM, new node: " << current_node << endl;
-      position = position+posrem;//?!?
+      position = position;//+posrem;//?!?
     }
     cout << "BETA position      : " << position << endl;
 
@@ -212,6 +222,7 @@ public:
     for(size_t n=0;n<store.size();n++) store[n].olink = -1; // AAAAAAAAAAAARRRRGGGHHHH NON LINEAR!
 
     bool firsta=true;
+    position = store[current_node].edge_label_length()-1;
     for(;position>=0;) {
 
       int link;
@@ -286,12 +297,12 @@ public:
       store[current_node].suffix_link = store.size()-1;
       current_node = store.size()-1;
     }
-
     // store[current_node].suffix_link = ?!?
  ////   if(any_insert) split_distance=0;
 
     cout << "split_distance: " << split_distance << endl;
     SuffixNode::end_marker_value++;
+*/
   }
 
 
@@ -304,19 +315,19 @@ public:
     cout << "position     : " << position << endl;
 
     posrem = 0;
-
+/*
     if(insertion_point == 0) {
       cout << "extend condition -0a, symbol_index is: " << symbol_index << endl;
       cout << "extend condition -0a, position is: " << position << endl;
       cout << "extend condition -0a" << endl;
-      insertion_point = store[0].children[s[symbol_index]];//bork change
+      insertion_point = store[0].children[symbol];//bork change
       //insertion_point = store[0].children[s[symbol_index-position]];//+1
 //      insertion_point = store[0].children[s[symbol_index-position+1]];//+1
-
+      cout << "extend condition -0a insertion_point now: " << insertion_point << endl;
       if(insertion_point == -1) {
 
        //  if(position == 0) position = 1;
-
+         cout << "extend condition -0b 0 " << endl;
          // there is no child with this symbol, add one!
          SuffixNode newnode(0,(symbol_index-position)); // -position (make this generalise was +1
  //        newnode.suffix_offset = symbol_index; // THIS IS WHAT I DONE ADDED
@@ -337,7 +348,7 @@ public:
 ///         return nidx;
       }
     }
-
+*/
     // 0. validation check
     if(position > store[insertion_point].edge_label_length()) {
 
