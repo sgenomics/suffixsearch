@@ -17,6 +17,21 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-11 || runall) {
+    cout << "RUN -11" << endl;
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.insert('b');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('a');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 == false) cout << "******************************* TEST -11 FAILURE" << endl;
+  }
+
   if(runonly==-10 || runall) {
 //rand str: AAACAC$
 //s2str: *CAC*

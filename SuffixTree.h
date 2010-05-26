@@ -181,11 +181,11 @@ public:
     cout << "calling insert: " << current_symbol << endl;
 
     s.push_back(current_symbol);
-    if(first) return insert_first(current_symbol);
 
     for(int n=s.size()-1;n>=0;n--) {
-      int posremin;
+      int  posremin;
       bool insertion;
+      cout << "******************************************** position: " << n << endl;
       int newnode = extend(0,current_symbol,s.size()-1,insertion,n,false,posremin);
       dump();
     }
@@ -315,6 +315,93 @@ public:
     cout << "position     : " << position << endl;
 
     posrem = 0;
+
+    if(position < store[insertion_point].edge_label_length()) {
+
+      char match_point_symbol = s[store[insertion_point].label_start+position];
+
+      cout << "match point symbol is: " << match_point_symbol << endl;
+      if(match_point_symbol == symbol) { cout << "extend condition -1"; return insertion_point; }
+
+      // insertion can occur at this point
+      cout << "extend condition 0" << endl;
+      cout << "performing funky split" << endl;
+
+      cout << "splitting at position (offset): " << position << endl;
+      cout << "in real string terms this is  : " << store[insertion_point].label_start+position << endl;
+      cout << "insertion_point is            : " << insertion_point << endl;
+
+      int original_label_start = store[insertion_point].label_start;
+      int original_label_end   = store[insertion_point].label_end;
+
+      int n1_label_start = original_label_start;
+      int n1_label_end   = original_label_start+position-1;
+
+      int n2_label_start = original_label_start+position;
+      int n2_label_end   = original_label_end;
+ 
+      int n3_label_start = symbol_index;
+      int n3_label_end   = SuffixNode::end_marker;
+
+      if((n1_label_end != -1) && (n1_label_start > n1_label_end)) cout << "******************************************************************************************************************************** N1 LABEL ERR" << endl;
+      if((n2_label_end != -1) && (n2_label_start > n2_label_end)) cout << "******************************************************************************************************************************** N2 LABEL ERR" << endl;
+      if((n3_label_end != -1) && (n3_label_start > n3_label_end)) cout << "******************************************************************************************************************************** N3 LABEL ERR" << endl;
+
+      cout << "original_label_start: " << original_label_start << endl;
+      cout << "original_label_end  : " << original_label_end   << endl;
+      cout << "position            : " << position             << endl;
+
+
+      char mismatch_symbol = s[original_label_start+position];
+
+
+      store[insertion_point].label_start = n1_label_start;
+      store[insertion_point].label_end   = n1_label_end;
+
+      SuffixNode n2(insertion_point);
+      n2.label_start = n2_label_start;
+      n2.label_end   = n2_label_end;
+      n2.suffix_link = 0;
+      n2.copy_children(store[insertion_point]);
+      store.push_back(n2);
+      int n2_idx = store.size()-1;
+
+      // update parenthood of children
+      for(int n=0;n<symbol_size;n++) {
+        if(n2.children[n] != -1) {
+          store[n2.children[n]].parent = n2_idx;
+        }
+      }
+
+
+      SuffixNode n3(insertion_point);
+      n3.label_start = n3_label_start;
+      n3.label_end   = n3_label_end;
+      n3.suffix_link = 0;
+      n3.suffix_offset = symbol_index;
+      store.push_back(n3);
+      int n3_idx = store.size()-1;
+
+      store[insertion_point].clear_children();
+      store[insertion_point].children[mismatch_symbol] = n2_idx;
+      store[insertion_point].children[symbol] = n3_idx;
+    } else {
+      cout << "extend condition 1" << endl;
+
+      if(store[insertion_point].children[s[symbol_index-position]] == -1) {
+        cout << "extend condition 2" << endl;
+        int startpoint = symbol_index-position;
+        char sym = s[startpoint];
+        SuffixNode n(insertion_point,startpoint);
+        store.push_back(n);
+        store[insertion_point].children[sym] = store.size()-1;
+        return store.size()-1;
+      }
+
+      int labellen = store[insertion_point].edge_label_length();
+      return extend(store[insertion_point].children[s[symbol_index-position]],s[symbol_index-position],symbol_index-position,insertion,position-labellen,test,posrem);
+    }
+
 /*
     if(insertion_point == 0) {
       cout << "extend condition -0a, symbol_index is: " << symbol_index << endl;
@@ -349,6 +436,8 @@ public:
       }
     }
 */
+
+/*
     // 0. validation check
     if(position > store[insertion_point].edge_label_length()) {
 
@@ -371,14 +460,13 @@ public:
       }
 
       if(position >= 1) {
-        // there is a child here at symbol?
-       //if(store[insertion_point].children[s[symbol_index-1]] != -1) {
+
+       // there is a child here at symbol?
        if(store[insertion_point].children[symbol] != -1) {
          cout << "extend condition 0c" << endl;
          cout << "extend condition 0c, insertion_point: " << insertion_point << endl;
          position = position - store[insertion_point].edge_label_length(); //////////////////////////////////////////////////// bork change removed +1
-         position--; //NAVBORKALPHA
-//         return extend(store[insertion_point].children[s[symbol_index-position]],symbol,symbol_index,insertion,position,test,posrem);//krob
+         position--;
          return extend(store[insertion_point].children[s[symbol_index]],symbol,symbol_index,insertion,position,test,posrem); // bork change was krob above
        } else {
          // there is no child with this symbol, add one!
@@ -386,7 +474,6 @@ public:
          store.push_back(newnode);
          int nidx = store.size()-1;
          store[insertion_point].children[s[symbol_index-position+1]] = nidx;
-         //store[insertion_point].children[symbol] = nidx;
          cout << "extend condition 0d" << endl;
          cout << "extend condition 0d, insertion_point: " << insertion_point << endl;
          cout << "extend condition 0d, symbol: " << symbol << endl;
@@ -597,6 +684,7 @@ cout << "extend condition 0.1b1 going to parent: " << store[insertion_point].par
     cout << "position was: " << position << endl;
     exit(0);
     return -1000000;
+    */
   }
 
   void dump() {
