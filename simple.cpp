@@ -8,7 +8,7 @@ using namespace std;
 
 int main(int argc,char ** argv) {
 
-  int runonly=-4;
+  int runonly=-11;
   bool runall=false;
 
   if(argc > 1) {
@@ -764,7 +764,7 @@ int main(int argc,char ** argv) {
     bool res;
 
     res = s9.exists(chkstr9);
-    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9 FAILURE" << endl;
+    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9A FAILURE" << endl;
 
     chkstr9.clear();
     chkstr9.push_back('b');
@@ -774,7 +774,7 @@ int main(int argc,char ** argv) {
     chkstr9.push_back('n');
     chkstr9.push_back('a');
     res = s9.exists(chkstr9);
-    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9 FAILURE" << endl;
+    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9B FAILURE" << endl;
 
     chkstr9.clear();
     chkstr9.push_back('a');
@@ -783,7 +783,7 @@ int main(int argc,char ** argv) {
     chkstr9.push_back('n');
     chkstr9.push_back('a');
     res = s9.exists(chkstr9);
-    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9 FAILURE" << endl;
+    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9C FAILURE" << endl;
 
     chkstr9.clear();
     chkstr9.push_back('n');
@@ -791,14 +791,14 @@ int main(int argc,char ** argv) {
     chkstr9.push_back('n');
     chkstr9.push_back('a');
     res = s9.exists(chkstr9);
-    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9 FAILURE" << endl;
+    if(res == true) cout << "test 9 passed" << endl; else cout << "test 9D FAILURE" << endl;
 
     chkstr9.clear();
     chkstr9.push_back('a');
     chkstr9.push_back('a');
     chkstr9.push_back('a');
     res = s9.exists(chkstr9);
-    if(res == false) cout << "test 9 passed" << endl; else cout << "test 9 FAILURE" << endl;
+    if(res == false) cout << "test 9 passed" << endl; else cout << "test 9E FAILURE" << endl;
   }
 
 

@@ -44,7 +44,7 @@ public:
     olink=-1;
   }
 
-  int edge_label_length() {
+  int get_label_length() {
     if(label_start == -1) return 0;
 
     if(label_end == end_marker) {
@@ -176,6 +176,79 @@ public:
     first = false;
   }
 
+  int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
+
+    cout << "extend2" << endl;
+    cout << "Insertion point: " << insertion_point << endl;
+    cout << "symbol            : " << symbol << endl;
+    cout << "symbol_index_start: " << symbol_index_start << endl;
+    cout << "symbol_index_end  : " << symbol_index_end   << endl;
+
+    int label_start = store[insertion_point].label_start;
+    int edge_length = store[insertion_point].get_label_length();
+
+    int insert_len = symbol_index_end - symbol_index_start;
+    // Check edge label
+    for(int n=0;(n<edge_length) && (n<=(insert_len));n++) {
+      if(s[symbol_index_start+n] != s[label_start+n]) {
+        // mismatch on edge label
+        cout << "Extend2 condition 1: Mismatch in edge label" << endl;
+        cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
+
+        SuffixNode b;
+        SuffixNode c;
+ 
+        b.label_start = label_start+n;
+        b.label_end   = store[insertion_point].label_end;
+
+        c.label_start = symbol_index_start+n;
+        c.label_end   = SuffixNode::end_marker;
+
+        int b_idx = store.size();
+        int c_idx = store.size()+1;
+
+        b.copy_children(store[insertion_point]);
+        store[insertion_point].clear_children();
+        store[insertion_point].label_end = label_start+n-1;
+        store[insertion_point].children[s[label_start+n]] = b_idx;
+        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
+
+        store.push_back(b);
+        store.push_back(c);
+
+        return 0;
+      }
+    }
+    
+    // Edge label matched insertion string completely.
+
+    cout << "Extend2 condition 2: checking children" << endl;
+
+    int pos = symbol_index_start + edge_length;
+
+    if(pos > symbol_index_end) return 0;
+
+    char child_sym = s[pos];
+
+    if(store[insertion_point].children[child_sym] == -1) {
+      cout << "Extend2 condition 2b: no children at point past edge label" << endl;
+      cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
+      SuffixNode newnode;
+      newnode.parent      = insertion_point;
+      newnode.label_start = pos;
+      newnode.label_end   = SuffixNode::end_marker;
+
+      store.push_back(newnode);
+      int n_idx = store.size()-1;
+      store[insertion_point].children[child_sym] = n_idx;
+      return 0;
+    }
+
+    // if a child does exist, recurse
+    cout << "recursing, position is now: " << pos << endl;
+    return extend2(store[insertion_point].children[child_sym],child_sym,pos,symbol_index_end);
+  }
+
   void insert(char current_symbol) {
 
     cout << "calling insert: " << current_symbol << endl;
@@ -185,8 +258,12 @@ public:
     for(int n=s.size()-1;n>=0;n--) {
       int  posremin;
       bool insertion;
-      cout << "******************************************** position: " << n << endl;
-      int newnode = extend(0,current_symbol,s.size()-1,insertion,n,false,posremin);
+      cout << "inserting: ";
+      for(int i=n;i<=s.size()-1;i++) {
+        cout << s[i];
+      }
+      cout << endl;
+      int newnode = extend2(0,current_symbol,n,s.size()-1);
       dump();
     }
     SuffixNode::end_marker_value++;
@@ -311,12 +388,12 @@ public:
     cout << "performing extension" << endl;
 
     cout << "insertion p  : " << insertion_point << endl;
-    cout << "label length : " << store[insertion_point].edge_label_length() << endl;
+    cout << "label length : " << store[insertion_point].get_label_length() << endl;
     cout << "position     : " << position << endl;
 
     posrem = 0;
 
-    if(position < store[insertion_point].edge_label_length()) {
+    if(position < store[insertion_point].get_label_length()) {
 
       char match_point_symbol = s[store[insertion_point].label_start+position];
 
@@ -398,7 +475,7 @@ public:
         return store.size()-1;
       }
 
-      int labellen = store[insertion_point].edge_label_length();
+      int labellen = store[insertion_point].get_label_length();
       return extend(store[insertion_point].children[s[symbol_index-position]],s[symbol_index-position],symbol_index-position,insertion,position-labellen,test,posrem);
     }
 
