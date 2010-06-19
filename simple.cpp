@@ -17,6 +17,50 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-13 || runall) {
+    cout << "RUN -13" << endl;
+    SuffixTree s1;
+
+    s1.insert('c');
+    s1.insert('b');
+    s1.insert('a');
+    s1.insert('c');
+    s1.insert('b');
+    s1.insert('c');
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -13 FAILURE" << endl;
+  }
+
+  if(runonly==-12 || runall) {
+    cout << "RUN -12" << endl;
+    SuffixTree s1;
+
+    s1.insert('c');
+    s1.insert('a');
+    s1.insert('b');
+    s1.insert('b');
+    s1.insert('c');
+    s1.insert('a');
+    s1.insert('$');
+    s1.dump();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    chkstr1.push_back('a');
+    chkstr1.push_back('a');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -12 FAILURE" << endl;
+  }
+
   if(runonly==-11 || runall) {
     cout << "RUN -11" << endl;
     SuffixTree s1;

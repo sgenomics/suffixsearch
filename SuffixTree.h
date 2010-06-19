@@ -28,7 +28,7 @@ public:
     next_right_leaf = -1;
     olink=-1;
   }
-
+/*
   SuffixNode() {
 
     clear_children();
@@ -43,7 +43,7 @@ public:
     parent          = -1;
     olink=-1;
   }
-
+*/
   int get_label_length() {
     if(label_start == -1) return 0;
 
@@ -72,6 +72,10 @@ public:
     return false;
   }
 
+  int get_parent() {
+    return parent;
+  }
+
   int get_label_end() {
     if(label_end == end_marker) {
       return end_marker_value;
@@ -85,6 +89,8 @@ public:
 
     return 0;
   }
+
+  int get_child(int n) { return children[n]; }
 
   int parent;
   int label_start;
@@ -142,11 +148,11 @@ public:
       // follow edge label
       cout << "label is: " << store[current_node].label_start << ":" << store[current_node].get_label_end() << endl;
       for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
-        if(s[position] != t[search_string_position]) return false;
+        if(s[position] != t[search_string_position]) { cout << "NOT FOUND" << endl; return false; }
         else {
           cout << "comparison to position: " << position << endl;
           search_string_position++;
-          if(search_string_position == t.size()) return true;
+          if(search_string_position == t.size()) { cout << "FOUND" << endl; return true; }
         }
       }
 
@@ -154,11 +160,13 @@ public:
       cout << "1navigating to: " << current_node << endl;
       if(current_node == -1) return false;
     }
+
+    cout << "NOT FOUND" << endl;
     return false;
   }
 
   void insert_first(char current_symbol) {
-    SuffixNode n;
+    SuffixNode n(0,-1);
 
     n.label_start = 0;
     n.label_end   = -1;
@@ -189,14 +197,63 @@ public:
 
     int insert_len = symbol_index_end - symbol_index_start;
     // Check edge label
+
+    cout << "edge_length: " << edge_length << endl;
+
+
+    // this means we're at the root node, it's kind of special!
+    if(store[insertion_point].label_start == -1) {
+
+      // if a child exists, go to it, without consuming
+      int child = store[insertion_point].children[s[symbol_index_start]];
+      if(child != -1) {
+        return extend2(child,0,symbol_index_start,symbol_index_end);
+      } else {
+        // if it doesn't exist add it.
+        SuffixNode sn(insertion_point,symbol_index_start);
+        sn.label_start = symbol_index_start;
+        store.push_back(sn);
+        store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
+        return store.size()-1;
+      }
+    }
+
+    // match at label start position?
+    if(edge_length == 0 && s[store[insertion_point].label_start] == s[symbol_index_start]) {
+      symbol_index_start++;
+    } else
+    if(edge_length == 0 && s[store[insertion_point].label_start] != s[symbol_index_start]) {
+
+      // mismatch at label start position - add new child to parent!
+
+      int parent = store[insertion_point].get_parent();
+      int child  = store[parent].get_child(s[symbol_index_start]);
+      if(child == -1) {
+        // no child here, add one.
+        SuffixNode sn(parent,symbol_index_start);
+        sn.label_start = symbol_index_start;
+        store.push_back(sn);
+        store[parent].children[s[symbol_index_start]] = store.size()-1;
+        return store.size()-1;
+      } else {
+        // recurse!
+        cout << "THIS IS THE SUCK!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!" << endl;
+ exit(0);
+      //  return extend2(child,0,symbol_index_start,symbol_index_end);
+      }
+
+
+    }
+
+    // consume edge label
     for(int n=0;(n<edge_length) && (n<=(insert_len));n++) {
       if(s[symbol_index_start+n] != s[label_start+n]) {
         // mismatch on edge label
         cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
 
-        SuffixNode b;
-        SuffixNode c;
+        SuffixNode b(insertion_point,0);
+        SuffixNode c(insertion_point,0);
  
         b.label_start = label_start+n;
         b.label_end   = store[insertion_point].label_end;
@@ -230,12 +287,13 @@ public:
 
     char child_sym = s[pos];
 
+    // if a child does not exist add
     if(store[insertion_point].children[child_sym] == -1) {
       cout << "Extend2 condition 2b: no children at point past edge label" << endl;
       cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
-      SuffixNode newnode;
-      newnode.parent      = insertion_point;
-      newnode.label_start = pos;
+      SuffixNode newnode(insertion_point,pos);
+//      newnode.parent      = insertion_point;
+//      newnode.label_start = pos;
       newnode.label_end   = SuffixNode::end_marker;
 
       store.push_back(newnode);
