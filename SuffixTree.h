@@ -28,22 +28,7 @@ public:
     next_right_leaf = -1;
     olink=-1;
   }
-/*
-  SuffixNode() {
 
-    clear_children();
-
-    suffix_link = 0;
-    suffix_offset = -1;
-
-    label_start     = -1;
-    label_end       = -1;
-    next_left_leaf  = -1;
-    next_right_leaf = -1;
-    parent          = -1;
-    olink=-1;
-  }
-*/
   int get_label_length() {
     if(label_start == -1) return 0;
 
@@ -218,11 +203,11 @@ public:
       }
     }
 
-bool dontdoit=false;
+    bool dontdoit=false;
     // match at label start position?
     if(edge_length == 0 && s[store[insertion_point].label_start] == s[symbol_index_start]) {
       symbol_index_start++;
-dontdoit=true;
+      dontdoit=true;
     } else
     if(edge_length == 0 && s[store[insertion_point].label_start] != s[symbol_index_start]) {
 
@@ -277,7 +262,7 @@ dontdoit=true;
         store.push_back(b);
         store.push_back(c);
 
-        return 0;
+        return store.size()-1;
       }
     }
     
@@ -287,8 +272,9 @@ dontdoit=true;
     cout << "Extend2 condition 2: checking children" << endl;
 
     int pos = symbol_index_start + edge_length + 1;
-if(dontdoit) pos--;
-    if(pos > symbol_index_end) return 0;
+
+    if(dontdoit) pos--;
+    if(pos > symbol_index_end) return insertion_point;
 
     char child_sym = s[pos];
 
@@ -304,7 +290,7 @@ if(dontdoit) pos--;
       store.push_back(newnode);
       int n_idx = store.size()-1;
       store[insertion_point].children[child_sym] = n_idx;
-      return 0;
+      return n_idx;
     }
 
     // if a child does exist, recurse
@@ -318,7 +304,10 @@ if(dontdoit) pos--;
 
     s.push_back(current_symbol);
 
-    for(int n=s.size()-1;n>=0;n--) {
+    bool first=true;
+    int last_node=0;
+    //for(int n=s.size()-1;n>=0;n--) {
+    for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
       cout << "inserting: ";
@@ -327,7 +316,10 @@ if(dontdoit) pos--;
       }
       cout << endl;
       int newnode = extend2(0,current_symbol,n,s.size()-1);
-      dump();
+      if(!first) store[last_node].suffix_link = newnode;
+      last_node = newnode;
+      first=false;
+   //   dump();
     }
     SuffixNode::end_marker_value++;
 
