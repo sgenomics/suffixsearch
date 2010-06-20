@@ -218,9 +218,11 @@ public:
       }
     }
 
+bool dontdoit=false;
     // match at label start position?
     if(edge_length == 0 && s[store[insertion_point].label_start] == s[symbol_index_start]) {
       symbol_index_start++;
+dontdoit=true;
     } else
     if(edge_length == 0 && s[store[insertion_point].label_start] != s[symbol_index_start]) {
 
@@ -245,8 +247,10 @@ public:
 
     }
 
+//NEW <=
     // consume edge label
-    for(int n=0;(n<edge_length) && (n<=(insert_len));n++) {
+    if(!dontdoit)
+    for(int n=0;(n<=edge_length) && (n<=(insert_len));n++) {
       if(s[symbol_index_start+n] != s[label_start+n]) {
         // mismatch on edge label
         cout << "Extend2 condition 1: Mismatch in edge label" << endl;
@@ -278,11 +282,12 @@ public:
     }
     
     // Edge label matched insertion string completely.
+    if((edge_length+1) > insert_len) return insertion_point;
 
     cout << "Extend2 condition 2: checking children" << endl;
 
-    int pos = symbol_index_start + edge_length;
-
+    int pos = symbol_index_start + edge_length + 1;
+if(dontdoit) pos--;
     if(pos > symbol_index_end) return 0;
 
     char child_sym = s[pos];
