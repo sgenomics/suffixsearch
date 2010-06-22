@@ -150,6 +150,7 @@ public:
     return false;
   }
 
+/*
   void insert_first(char current_symbol) {
     SuffixNode n(0,-1);
 
@@ -168,6 +169,7 @@ public:
 
     first = false;
   }
+*/
 
   int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
 
@@ -199,6 +201,7 @@ public:
         sn.label_start = symbol_index_start;
         store.push_back(sn);
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
+if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 1" << endl;
         return store.size()-1;
       }
     }
@@ -221,6 +224,7 @@ public:
         sn.label_start = symbol_index_start;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
+if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 2" << endl;
         return store.size()-1;
       } else {
         // recurse!
@@ -260,7 +264,11 @@ public:
         store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
 
         store.push_back(b);
+cout << "b_idx: " << b_idx << endl;
+cout << "c_idx: " << c_idx << endl;
+if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 3A" << endl;
         store.push_back(c);
+if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 3B" << endl;
 
         return store.size()-1;
       }
@@ -287,6 +295,7 @@ public:
 //      newnode.label_start = pos;
       newnode.label_end   = SuffixNode::end_marker;
 
+if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 4" << endl;
       store.push_back(newnode);
       int n_idx = store.size()-1;
       store[insertion_point].children[child_sym] = n_idx;
