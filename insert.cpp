@@ -26,4 +26,5 @@ int main(int argc,char ** argv) {
     t.push_back(ss[n]);
   }
   st.exists(t);
+  st.validate_tree();
 }
