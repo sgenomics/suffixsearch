@@ -258,6 +258,8 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
         int c_idx = store.size()+1;
 
         b.copy_children(store[insertion_point]);
+
+        for(int i=0;i<255;i++) { if(b.children[i] != -1) store[b.children[i]].parent = b_idx; }
         store[insertion_point].clear_children();
         store[insertion_point].label_end = label_start+n-1;
         store[insertion_point].children[s[label_start+n]] = b_idx;
@@ -291,8 +293,6 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
       cout << "Extend2 condition 2b: no children at point past edge label" << endl;
       cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
       SuffixNode newnode(insertion_point,pos);
-//      newnode.parent      = insertion_point;
-//      newnode.label_start = pos;
       newnode.label_end   = SuffixNode::end_marker;
 
 if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 4" << endl;
@@ -305,6 +305,9 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
     // if a child does exist, recurse
     cout << "recursing, position is now: " << pos << endl;
     return extend2(store[insertion_point].children[child_sym],child_sym,pos,symbol_index_end);
+  }
+
+  bool validate_suffix_links() {
   }
 
   void insert(char current_symbol) {
@@ -385,11 +388,26 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
     string suffix_path_label = get_path_label(store[n].suffix_link);
     
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
+    if((static_cast<int>(my_path_label.size())-1) > 0)
+    for(int n=0;n<my_path_label.size()-1;n++) {
+      if(suffix_path_label[n] != my_path_label[n+1]) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
+    }
+  }
+
+  void validate_parent(size_t n) {
+    size_t parent =  store[n].parent;
+
+    bool ok=false;
+    for(int i=0;i<255;i++) { if(store[parent].children[i] == n) ok = true; }
+
+    if(n == 0) ok = true;
+    if(ok != true) cout << "************************************************************************************ ERROR PARENT LINK NOT VALIDATED" << endl;
   }
 
   void validate_tree() {
     for(size_t n=0;n<store.size();n++) {
       validate_suffix_link(n);
+      validate_parent(n);
     }
   }
 
