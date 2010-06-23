@@ -234,6 +234,7 @@ public:
         size_t old_parent      = store[insertion_point].parent;
         size_t old_label_start = store[insertion_point].label_start;
         size_t old_label_end   = store[insertion_point].label_end;
+        size_t old_suffix_link = store[insertion_point].suffix_link;
 
         store[old_parent].replace_children(insertion_point,b_idx);
 
@@ -243,6 +244,7 @@ public:
         SuffixNode b(old_parent,0);
         SuffixNode c(b_idx,0);
  
+        b.suffix_link = old_suffix_link;
         b.label_start = old_label_start;
         b.label_end   = old_label_start+n-1;
 
@@ -252,18 +254,10 @@ public:
         b.children[s[old_label_start+n]]    = insertion_point;
         b.children[s[symbol_index_start+n]] = c_idx;
 
-//        b.copy_children(store[insertion_point]);
-
-//        for(int i=0;i<255;i++) { if(b.children[i] != -1) store[b.children[i]].parent = b_idx; }
-//        store[insertion_point].clear_children();
-//        store[insertion_point].label_end = label_start+n-1;
-//        store[insertion_point].children[s[label_start+n]] = b_idx;
-//        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
-
         store.push_back(b);
         store.push_back(c);
 
-        return store.size()-1;
+        return c_idx;
       }
     }
     
@@ -295,9 +289,6 @@ public:
     // if a child does exist, recurse
     cout << "recursing, position is now: " << pos << endl;
     return extend2(store[insertion_point].children[child_sym],child_sym,pos,symbol_index_end);
-  }
-
-  bool validate_suffix_links() {
   }
 
   void insert(char current_symbol) {
@@ -348,10 +339,8 @@ public:
 
   string get_path_label(int n) {
     vector<size_t> parents;
-    cout << "examine node: " << n << endl;
     size_t parent = n;
     for(;parent != 0;) {
-      cout << "parent: " << parent << endl;
       parents.push_back(parent);
       parent = store[parent].parent;
     }
@@ -360,12 +349,10 @@ public:
     for(int n=parents.size()-1;n>=0;n--) {
       int start = store[parents[n]].label_start;
       int end   = store[parents[n]].get_label_end();
-      cout << "start: " << start << "," << end << endl;
       for(int i=start;i<=end;i++) {
         my_path_label += s[i];
       }
     }
- cout << "label is: " << my_path_label << endl;
     return my_path_label;
   }
 
@@ -377,6 +364,7 @@ public:
     string my_path_label     = get_path_label(n);
     string suffix_path_label = get_path_label(store[n].suffix_link);
     
+    cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
     for(int n=0;n<my_path_label.size()-1;n++) {
@@ -395,7 +383,7 @@ public:
   }
 
   void validate_tree() {
-    for(size_t n=0;n<store.size();n++) {
+    for(size_t n=1;n<store.size();n++) {
       validate_suffix_link(n);
       validate_parent(n);
     }
