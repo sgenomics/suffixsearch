@@ -49,6 +49,12 @@ public:
     }
   }
 
+  void replace_children(size_t old_id,size_t new_id) {
+    for(int n=0;n<255;n++) {
+      if(children[n] == old_id) children[n] = new_id;
+    }
+  }
+
   bool has_children() {
     for(size_t n=0;n<symbol_size;n++) {
       if(children[n] != -1) return true;
@@ -150,27 +156,6 @@ public:
     return false;
   }
 
-/*
-  void insert_first(char current_symbol) {
-    SuffixNode n(0,-1);
-
-    n.label_start = 0;
-    n.label_end   = -1;
-    n.suffix_link = 0;
-    n.parent      = 0;
-
-    store.push_back(n);
-
-    store[root_node].children[current_symbol] = 1;
-
-    current_node = 1;
-    split_point_node = 1;
-    split_point_position = 0;
-
-    first = false;
-  }
-*/
-
   int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
 
     cout << "extend2" << endl;
@@ -201,7 +186,6 @@ public:
         sn.label_start = symbol_index_start;
         store.push_back(sn);
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
-if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 1" << endl;
         return store.size()-1;
       }
     }
@@ -224,7 +208,6 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
         sn.label_start = symbol_index_start;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
-if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 2" << endl;
         return store.size()-1;
       } else {
         // recurse!
@@ -245,32 +228,40 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
         cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
 
-        SuffixNode b(insertion_point,0);
-        SuffixNode c(insertion_point,0);
+        int b_idx = store.size();
+        int c_idx = store.size()+1;
+
+        size_t old_parent      = store[insertion_point].parent;
+        size_t old_label_start = store[insertion_point].label_start;
+        size_t old_label_end   = store[insertion_point].label_end;
+
+        store[old_parent].replace_children(insertion_point,b_idx);
+
+
+        store[insertion_point].parent = b_idx;
+        store[insertion_point].label_start = old_label_start+n;
+        SuffixNode b(old_parent,0);
+        SuffixNode c(b_idx,0);
  
-        b.label_start = label_start+n;
-        b.label_end   = store[insertion_point].label_end;
+        b.label_start = old_label_start;
+        b.label_end   = old_label_start+n-1;
 
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
 
-        int b_idx = store.size();
-        int c_idx = store.size()+1;
+        b.children[s[old_label_start+n]]    = insertion_point;
+        b.children[s[symbol_index_start+n]] = c_idx;
 
-        b.copy_children(store[insertion_point]);
+//        b.copy_children(store[insertion_point]);
 
-        for(int i=0;i<255;i++) { if(b.children[i] != -1) store[b.children[i]].parent = b_idx; }
-        store[insertion_point].clear_children();
-        store[insertion_point].label_end = label_start+n-1;
-        store[insertion_point].children[s[label_start+n]] = b_idx;
-        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
+//        for(int i=0;i<255;i++) { if(b.children[i] != -1) store[b.children[i]].parent = b_idx; }
+//        store[insertion_point].clear_children();
+//        store[insertion_point].label_end = label_start+n-1;
+//        store[insertion_point].children[s[label_start+n]] = b_idx;
+//        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
 
         store.push_back(b);
-cout << "b_idx: " << b_idx << endl;
-cout << "c_idx: " << c_idx << endl;
-if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 3A" << endl;
         store.push_back(c);
-if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 3B" << endl;
 
         return store.size()-1;
       }
@@ -295,7 +286,6 @@ if(store.size()-1 == 4) cout << "*************************************** WHAT WH
       SuffixNode newnode(insertion_point,pos);
       newnode.label_end   = SuffixNode::end_marker;
 
-if(store.size()-1 == 4) cout << "*************************************** WHAT WHAT WHAT 4" << endl;
       store.push_back(newnode);
       int n_idx = store.size()-1;
       store[insertion_point].children[child_sym] = n_idx;
