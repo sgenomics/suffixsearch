@@ -17,6 +17,37 @@ int main(int argc,char ** argv) {
      
   }
 
+
+  if(runonly==-14 || runall) {
+    cout << "RUN -14" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.validate_tree();
+    s1.insert('a');
+    s1.validate_tree();
+    s1.insert('b');
+    s1.validate_tree();
+    s1.insert('b');
+    s1.validate_tree();
+    s1.insert('b');
+    s1.validate_tree();
+    s1.insert('b');
+    s1.validate_tree();
+    s1.insert('$');
+    s1.dump();
+    s1.validate_tree();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    chkstr1.push_back('b');
+    chkstr1.push_back('b');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 == true) cout << "******************************* TEST -14 FAILURE" << endl;
+  }
+
+
   if(runonly==-13 || runall) {
     cout << "RUN -13" << endl;
     SuffixTree s1;
@@ -29,6 +60,7 @@ int main(int argc,char ** argv) {
     s1.insert('c');
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.clear();
@@ -51,6 +83,7 @@ int main(int argc,char ** argv) {
     s1.insert('a');
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.clear();
@@ -68,6 +101,7 @@ int main(int argc,char ** argv) {
     s1.insert('a');
     s1.insert('b');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.clear();
@@ -83,19 +117,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('c');
@@ -122,19 +151,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('b');
@@ -154,19 +178,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('b');
@@ -187,19 +206,13 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
-    s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('b');
@@ -218,19 +231,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('b');
@@ -273,19 +281,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('c');
@@ -305,19 +308,14 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('c');
@@ -337,17 +335,13 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('b');
@@ -375,27 +369,18 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('c');
@@ -414,35 +399,22 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('a');
@@ -461,15 +433,12 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('a');
@@ -485,24 +454,16 @@ int main(int argc,char ** argv) {
     SuffixTree s1;
 
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('c');
-    s1.dump();
     s1.insert('b');
-    s1.dump();
     s1.insert('a');
-    s1.dump();
-
     s1.insert('$');
     s1.dump();
+    s1.validate_tree();
 
     vector<char> chkstr1;
     chkstr1.push_back('c');
@@ -522,21 +483,15 @@ int main(int argc,char ** argv) {
     cout << "RUN 2" << endl;
     SuffixTree s2;
     s2.insert('b');
-    s2.dump();
     s2.insert('a');
-    s2.dump();
     s2.insert('c');
-    s2.dump();
     s2.insert('a');
-    s2.dump();
     s2.insert('c');
-    s2.dump();
     s2.insert('b');
-    s2.dump();
     s2.insert('a');
-    s2.dump();
     s2.insert('$');
     s2.dump();
+    s2.validate_tree();
 
     vector<char> chkstr2;
     chkstr2.push_back('a');
@@ -553,15 +508,12 @@ int main(int argc,char ** argv) {
     cout << "RUN 3" << endl;
     SuffixTree s3;
     s3.insert('a');
-    s3.dump();
     s3.insert('b');
-    s3.dump();
     s3.insert('a');
-    s3.dump();
     s3.insert('a');
-    s3.dump();
     s3.insert('$');
     s3.dump();
+    s3.validate_tree();
     vector<char> chkstr3;
     chkstr3.push_back('a');
     chkstr3.push_back('b');
@@ -586,11 +538,10 @@ int main(int argc,char ** argv) {
     cout << "RUN 4" << endl;
     SuffixTree s4;
     s4.insert('a');
-    s4.dump();
     s4.insert('a');
-    s4.dump();
     s4.insert('$');
     s4.dump();
+    s4.validate_tree();
     vector<char> chkstr4;
     chkstr4.push_back('a');
     chkstr4.push_back('a');

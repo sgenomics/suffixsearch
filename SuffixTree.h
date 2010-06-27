@@ -99,7 +99,7 @@ public:
 };
 
 int SuffixNode::end_marker = -1;
-int SuffixNode::end_marker_value = 0;
+int SuffixNode::end_marker_value = -1;
 
 
 class SuffixTree {
@@ -120,7 +120,7 @@ public:
     split_point_position = 0;
 
     first = true;
-    SuffixNode::end_marker_value = 0;
+    SuffixNode::end_marker_value = -1;
     posrem=0;
   }
 
@@ -312,8 +312,8 @@ public:
       if(!first) store[last_node].suffix_link = newnode;
       last_node = newnode;
       first=false;
-   //   dump();
     }
+
     SuffixNode::end_marker_value++;
 
   }

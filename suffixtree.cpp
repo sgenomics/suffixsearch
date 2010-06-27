@@ -54,12 +54,12 @@ int main() {
 */
   // randomised tests
 
-  for(int i=0;i<500;i++) {
+  for(int i=0;i<1000;i++) {
     vector<char> str2;
     vector<char> chkstr2;
 
     cout << "randomised string: ";
-    for(int n=0;n<20;n++) {
+    for(int n=0;n<6;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
       cout << c;
@@ -68,7 +68,7 @@ int main() {
     cout << endl;
 
     cout << "check string: ";
-    for(int n=0+(rand()%2);n<(6+rand()%1);n++) {
+    for(int n=0+(rand()%2);n<(3+rand()%1);n++) {
       chkstr2.push_back(str2[n]);
       cout << str2[n];
     }
@@ -78,6 +78,8 @@ int main() {
     for(size_t n=0;n<str2.size();n++) {
       s2.insert(str2[n]);
     }
+    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
+    s2.validate_tree();
 
     res = s2.exists(chkstr2);
     cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
