@@ -54,12 +54,12 @@ int main() {
 */
   // randomised tests
 
-  for(int i=0;i<1000;i++) {
+  for(int i=0;i<100000;i++) {
     vector<char> str2;
     vector<char> chkstr2;
 
     cout << "randomised string: ";
-    for(int n=0;n<6;n++) {
+    for(int n=0;n<8;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
       cout << c;

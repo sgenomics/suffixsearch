@@ -228,6 +228,53 @@ public:
         cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
 
+        // new bit...
+        int b_idx = store.size();
+        int c_idx = store.size()+1;
+
+        size_t old_parent      = store[insertion_point].parent;
+        size_t old_label_start = store[insertion_point].label_start;
+        size_t old_label_end   = store[insertion_point].label_end;
+        size_t old_suffix_link = store[insertion_point].suffix_link;
+
+        SuffixNode b(insertion_point,0);
+        SuffixNode c(insertion_point,0);
+
+        b.copy_children(store[insertion_point]);
+        for(size_t i=0;i<255;i++) if(store[insertion_point].children[i] != -1) { store[store[insertion_point].children[i]].parent = b_idx;  }
+        store[insertion_point].clear_children();
+        store[insertion_point].children[s[old_label_start+n]]    = b_idx;
+        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
+
+        store[insertion_point].label_end = old_label_start+n-1;
+        b.label_start = old_label_start+n;
+        b.label_end   = old_label_end;
+        size_t suffix_len = store[old_suffix_link].get_label_length();
+        if(suffix_len <= n) b.suffix_link = old_suffix_link;
+                      else {
+                        size_t strleft = n;
+                        bool end=false;
+                        size_t current = old_suffix_link;
+                        for(;end==false;) {
+                          size_t len = store[current].get_label_length();
+                          cout << "len: " << len << endl;
+                          cout << "strleft: " << strleft << endl;
+                          if(strleft <= len) {b.suffix_link = current; end=true;}
+                          strleft -= len;
+                          current = store[current].children[s[old_label_start+len]];
+                          cout << "***************************************************** DOING THIS THING" << endl;
+                        }
+                        b.suffix_link = current;
+                     } //< something like this...
+
+        c.label_start = symbol_index_start+n;
+        c.label_end   = SuffixNode::end_marker;
+
+        store.push_back(b);
+        store.push_back(c);
+ 
+        return c_idx;
+/*
         int b_idx = store.size();
         int c_idx = store.size()+1;
 
@@ -257,12 +304,12 @@ public:
         store.push_back(b);
         store.push_back(c);
 
-        return c_idx;
+        return c_idx;*/
       }
     }
-    
+
     // Edge label matched insertion string completely.
-    if((edge_length+1) > insert_len) return insertion_point;
+    if((edge_length+1) > insert_len) { cout << "Extend2 condition 1.5: match in edge_label: returning " << insertion_point << endl; return insertion_point; }
 
     cout << "Extend2 condition 2: checking children" << endl;
 
@@ -309,6 +356,7 @@ public:
       }
       cout << endl;
       int newnode = extend2(0,current_symbol,n,s.size()-1);
+      // if(!first) store[newnode].suffix_link = last_node;
       if(!first) store[last_node].suffix_link = newnode;
       last_node = newnode;
       first=false;
@@ -361,8 +409,8 @@ public:
    // get my path label
    // get parent chain to root.
 
-    string my_path_label     = get_path_label(n);
-    string suffix_path_label = get_path_label(store[n].suffix_link);
+    string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
+    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
     
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
