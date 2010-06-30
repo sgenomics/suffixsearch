@@ -255,15 +255,27 @@ public:
                         size_t strleft = n;
                         bool end=false;
                         size_t current = old_suffix_link;
+			dump();
                         for(;end==false;) {
                           size_t len = store[current].get_label_length();
                           cout << "len: " << len << endl;
                           cout << "strleft: " << strleft << endl;
+                          cout << "old_label_start: " << old_label_start << endl;
+                          cout << "current is: " << current << endl;
                           if(strleft <= len) {b.suffix_link = current; end=true;}
                           strleft -= len;
-                          current = store[current].children[s[old_label_start+len]];
+                          int current_label_start = store[current].label_start;
+                          cout << "current_label_start: " << current_label_start << endl;
+                          int next = store[current].children[s[current_label_start+len]];
+                          cout << "next using char is: " << s[current_label_start+len] << endl;
+                          cout << "next is: " << next << endl;
+                          
+                          if(next != -1) current = next; else {
+                            end=true;
+                          }
                           cout << "***************************************************** DOING THIS THING" << endl;
                         }
+                        dump();
                         b.suffix_link = current;
                      } //< something like this...
 
