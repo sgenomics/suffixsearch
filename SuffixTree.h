@@ -268,12 +268,12 @@ public:
                           int64_t len = store[current].get_label_length()+1; // +1!!
                           cout << "len: " << len << endl;
                           cout << "strleft: " << strleft << endl;
-                          if(strleft <= len)                 {cout << "EXIT STRLEFT<=LEN" << endl; b.suffix_link = current; end=true; break;} 
+                          if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; b.suffix_link = current; end=true; break;} // WAS <=
                           if(store[current].label_end == -1) {cout << "EXIT ENDLABEL FOUND" << endl; b.suffix_link = current; end=true; break;}
                           strleft -= len;
                           int64_t current_start = store[b.parent].label_start;
                           usedlen += len;
-                          int64_t position = s[current_start+usedlen]; // WAS +1
+                          int64_t position = s[current_start+usedlen-1]; // WAS +1
                           cout << "CURRENT_START IS: " << current_start << endl;
                           cout << "USEDLEN IS: " << usedlen << endl;
                           cout << "POSITION IS: " << position << endl;
@@ -411,7 +411,7 @@ public:
     vector<int64_t> parents;
     int64_t parent = n;
     for(;parent != 0;) {
-      cout << "current parent: " << parent << endl;
+   //   cout << "current parent: " << parent << endl;
       parents.push_back(parent);
       parent = store[parent].parent;
     }
@@ -432,8 +432,12 @@ public:
    // get my path label
    // get parent chain to root.
 
-    string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
+    string my_path_label     = get_path_label(store[n].parent) ;
+    //string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
+
     string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
+ //   string my_path_label     = get_path_label(store[n].parent) ;
+ //   string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) ;
     
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
