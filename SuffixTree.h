@@ -40,23 +40,23 @@ public:
   }
 
   void clear_children() {
-    for(size_t n=0;n<symbol_size;n++) children   [n] = -1;
+    for(int64_t n=0;n<symbol_size;n++) children   [n] = -1;
   }
 
   void copy_children(SuffixNode &other) {
-    for(size_t n=0;n<symbol_size;n++) {
+    for(int64_t n=0;n<symbol_size;n++) {
       children[n] = other.children[n];
     }
   }
 
-  void replace_children(size_t old_id,size_t new_id) {
+  void replace_children(int64_t old_id,int64_t new_id) {
     for(int n=0;n<255;n++) {
       if(children[n] == old_id) children[n] = new_id;
     }
   }
 
   bool has_children() {
-    for(size_t n=0;n<symbol_size;n++) {
+    for(int64_t n=0;n<symbol_size;n++) {
       if(children[n] != -1) return true;
     }
 
@@ -133,7 +133,7 @@ public:
     if(current_node == -1) return false;
 
     cout << "0navigating to: " << current_node << endl;
-    size_t search_string_position = 0;
+    int64_t search_string_position = 0;
 
     for(;search_string_position < t.size();) {
       // follow edge label
@@ -231,16 +231,16 @@ public:
         int b_idx = store.size();
         int c_idx = store.size()+1;
 
-        size_t old_parent      = store[insertion_point].parent;
-        size_t old_label_start = store[insertion_point].label_start;
-        size_t old_label_end   = store[insertion_point].label_end;
-        size_t old_suffix_link = store[insertion_point].suffix_link;
+        int64_t old_parent      = store[insertion_point].parent;
+        int64_t old_label_start = store[insertion_point].label_start;
+        int64_t old_label_end   = store[insertion_point].label_end;
+        int64_t old_suffix_link = store[insertion_point].suffix_link;
 
         SuffixNode b(insertion_point,0);
         SuffixNode c(insertion_point,0);
 
         b.copy_children(store[insertion_point]);
-        for(size_t i=0;i<255;i++) if(store[insertion_point].children[i] != -1) { store[store[insertion_point].children[i]].parent = b_idx;  }
+        for(int64_t i=0;i<255;i++) if(store[insertion_point].children[i] != -1) { store[store[insertion_point].children[i]].parent = b_idx;  }
         store[insertion_point].clear_children();
         store[insertion_point].children[s[old_label_start+n]]    = b_idx;
         store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
@@ -248,42 +248,60 @@ public:
         store[insertion_point].label_end = old_label_start+n-1;
         b.label_start = old_label_start+n;
         b.label_end   = old_label_end;
-        size_t suffix_len = store[old_suffix_link].get_label_length();
-        if(suffix_len <= n) b.suffix_link = old_suffix_link;
-                      else {
-                        size_t strleft = n;
+        int64_t suffix_len = store[old_suffix_link].get_label_length();
+ //       if(suffix_len <= n) b.suffix_link = old_suffix_link;
+ //                     else {
+ //                     
+                        cout << "******* PARENT IS: " << b.parent << endl; 
+                        int64_t strleft = n+1;//+1!!
                         bool end=false;
-                        size_t current = old_suffix_link;
+                        int64_t current = old_suffix_link;
+                        cout << "******* DOING THIS THING" << endl;
+                        dump();
+                        cout << "******* OLDLABELSTART IS: " << old_label_start << endl; 
+                        cout << "******* OLDLABELEND IS: " << old_label_end << endl; 
+                        cout << "******* strleft : " << strleft << endl;
+                        cout << "******* link str: " << current << endl;
+                        int64_t usedlen = 0;
                         for(;end==false;) {
-                          size_t len = store[current].get_label_length();
+                          cout << "CURRENT IS: " << current << endl;
+                          int64_t len = store[current].get_label_length()+1; // +1!!
                           cout << "len: " << len << endl;
                           cout << "strleft: " << strleft << endl;
-                          if(strleft <= len) {b.suffix_link = current; end=true; break;}
-                          if(store[current].label_end == -1) {b.suffix_link = current; end=true; break;}
+                          if(strleft <= len)                 {cout << "EXIT STRLEFT<=LEN" << endl; b.suffix_link = current; end=true; break;} 
+                          if(store[current].label_end == -1) {cout << "EXIT ENDLABEL FOUND" << endl; b.suffix_link = current; end=true; break;}
                           strleft -= len;
-                          int64_t current_start = store[current].label_start;
-                          int64_t position = s[current_start+len+1];
+                          int64_t current_start = store[b.parent].label_start;
+                          usedlen += len;
+                          int64_t position = s[current_start+usedlen]; // WAS +1
+                          cout << "CURRENT_START IS: " << current_start << endl;
+                          cout << "USEDLEN IS: " << usedlen << endl;
+                          cout << "POSITION IS: " << position << endl;
                           current = store[current].children[position];
+                          if(current == -1) end=true;
+                          cout << "NEW CURRENT IS: " << current << endl;
                           cout << "***************************************************** DOING THIS THING" << endl;
                         }
-                        b.suffix_link = current;
-                     } //< something like this...
+                        if(current != -1) b.suffix_link = current;
+ //                    } //< something like this...
 
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
 
+        cout << "***************************************************** ADD NODE: " << b_idx << endl;
+        cout << "***************************************************** ADD NODE: " << c_idx << endl;
         store.push_back(b);
         store.push_back(c);
- 
+ dump();
         return c_idx;
 /*
         int b_idx = store.size();
         int c_idx = store.size()+1;
 
-        size_t old_parent      = store[insertion_point].parent;
-        size_t old_label_start = store[insertion_point].label_start;
-        size_t old_label_end   = store[insertion_point].label_end;
-        size_t old_suffix_link = store[insertion_point].suffix_link;
+        int64_t old_parent      = store[insertion_point].parent;
+        int64_t old_label_start = store[insertion_point].label_start;
+        int64_t old_label_end   = store[insertion_point].label_end;
+        int64_t old_suffix_link = store[insertion_point].suffix_link;
 
         store[old_parent].replace_children(insertion_point,b_idx);
 
@@ -331,6 +349,7 @@ public:
 
       store.push_back(newnode);
       int n_idx = store.size()-1;
+      cout << "***************************************************** ADD NODE: " << n_idx << endl;
       store[insertion_point].children[child_sym] = n_idx;
       return n_idx;
     }
@@ -362,6 +381,7 @@ public:
       if(!first) store[last_node].suffix_link = newnode;
       last_node = newnode;
       first=false;
+      validate_tree();
     }
 
     SuffixNode::end_marker_value++;
@@ -371,7 +391,7 @@ public:
 
   void dump() {
     cout << "****************************** Tree dump" << endl;
-    for(size_t n=0;n<store.size();n++) {
+    for(int64_t n=0;n<store.size();n++) {
       cout << "node: " << n << endl;
       cout << "label: " << store[n].label_start << " ";
       if(store[n].label_end == SuffixNode::end_marker) cout << store[n].label_end << "(" << SuffixNode::end_marker_value << ")" << endl;
@@ -407,7 +427,7 @@ public:
     return my_path_label;
   }
 
-  void validate_suffix_link(size_t n) {
+  void validate_suffix_link(int64_t n) {
  
    // get my path label
    // get parent chain to root.
@@ -426,8 +446,8 @@ public:
     }
   }
 
-  void validate_parent(size_t n) {
-    size_t parent =  store[n].parent;
+  void validate_parent(int64_t n) {
+    int64_t parent =  store[n].parent;
 
     bool ok=false;
     for(int i=0;i<255;i++) { if(store[parent].children[i] == n) ok = true; }
@@ -437,7 +457,7 @@ public:
   }
 
   void validate_tree() {
-    for(size_t n=1;n<store.size();n++) {
+    for(int64_t n=1;n<store.size();n++) {
       validate_suffix_link(n);
       validate_parent(n);
     }
