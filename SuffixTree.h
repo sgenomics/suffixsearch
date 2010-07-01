@@ -219,7 +219,6 @@ public:
 
     }
 
-//NEW <=
     // consume edge label
     if(!dontdoit)
     for(int n=0;(n<=edge_length) && (n<=(insert_len));n++) {
@@ -255,27 +254,18 @@ public:
                         size_t strleft = n;
                         bool end=false;
                         size_t current = old_suffix_link;
-			dump();
                         for(;end==false;) {
                           size_t len = store[current].get_label_length();
                           cout << "len: " << len << endl;
                           cout << "strleft: " << strleft << endl;
-                          cout << "old_label_start: " << old_label_start << endl;
-                          cout << "current is: " << current << endl;
-                          if(strleft <= len) {b.suffix_link = current; end=true;}
+                          if(strleft <= len) {b.suffix_link = current; end=true; break;}
+                          if(store[current].label_end == -1) {b.suffix_link = current; end=true; break;}
                           strleft -= len;
-                          int current_label_start = store[current].label_start;
-                          cout << "current_label_start: " << current_label_start << endl;
-                          int next = store[current].children[s[current_label_start+len]];
-                          cout << "next using char is: " << s[current_label_start+len] << endl;
-                          cout << "next is: " << next << endl;
-                          
-                          if(next != -1) current = next; else {
-                            end=true;
-                          }
+                          int64_t current_start = store[current].label_start;
+                          int64_t position = s[current_start+len+1];
+                          current = store[current].children[position];
                           cout << "***************************************************** DOING THIS THING" << endl;
                         }
-                        dump();
                         b.suffix_link = current;
                      } //< something like this...
 
@@ -398,9 +388,10 @@ public:
 
 
   string get_path_label(int n) {
-    vector<size_t> parents;
-    size_t parent = n;
+    vector<int64_t> parents;
+    int64_t parent = n;
     for(;parent != 0;) {
+      cout << "current parent: " << parent << endl;
       parents.push_back(parent);
       parent = store[parent].parent;
     }
@@ -427,6 +418,9 @@ public:
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
+    if((suffix_path_label.size()) < ((my_path_label.size()-1))) {
+        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR" << endl;
+    } else
     for(int n=0;n<my_path_label.size()-1;n++) {
       if(suffix_path_label[n] != my_path_label[n+1]) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
     }
