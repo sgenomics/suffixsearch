@@ -156,6 +156,53 @@ public:
     return false;
   }
 
+  int shiftdown(int nodeidx) {
+
+    // take the parents suffixlink and it's label length and use this to update our own suffixlink.
+
+    int64_t old_link = store[nodeidx].suffix_link;
+
+    int64_t parent_idx = store[nodeidx].parent;
+    int64_t parent_len = store[parent_idx].get_label_length();
+    int64_t old_suffix_link = store[parent_idx].suffix_link;
+
+    cout << "******* PARENT IS: " << parent_idx << endl; 
+    int64_t strleft = parent_len+1;//+1!!
+    bool end=false;
+    int64_t current = old_suffix_link;
+    cout << "******* DOING THIS THING" << endl;
+    dump();
+    cout << "******* strleft : " << strleft << endl;
+    cout << "******* link str: " << current << endl;
+    int64_t usedlen = 0;
+    for(;end==false;) {
+      cout << "CURRENT IS: " << current << endl;
+      int64_t len = store[current].get_label_length()+1; // +1!!
+      if(current == 0) len = 0;
+      cout << "len: " << len << endl;
+      cout << "strleft: " << strleft << endl;
+      if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; store[nodeidx].suffix_link = current; end=true; break;} // WAS <=
+      if((current != 0) && (store[current].label_end == -1)) {cout << "EXIT ENDLABEL FOUND" << endl; store[nodeidx].suffix_link = current; end=true; break;}
+      strleft -= len;
+      int64_t current_start = store[parent_idx].label_start;
+      usedlen += len;
+      int64_t position = s[current_start+usedlen-1]; // WAS +1
+      cout << "CURRENT_START IS: " << current_start << endl;
+      cout << "USEDLEN IS: " << usedlen << endl;
+      cout << "POSITION IS: " << position << endl;
+      current = store[current].children[position];
+      if(current == -1) end=true;
+      cout << "NEW CURRENT IS: " << current << endl;
+      cout << "***************************************************** DOING THIS THING" << endl;
+    }
+
+    cout << "**********************************************************************************************       NODEIDX IS: " << nodeidx << endl;
+    cout << "********************************************************************************************** PRESHIFTDOWN WAS: " << old_link << endl;
+    cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
+
+    if(current != -1) store[nodeidx].suffix_link = current;
+  }
+
   int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
 
     cout << "extend2" << endl;
@@ -184,8 +231,10 @@ public:
         // if it doesn't exist add it.
         SuffixNode sn(insertion_point,symbol_index_start);
         sn.label_start = symbol_index_start;
+        sn.suffix_link = 0;
         store.push_back(sn);
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
+        cout << "ADD NODE: " << store.size()-1 << endl;
         return store.size()-1;
       }
     }
@@ -248,42 +297,6 @@ public:
         store[insertion_point].label_end = old_label_start+n-1;
         b.label_start = old_label_start+n;
         b.label_end   = old_label_end;
-        int64_t suffix_len = store[old_suffix_link].get_label_length();
- //       if(suffix_len <= n) b.suffix_link = old_suffix_link;
- //                     else {
- //                     
-                        cout << "******* PARENT IS: " << b.parent << endl; 
-                        int64_t strleft = n+1;//+1!!
-                        bool end=false;
-                        int64_t current = old_suffix_link;
-                        cout << "******* DOING THIS THING" << endl;
-                        dump();
-                        cout << "******* OLDLABELSTART IS: " << old_label_start << endl; 
-                        cout << "******* OLDLABELEND IS: " << old_label_end << endl; 
-                        cout << "******* strleft : " << strleft << endl;
-                        cout << "******* link str: " << current << endl;
-                        int64_t usedlen = 0;
-                        for(;end==false;) {
-                          cout << "CURRENT IS: " << current << endl;
-                          int64_t len = store[current].get_label_length()+1; // +1!!
-                          cout << "len: " << len << endl;
-                          cout << "strleft: " << strleft << endl;
-                          if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; b.suffix_link = current; end=true; break;} // WAS <=
-                          if(store[current].label_end == -1) {cout << "EXIT ENDLABEL FOUND" << endl; b.suffix_link = current; end=true; break;}
-                          strleft -= len;
-                          int64_t current_start = store[b.parent].label_start;
-                          usedlen += len;
-                          int64_t position = s[current_start+usedlen-1]; // WAS +1
-                          cout << "CURRENT_START IS: " << current_start << endl;
-                          cout << "USEDLEN IS: " << usedlen << endl;
-                          cout << "POSITION IS: " << position << endl;
-                          current = store[current].children[position];
-                          if(current == -1) end=true;
-                          cout << "NEW CURRENT IS: " << current << endl;
-                          cout << "***************************************************** DOING THIS THING" << endl;
-                        }
-                        if(current != -1) b.suffix_link = current;
- //                    } //< something like this...
 
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
@@ -292,6 +305,7 @@ public:
         cout << "***************************************************** ADD NODE: " << c_idx << endl;
         store.push_back(b);
         store.push_back(c);
+        shiftdown(b_idx);
  dump();
         return c_idx;
 /*
@@ -378,9 +392,13 @@ public:
       cout << endl;
       int newnode = extend2(0,current_symbol,n,s.size()-1);
       // if(!first) store[newnode].suffix_link = last_node;
-      if(!first) store[last_node].suffix_link = newnode;
+      if(!first) { cout << "CREATING LINK FROM " << last_node << " to " << newnode << endl; store[last_node].suffix_link = newnode; }
+      // fix suffix links of ALL children (overkill)
+      if(!first)  for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) shiftdown(store[store[last_node].parent].children[n]);
       last_node = newnode;
       first=false;
+
+
       validate_tree();
     }
 
@@ -433,12 +451,15 @@ public:
    // get parent chain to root.
 
     string my_path_label     = get_path_label(store[n].parent) ;
-    //string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
-
+//    string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
     string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
- //   string my_path_label     = get_path_label(store[n].parent) ;
- //   string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) ;
-    
+//    string my_path_label     = get_path_label(store[n].parent) ;
+//    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) ;
+  
+  //  string my_path_label     = get_path_label(n) ;
+  //  string suffix_path_label = get_path_label(store[n].suffix_link) ;
+
+  
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
