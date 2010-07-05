@@ -156,7 +156,7 @@ public:
     return false;
   }
 
-  int shiftdown(int nodeidx) {
+  void shiftdown(int nodeidx) {
 
     // take the parents suffixlink and it's label length and use this to update our own suffixlink.
 
@@ -175,21 +175,26 @@ public:
     cout << "******* strleft : " << strleft << endl;
     cout << "******* link str: " << current << endl;
     int64_t usedlen = 0;
+
+    if((store[store[nodeidx].parent].parent == 0) && (store[store[nodeidx].parent].get_label_length() <= 0)) { store[nodeidx].suffix_link = 0; return ; }
+
+    int64_t current_start = store[parent_idx].label_start;
+
+    if(store[parent_idx].parent == 0) current_start++;
     for(;end==false;) {
       cout << "CURRENT IS: " << current << endl;
       int64_t len = store[current].get_label_length()+1; // +1!!
-      if(current == 0) len = 0;
+      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; } // AS ALWAYS ROOT IS SPECIAL!
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
       if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; store[nodeidx].suffix_link = current; end=true; break;} // WAS <=
       if((current != 0) && (store[current].label_end == -1)) {cout << "EXIT ENDLABEL FOUND" << endl; store[nodeidx].suffix_link = current; end=true; break;}
       strleft -= len;
-      int64_t current_start = store[parent_idx].label_start;
-      usedlen += len;
-      int64_t position = s[current_start+usedlen-1]; // WAS +1
       cout << "CURRENT_START IS: " << current_start << endl;
       cout << "USEDLEN IS: " << usedlen << endl;
+      int64_t position = s[current_start+usedlen]; // WAS -1
       cout << "POSITION IS: " << position << endl;
+      usedlen += len;
       current = store[current].children[position];
       if(current == -1) end=true;
       cout << "NEW CURRENT IS: " << current << endl;
@@ -257,6 +262,7 @@ public:
         sn.label_start = symbol_index_start;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
+        cout << "ADD NODE: " << store.size()-1 << endl;
         return store.size()-1;
       } else {
         // recurse!
@@ -295,6 +301,15 @@ public:
         store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
 
         store[insertion_point].label_end = old_label_start+n-1;
+
+        cout << "LABEL LENGTH IS: " << store[insertion_point].get_label_length() << endl;
+        if(store[insertion_point].get_label_length() == 0) {
+          cout << "PARENT LINK SHIFTED UP" << endl;
+          cout << "OLD LINK: " << store[insertion_point].suffix_link << endl;
+          store[insertion_point].suffix_link = store[store[insertion_point].suffix_link].parent;
+          cout << "NEW LINK: " << store[insertion_point].suffix_link << endl;
+        }
+
         b.label_start = old_label_start+n;
         b.label_end   = old_label_end;
 
@@ -402,6 +417,9 @@ public:
       validate_tree();
     }
 
+    store[last_node].suffix_link = 0;
+    cout << "CREATING LINK FROM " << last_node << " to 0" << endl;
+
     SuffixNode::end_marker_value++;
 
   }
@@ -445,20 +463,24 @@ public:
     return my_path_label;
   }
 
+  string get_label(int n) {
+    int start = store[n].label_start;
+    int end   = store[n].get_label_end();
+    string my_path_label;
+    for(int i=start;i<=end;i++) {
+      my_path_label += s[i];
+    }
+    return my_path_label;
+  }
+
   void validate_suffix_link(int64_t n) {
  
    // get my path label
    // get parent chain to root.
 
     string my_path_label     = get_path_label(store[n].parent) ;
-//    string my_path_label     = get_path_label(store[n].parent) + s[store[n].label_start];
-    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
-//    string my_path_label     = get_path_label(store[n].parent) ;
-//    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) ;
-  
-  //  string my_path_label     = get_path_label(n) ;
-  //  string suffix_path_label = get_path_label(store[n].suffix_link) ;
-
+//    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
+    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + get_label(store[n].suffix_link);
   
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
