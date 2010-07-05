@@ -177,14 +177,15 @@ public:
     int64_t usedlen = 0;
 
     if((store[store[nodeidx].parent].parent == 0) && (store[store[nodeidx].parent].get_label_length() <= 0)) { store[nodeidx].suffix_link = 0; return ; }
+    if(store[nodeidx].parent == 0) { store[nodeidx].suffix_link = 0; return ; }
 
     int64_t current_start = store[parent_idx].label_start;
 
-    if(store[parent_idx].parent == 0) current_start++;
+    if(store[parent_idx].parent == 0) current_start++;//can believe this is required any longer..
     for(;end==false;) {
       cout << "CURRENT IS: " << current << endl;
       int64_t len = store[current].get_label_length()+1; // +1!!
-      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; } // AS ALWAYS ROOT IS SPECIAL!
+      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; } // AS ALWAYS ROOT IS SPECIAL!
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
       if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; store[nodeidx].suffix_link = current; end=true; break;} // WAS <=
@@ -413,14 +414,13 @@ public:
       last_node = newnode;
       first=false;
 
-
-      validate_tree();
     }
 
     store[last_node].suffix_link = 0;
     cout << "CREATING LINK FROM " << last_node << " to 0" << endl;
 
     SuffixNode::end_marker_value++;
+    validate_tree();
 
   }
 
