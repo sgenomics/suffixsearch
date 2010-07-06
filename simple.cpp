@@ -17,6 +17,28 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-18 || runall) {
+    cout << "RUN -18" << endl;
+    SuffixTree s1;
+
+    s1.insert('a');
+    s1.insert('a');
+    s1.insert('c');
+    s1.insert('a');
+    s1.insert('a');
+    s1.insert('a');
+    s1.insert('a');
+    s1.insert('$');
+    s1.dump();
+    s1.validate_tree();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 != true) cout << "******************************* TEST -18 FAILURE" << endl;
+  }
+
   if(runonly==-17 || runall) {
     cout << "RUN -17" << endl;
     SuffixTree s1;
@@ -37,7 +59,7 @@ int main(int argc,char ** argv) {
     chkstr1.clear();
     chkstr1.push_back('c');
     bool res1 = s1.exists(chkstr1);
-    if(res1 != true) cout << "******************************* TEST -15 FAILURE" << endl;
+    if(res1 != true) cout << "******************************* TEST -17 FAILURE" << endl;
   }
 
 
@@ -57,7 +79,7 @@ int main(int argc,char ** argv) {
     chkstr1.clear();
     chkstr1.push_back('c');
     bool res1 = s1.exists(chkstr1);
-    if(res1 != true) cout << "******************************* TEST -15 FAILURE" << endl;
+    if(res1 != true) cout << "******************************* TEST -16 FAILURE" << endl;
   }
 
   if(runonly==-15 || runall) {
