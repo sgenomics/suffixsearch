@@ -167,7 +167,7 @@ public:
     int64_t old_suffix_link = store[parent_idx].suffix_link;
 
     cout << "******* PARENT IS: " << parent_idx << endl; 
-    int64_t strleft = parent_len+1;//+1!!
+    int64_t strleft = parent_len+2;//+1!!
     bool end=false;
     int64_t current = old_suffix_link;
     cout << "******* DOING THIS THING" << endl;
@@ -193,11 +193,11 @@ public:
       strleft -= len;
       cout << "CURRENT_START IS: " << current_start << endl;
       cout << "USEDLEN IS: " << usedlen << endl;
-      int64_t position = s[current_start+usedlen]; // WAS -1
-      cout << "POSITION IS: " << position << endl;
       usedlen += len;
+      int64_t position = s[current_start+usedlen-1]; // WAS -1
+      cout << "POSITION IS: " << position << endl;
       current = store[current].children[position];
-      if(current == -1) end=true;
+      if(current == -1) { cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; end=true; }
       cout << "NEW CURRENT IS: " << current << endl;
       cout << "***************************************************** DOING THIS THING" << endl;
     }
@@ -444,6 +444,9 @@ public:
 
 
   string get_path_label(int n) {
+
+    if(n==0) return "";
+
     vector<int64_t> parents;
     int64_t parent = n;
     for(;parent != 0;) {
@@ -464,6 +467,7 @@ public:
   }
 
   string get_label(int n) {
+    if(n==0) return "";
     int start = store[n].label_start;
     int end   = store[n].get_label_end();
     string my_path_label;
