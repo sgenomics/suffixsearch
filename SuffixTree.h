@@ -163,11 +163,11 @@ public:
     int64_t old_link = store[nodeidx].suffix_link;
 
     int64_t parent_idx = store[nodeidx].parent;
-    int64_t parent_len = store[parent_idx].get_label_length();
+    int64_t parent_len = store[parent_idx].get_label_length()+1;
     int64_t old_suffix_link = store[parent_idx].suffix_link;
 
     cout << "******* PARENT IS: " << parent_idx << endl; 
-    int64_t strleft = parent_len+2;//+2!! +1 is an offset (0 is 1)  +2 because need to be past parent length
+    int64_t strleft = parent_len+1;// ??+1 because need to be past parent length
     bool end=false;
     int64_t current = old_suffix_link;
     cout << "******* DOING THIS THING" << endl;
@@ -182,15 +182,17 @@ public:
     if(store[nodeidx].parent == 0) { store[nodeidx].suffix_link = 0; return ; }
 
     int64_t current_start = store[parent_idx].label_start;
-bool first=true;
-    if(store[parent_idx].parent == 0) current_start++;//can believe this is required any longer..
-      int64_t len  = -1;
-      int64_t ocurrent = -1;
+    int64_t current_end   = store[parent_idx].label_end;
+
+    bool first=true;
+    if(store[parent_idx].parent == 0) {strleft--; current_start++;} //can believe this is required any longer..
+    int64_t len  = -1;
+    int64_t ocurrent = -1;
     for(;end==false;) {
       cout << "CURRENT IS: " << current << endl;
-int64_t olen = len;
-       len = store[current].get_label_length()+1; // +1!!
-      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; cout << "current is now: " << current << endl;} // AS ALWAYS ROOT IS SPECIAL!
+      int64_t olen = len;
+      len = store[current].get_label_length()+1; // +1!!
+      if(current == 0) { current = store[0].children[s[current_start]]; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; cout << "current is now: " << current << endl;} // AS ALWAYS ROOT IS SPECIAL!
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
 
@@ -213,9 +215,11 @@ int64_t olen = len;
 
       strleft -= len;
       cout << "CURRENT_START IS: " << current_start << endl;
-      cout << "USEDLEN IS: " << usedlen << endl;
-      int64_t position = s[current_start+usedlen]; // WAS -1
       usedlen += len;
+      cout << "USEDLEN IS: " << usedlen << endl;
+
+      if(usedlen > (current_end-current_start)) { current_start = store[nodeidx].label_start; current_end = store[nodeidx].get_label_end(); usedlen=0; }
+      int64_t position = s[current_start+usedlen]; // WAS -1
 
       ocurrent = current;
       if(strleft == 0) {
@@ -242,7 +246,7 @@ int64_t olen = len;
       }
       cout << "NEW CURRENT IS: " << current << endl;
       cout << "***************************************************** DOING THIS THING" << endl;
-first=false;
+      first=false;
     }
 
     cout << "**********************************************************************************************       NODEIDX IS: " << nodeidx << endl;
