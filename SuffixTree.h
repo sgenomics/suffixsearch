@@ -167,11 +167,13 @@ public:
     int64_t old_suffix_link = store[parent_idx].suffix_link;
 
     cout << "******* PARENT IS: " << parent_idx << endl; 
-    int64_t strleft = parent_len+2;//+1!!
+    int64_t strleft = parent_len+2;//+2!! +1 is an offset (0 is 1)  +2 because need to be past parent length
     bool end=false;
     int64_t current = old_suffix_link;
     cout << "******* DOING THIS THING" << endl;
+    cout << "IN SHIFTDOWN DUMP BETA" << endl;
     dump();
+    cout << "IN SHIFTDOWN DUMP BETA END" << endl;
     cout << "******* strleft : " << strleft << endl;
     cout << "******* link str: " << current << endl;
     int64_t usedlen = 0;
@@ -180,7 +182,7 @@ public:
     if(store[nodeidx].parent == 0) { store[nodeidx].suffix_link = 0; return ; }
 
     int64_t current_start = store[parent_idx].label_start;
-
+bool first=true;
     if(store[parent_idx].parent == 0) current_start++;//can believe this is required any longer..
     for(;end==false;) {
       cout << "CURRENT IS: " << current << endl;
@@ -188,15 +190,28 @@ public:
       if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; } // AS ALWAYS ROOT IS SPECIAL!
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
-      if(strleft < len)                  {cout << "EXIT STRLEFT<LEN" << endl; store[nodeidx].suffix_link = current; end=true; break;} // WAS <=
-      if((current != 0) && (store[current].label_end == -1)) {cout << "EXIT ENDLABEL FOUND" << endl; store[nodeidx].suffix_link = current; end=true; break;}
+
+      if(strleft <= len) {
+        cout << "EXIT STRLEFT<LEN" << endl; 
+        store[nodeidx].suffix_link = current; 
+        end=true;
+      } // WAS <= removed break, still want to try and move down one more.
+
+      if((current != 0) && (store[current].label_end == -1)) {
+        cout << "EXIT ENDLABEL FOUND" << endl;
+        store[nodeidx].suffix_link = current;
+        end=true;
+        break;
+      }
+
       strleft -= len;
       cout << "CURRENT_START IS: " << current_start << endl;
       cout << "USEDLEN IS: " << usedlen << endl;
+      int64_t position = s[current_start+usedlen]; // WAS -1
       usedlen += len;
-      int64_t position = s[current_start+usedlen-1]; // WAS -1
       cout << "POSITION IS: " << position << endl;
       current = store[current].children[position];
+ //     if(current != -1) { store[nodeidx].suffix_link = current; }
       if(current == -1) { cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; end=true; }
       cout << "NEW CURRENT IS: " << current << endl;
       cout << "***************************************************** DOING THIS THING" << endl;
@@ -206,7 +221,7 @@ public:
     cout << "********************************************************************************************** PRESHIFTDOWN WAS: " << old_link << endl;
     cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
 
-    if(current != -1) store[nodeidx].suffix_link = current;
+    // if(current != -1) store[nodeidx].suffix_link = current;
   }
 
   int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
@@ -322,6 +337,7 @@ public:
         store.push_back(b);
         store.push_back(c);
         shiftdown(b_idx);
+cout << "ALPHA POINT DUMP" << endl;
  dump();
         return c_idx;
 /*
@@ -411,6 +427,11 @@ public:
       if(!first) { cout << "CREATING LINK FROM " << last_node << " to " << newnode << endl; store[last_node].suffix_link = newnode; }
       // fix suffix links of ALL children (overkill)
       if(!first)  for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) shiftdown(store[store[last_node].parent].children[n]);
+
+///NONLINEAR TIME MAGICMCMAGIC
+      if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
+      if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
+
       last_node = newnode;
       first=false;
 
