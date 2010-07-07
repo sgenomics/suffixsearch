@@ -340,37 +340,6 @@ bool first=true;
 cout << "ALPHA POINT DUMP" << endl;
  dump();
         return c_idx;
-/*
-        int b_idx = store.size();
-        int c_idx = store.size()+1;
-
-        int64_t old_parent      = store[insertion_point].parent;
-        int64_t old_label_start = store[insertion_point].label_start;
-        int64_t old_label_end   = store[insertion_point].label_end;
-        int64_t old_suffix_link = store[insertion_point].suffix_link;
-
-        store[old_parent].replace_children(insertion_point,b_idx);
-
-
-        store[insertion_point].parent = b_idx;
-        store[insertion_point].label_start = old_label_start+n;
-        SuffixNode b(old_parent,0);
-        SuffixNode c(b_idx,0);
- 
-        b.suffix_link = old_suffix_link;
-        b.label_start = old_label_start;
-        b.label_end   = old_label_start+n-1;
-
-        c.label_start = symbol_index_start+n;
-        c.label_end   = SuffixNode::end_marker;
-
-        b.children[s[old_label_start+n]]    = insertion_point;
-        b.children[s[symbol_index_start+n]] = c_idx;
-
-        store.push_back(b);
-        store.push_back(c);
-
-        return c_idx;*/
       }
     }
 
