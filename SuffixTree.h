@@ -197,7 +197,7 @@ int64_t olen = len;
       if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
       if(strleft <= len) {
         cout << "EXIT STRLEFT<LEN" << endl; 
-        store[nodeidx].suffix_link = current; 
+        store[nodeidx].suffix_link = ocurrent; // LALAL
         end=true;
         break;
       } // WAS <= removed break, still want to try and move down one more.
@@ -210,22 +210,33 @@ int64_t olen = len;
         break;
       }
 
+
       strleft -= len;
       cout << "CURRENT_START IS: " << current_start << endl;
       cout << "USEDLEN IS: " << usedlen << endl;
       int64_t position = s[current_start+usedlen]; // WAS -1
       usedlen += len;
 
-if(strleft == 0) break;
-      cout << "POSITION IS: " << position << endl;
       ocurrent = current;
+      if(strleft == 0) {
+        cout << "EXIT NOTHING LEFT" << endl;
+        if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0)) {
+          store[nodeidx].suffix_link = store[ocurrent].parent;
+          cout << "EOPTION 1" << endl;
+        }
+        else  {cout << "EOPTION 2" << endl; store[nodeidx].suffix_link = ocurrent; current=ocurrent; }//huh.. 
+        break;
+      }
+      cout << "POSITION IS: " << position << endl;
       current = store[current].children[position];
- //     if(current != -1) { store[nodeidx].suffix_link = current; }
       if(current == -1) { 
         cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; 
         end=true; 
-        store[nodeidx].suffix_link = store[ocurrent].parent;
-        if(store[nodeidx].suffix_link == 0) store[nodeidx].suffix_link = ocurrent;//huh..
+        if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0) && (store[ocurrent].get_label_length() > 0)) {
+          store[nodeidx].suffix_link = store[ocurrent].parent;
+          cout << "OPTION 1" << endl;
+        }
+        else  {cout << "OPTION 2" << endl; store[nodeidx].suffix_link = ocurrent; }//huh.. 
 
         break;
       }
