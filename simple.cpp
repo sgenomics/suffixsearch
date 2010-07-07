@@ -17,6 +17,29 @@ int main(int argc,char ** argv) {
      
   }
 
+  if(runonly==-20 || runall) {
+    cout << "RUN -20" << endl;
+    SuffixTree s1;
+
+    s1.insert('b');
+    s1.insert('c');
+    s1.insert('a');
+    s1.insert('b');
+    s1.insert('c');
+    s1.insert('b');
+    s1.insert('c');
+    s1.insert('a');
+    s1.insert('$');
+    s1.dump();
+    s1.validate_tree();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('c');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 != true) cout << "******************************* TEST -20 FAILURE" << endl;
+  }
+
   if(runonly==-19 || runall) {
     cout << "RUN -19" << endl;
     SuffixTree s1;
