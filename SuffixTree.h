@@ -184,19 +184,25 @@ public:
     int64_t current_start = store[parent_idx].label_start;
 bool first=true;
     if(store[parent_idx].parent == 0) current_start++;//can believe this is required any longer..
+      int64_t len  = -1;
+      int64_t ocurrent = -1;
     for(;end==false;) {
       cout << "CURRENT IS: " << current << endl;
-      int64_t len = store[current].get_label_length()+1; // +1!!
-      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; } // AS ALWAYS ROOT IS SPECIAL!
+int64_t olen = len;
+       len = store[current].get_label_length()+1; // +1!!
+      if(current == 0) { current = store[0].children[s[current_start]]; usedlen = 1; strleft -= 1; len = store[current].get_label_length()+1; cout << "*** DOING SPECIAL ROOT STUFF" << endl; cout << "current is now: " << current << endl;} // AS ALWAYS ROOT IS SPECIAL!
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
 
+      if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
       if(strleft <= len) {
         cout << "EXIT STRLEFT<LEN" << endl; 
         store[nodeidx].suffix_link = current; 
         end=true;
+        break;
       } // WAS <= removed break, still want to try and move down one more.
 
+      if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
       if((current != 0) && (store[current].label_end == -1)) {
         cout << "EXIT ENDLABEL FOUND" << endl;
         store[nodeidx].suffix_link = current;
@@ -209,19 +215,31 @@ bool first=true;
       cout << "USEDLEN IS: " << usedlen << endl;
       int64_t position = s[current_start+usedlen]; // WAS -1
       usedlen += len;
+
+if(strleft == 0) break;
       cout << "POSITION IS: " << position << endl;
+      ocurrent = current;
       current = store[current].children[position];
  //     if(current != -1) { store[nodeidx].suffix_link = current; }
-      if(current == -1) { cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; end=true; }
+      if(current == -1) { 
+        cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; 
+        end=true; 
+        store[nodeidx].suffix_link = store[ocurrent].parent;
+        if(store[nodeidx].suffix_link == 0) store[nodeidx].suffix_link = ocurrent;//huh..
+
+        break;
+      }
       cout << "NEW CURRENT IS: " << current << endl;
       cout << "***************************************************** DOING THIS THING" << endl;
+first=false;
     }
 
     cout << "**********************************************************************************************       NODEIDX IS: " << nodeidx << endl;
     cout << "********************************************************************************************** PRESHIFTDOWN WAS: " << old_link << endl;
     cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
 
-    // if(current != -1) store[nodeidx].suffix_link = current;
+    if(current != -1) store[nodeidx].suffix_link = current;
+    cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
   }
 
   int extend2(int insertion_point,int symbol,int symbol_index_start,int symbol_index_end) {
