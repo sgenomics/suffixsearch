@@ -196,6 +196,8 @@ public:
       cout << "len: " << len << endl;
       cout << "strleft: " << strleft << endl;
 
+     // if(first) len--;
+
       if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
       if(strleft <= len) {
         cout << "EXIT STRLEFT<LEN" << endl; 
@@ -218,7 +220,7 @@ public:
       usedlen += len;
       cout << "USEDLEN IS: " << usedlen << endl;
 
-      if(usedlen > (current_end-current_start)) { current_start = store[nodeidx].label_start; current_end = store[nodeidx].get_label_end(); usedlen=0; }
+      if(usedlen > (current_end-current_start)) { current_start = store[nodeidx].label_start; current_end = store[nodeidx].get_label_end(); usedlen=0; cout << "used parent label up, so down to current" << endl; }
       int64_t position = s[current_start+usedlen]; // WAS -1
 
       ocurrent = current;
@@ -236,6 +238,7 @@ public:
       if(current == -1) { 
         cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; 
         end=true; 
+        store[nodeidx].suffix_link = ocurrent; break; // TRYING THIS
         if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0) && (store[ocurrent].get_label_length() > 0)) {
           store[nodeidx].suffix_link = store[ocurrent].parent;
           cout << "OPTION 1" << endl;
@@ -507,7 +510,8 @@ cout << "ALPHA POINT DUMP" << endl;
 
     string my_path_label     = get_path_label(store[n].parent) ;
 //    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
-    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + get_label(store[n].suffix_link);
+    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent);
+    //string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + get_label(store[n].suffix_link);
   
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
