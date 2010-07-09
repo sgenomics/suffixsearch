@@ -172,7 +172,6 @@ public:
     int64_t current = old_suffix_link;
     cout << "******* DOING THIS THING" << endl;
     cout << "IN SHIFTDOWN DUMP BETA" << endl;
-    dump();
     cout << "IN SHIFTDOWN DUMP BETA END" << endl;
     cout << "******* strleft : " << strleft << endl;
     cout << "******* link str: " << current << endl;
@@ -372,9 +371,8 @@ public:
         cout << "***************************************************** ADD NODE: " << c_idx << endl;
         store.push_back(b);
         store.push_back(c);
-        shiftdown(b_idx);
+//        shiftdown(b_idx);
 cout << "ALPHA POINT DUMP" << endl;
- dump();
         return c_idx;
       }
     }
@@ -419,6 +417,7 @@ cout << "ALPHA POINT DUMP" << endl;
     bool first=true;
     int last_node=0;
     //for(int n=s.size()-1;n>=0;n--) {
+    vector<int64_t> dome;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -431,16 +430,33 @@ cout << "ALPHA POINT DUMP" << endl;
       // if(!first) store[newnode].suffix_link = last_node;
       if(!first) { cout << "CREATING LINK FROM " << last_node << " to " << newnode << endl; store[last_node].suffix_link = newnode; }
       // fix suffix links of ALL children (overkill)
-      if(!first)  for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) shiftdown(store[store[last_node].parent].children[n]);
+      dome.push_back(newnode);
+      dome.push_back(store[newnode].parent);
+      for(int n=0;n<255;n++) if(store[newnode].children[n] != -1) dome.push_back(store[newnode].children[n]);
+      for(int n=0;n<255;n++) if(store[store[newnode].parent].children[n] != -1) dome.push_back(store[store[newnode].parent].children[n]);
+//      shiftdown(newnode);
+//      shiftdown(store[newnode].parent);
+      for(int n=0;n<255;n++) if(store[last_node].children[n] != -1) dome.push_back(store[last_node].children[n]);
+      for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
+      dome.push_back(store[store[last_node].parent].suffix_link);
+      //if(!first)  for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) shiftdown(store[store[last_node].parent].children[n]);
 
 ///NONLINEAR TIME MAGICMCMAGIC
-      if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
-      if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
+    //  cout << "FIRST SHIFTDOWN" << endl;
+     // if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
+     // cout << "SECOND SHIFTDOWN" << endl;
+    //  if(!first) for(int n=0;n<store.size();n++) shiftdown(n);
 
       last_node = newnode;
       first=false;
-
+dump();
     }
+    cout << "dome contains: ";
+    for(int n=dome.size()-1;n>=0;n--) {cout << dome[n] << ",";}
+    cout << endl;
+    for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
+    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
 
     store[last_node].suffix_link = 0;
     cout << "CREATING LINK FROM " << last_node << " to 0" << endl;
