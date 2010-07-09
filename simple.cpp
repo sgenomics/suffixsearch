@@ -15,7 +15,6 @@ int main(int argc,char ** argv) {
     if(argv[1][0] == 'A') {runall=true; cout << "runall" << endl; }
     else { runonly = atoi(argv[1]); cout << "runonly " << runonly << endl; }
   }
-
 //  ACABABBABABB$
   if(runonly==-24 || runall) {
     cout << "RUN -24" << endl;
