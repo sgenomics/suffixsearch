@@ -442,6 +442,10 @@ cout << "ALPHA POINT DUMP" << endl;
       first=false;
 dump();
     }
+    store[last_node].suffix_link = 0;
+    cout << "CREATING LINK FROM " << last_node << " to 0" << endl;
+    SuffixNode::end_marker_value++;
+
     cout << "dome contains: ";
     for(int n=dome.size()-1;n>=0;n--) {cout << dome[n] << ",";}
     cout << endl;
@@ -450,12 +454,8 @@ dump();
     for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
     for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
 
-//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+//    for(int n=0;n<store.size();n++) shiftdown(store[n]);
 
-    store[last_node].suffix_link = 0;
-    cout << "CREATING LINK FROM " << last_node << " to 0" << endl;
-
-    SuffixNode::end_marker_value++;
     dump();
     validate_tree();
 
