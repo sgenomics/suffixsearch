@@ -544,7 +544,10 @@ dump();
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
     if((suffix_path_label.size()) < ((my_path_label.size()-1))) {
-        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR" << endl;
+        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR1" << endl;
+    } else
+    if((suffix_path_label.size()) != ((my_path_label.size()-1))) {
+        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR2" << endl;
     } else
     for(int n=0;n<my_path_label.size()-1;n++) {
       if(suffix_path_label[n] != my_path_label[n+1]) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
