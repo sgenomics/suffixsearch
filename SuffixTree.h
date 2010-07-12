@@ -447,22 +447,33 @@ dump();
     SuffixNode::end_marker_value++;
 
     cout << "dome contains: ";
-    for(int n=dome.size()-1;n>=0;n--) {cout << dome[n] << ",";}
+    for(int n=0;n<dome.size();n++) {cout << dome[n] << ",";}
     cout << endl;
  //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
-    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+ //   for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
  //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
-    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
-    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
-    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
 
-//    for(int n=0;n<store.size();n++) shiftdown(store[n]);
+    shiftall();
+ //   for(int n=0;n<store.size();n++) shiftdown(store[n]);
 
     dump();
     validate_tree();
 
   }
 
+
+  void shiftall(int n=0) {
+
+    shiftdown(n);
+
+    for(int i=0;i<symbol_size;i++) {
+      if(store[n].children[i] != -1) shiftall(store[n].children[i]);
+    }
+
+  }
 
   void dump() {
     cout << "****************************** Tree dump" << endl;
