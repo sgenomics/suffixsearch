@@ -522,7 +522,8 @@ dump();
     string my_path_label     = get_path_label(store[n].parent) ;
 //    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + s[store[store[n].suffix_link].label_start];
  //   string suffix_path_label = get_path_label(store[store[n].suffix_link].parent);
-    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + get_label(store[n].suffix_link);
+  //  string suffix_path_label = get_path_label(store[store[n].suffix_link].parent) + get_label(store[n].suffix_link);
+    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent);
   
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << endl;
     cout << "labels: " << my_path_label << "," << suffix_path_label << endl;

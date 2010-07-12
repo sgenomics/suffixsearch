@@ -16,6 +16,25 @@ int main(int argc,char ** argv) {
     else { runonly = atoi(argv[1]); cout << "runonly " << runonly << endl; }
   }
 
+  if(runonly==-27 || runall) {
+    cout << "RUN -27" << endl;
+    string ms = "CACACCACACACACA$";
+    SuffixTree s1;
+
+    for(int n=0;n<ms.size();n++) {
+      s1.insert(ms[n]);
+    }
+
+    s1.dump();
+    s1.validate_tree();
+
+    vector<char> chkstr1;
+    chkstr1.clear();
+    chkstr1.push_back('A');
+    bool res1 = s1.exists(chkstr1);
+    if(res1 != true) cout << "******************************* TEST -27 FAILURE" << endl;
+  }
+
   if(runonly==-26 || runall) {
     cout << "RUN -26" << endl;
     string ms = "CBACBACBACBCBBA$";
