@@ -449,9 +449,11 @@ dump();
     cout << "dome contains: ";
     for(int n=dome.size()-1;n>=0;n--) {cout << dome[n] << ",";}
     cout << endl;
-    for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
+ //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
     for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
-    for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
+ //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
+    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
+    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
     for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
 
 //    for(int n=0;n<store.size();n++) shiftdown(store[n]);
