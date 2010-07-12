@@ -171,7 +171,6 @@ public:
     bool end=false;
     int64_t current = old_suffix_link;
     cout << "******* DOING THIS THING" << endl;
-    cout << "IN SHIFTDOWN DUMP BETA" << endl;
     cout << "IN SHIFTDOWN DUMP BETA END" << endl;
     cout << "******* strleft : " << strleft << endl;
     cout << "******* link str: " << current << endl;
@@ -223,7 +222,7 @@ public:
       int64_t position = s[current_start+usedlen]; // WAS -1
 
       ocurrent = current;
-      if(strleft == 0) {
+      if(strleft <= 0) {
         cout << "EXIT NOTHING LEFT" << endl;
         if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0)) {
           store[nodeidx].suffix_link = store[ocurrent].parent;
@@ -234,6 +233,7 @@ public:
       }
       cout << "POSITION IS: " << position << endl;
       current = store[current].children[position];
+
       if(current == -1) { 
         cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; 
         end=true; 
