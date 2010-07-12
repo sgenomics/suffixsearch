@@ -418,6 +418,7 @@ cout << "ALPHA POINT DUMP" << endl;
     int last_node=0;
     //for(int n=s.size()-1;n>=0;n--) {
     vector<int64_t> dome;
+    vector<vector<int64_t> > doall;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -438,6 +439,10 @@ cout << "ALPHA POINT DUMP" << endl;
       for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
       dome.push_back(newnode);
 
+      doall.push_back(dome);
+      dome.clear();
+
+
       last_node = newnode;
       first=false;
 dump();
@@ -449,15 +454,12 @@ dump();
     cout << "dome contains: ";
     for(int n=0;n<dome.size();n++) {cout << dome[n] << ",";}
     cout << endl;
- //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
- //   for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
- //   for(int n=dome.size()-1;n>=0;n--) shiftdown(dome[n]);
-//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
-//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
-//    for(int n=0;n<dome.size();n++) shiftdown(dome[n]);
 
-    shiftall();
- //   for(int n=0;n<store.size();n++) shiftdown(store[n]);
+    for(int n=doall.size()-1;n>=0;n--) {
+      for(int i=0;i<doall[n].size();i++) {
+        shiftdown(doall[n][i]);
+      }
+    }
 
     dump();
     validate_tree();
