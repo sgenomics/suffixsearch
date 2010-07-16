@@ -253,7 +253,7 @@ public:
     //cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
   }
 
-  int extend2(int insertion_point,int symbol_index_start,int symbol_index_end) {
+  int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split) {
 
     //cout << "extend2" << endl;
     //cout << "Insertion point: " << insertion_point << endl;
@@ -276,13 +276,14 @@ public:
       // if a child exists, go to it, without consuming
       int child = store[insertion_point].children[s[symbol_index_start]];
       if(child != -1) {
-        return extend2(child,symbol_index_start,symbol_index_end);
+        return extend2(child,symbol_index_start,symbol_index_end,split);
       } else {
         // if it doesn't exist add it.
         SuffixNode sn(insertion_point,symbol_index_start);
         sn.label_start = symbol_index_start;
         sn.suffix_link = 0;
         store.push_back(sn);
+        split = true;
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
         //cout << "ADD NODE: " << store.size()-1 << endl;
         return store.size()-1;
@@ -305,6 +306,7 @@ public:
         // no child here, add one.
         SuffixNode sn(parent,symbol_index_start);
         sn.label_start = symbol_index_start;
+        split=true;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
         //cout << "ADD NODE: " << store.size()-1 << endl;
@@ -359,6 +361,7 @@ public:
 
         //cout << "***************************************************** ADD NODE: " << b_idx << endl;
         //cout << "***************************************************** ADD NODE: " << c_idx << endl;
+        split=true;
         store.push_back(b);
         store.push_back(c);
         return c_idx;
@@ -384,6 +387,7 @@ public:
       SuffixNode newnode(insertion_point,pos);
       newnode.label_end   = SuffixNode::end_marker;
 
+      split=true;
       store.push_back(newnode);
       int n_idx = store.size()-1;
       //cout << "***************************************************** ADD NODE: " << n_idx << endl;
@@ -393,7 +397,7 @@ public:
 
     // if a child does exist, recurse
     //cout << "recursing, position is now: " << pos << endl;
-    return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end);
+    return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split);
   }
 
 
@@ -403,8 +407,19 @@ public:
 
     bool first=true;
     int last_node=0;
+    int last_node_sl=0;
     vector<int64_t> dome;
     vector<vector<int64_t> > doall;
+
+
+    cout << "All paths" << endl;
+    cout << "path: " << get_path_label(first_node) << "(" << first_node << ")" << endl;
+
+    for(int n=first_node;n != store[n].suffix_link;n = store[n].suffix_link) {
+    //  for(int j=0;j<=store[n].get_label_length();j++) 
+      cout << "path: " << get_path_label(n) << "(" << n << "),  lablen: " << store[n].get_label_length() << " parlablen: " << store[store[n].parent].get_label_length() << endl;
+    }
+    cout << "All paths complete" << endl;
 
     last_node = first_node;
     for(int n=0;n<s.size();n++) {
@@ -436,14 +451,14 @@ public:
       if(first       ) cout << "1insertion node is: " << first_node << endl;
                   else cout << "2insertion node is: " << store[last_node].suffix_link << endl;
 
-      int last_node_sl = store[last_node].suffix_link;
+      last_node_sl = store[last_node].suffix_link;
 
       int newnode;
  //     if(first_insert) newnode = extend2(0,n,s.size()-1); else
  //     if(first       ) newnode = extend2(0,n,s.size()-1);
  //                 else newnode = extend2(store[last_node].suffix_link,s.size()-1,s.size()-1);
-
-      newnode = extend2(0,n,s.size()-1);
+      bool split=false;
+      newnode = extend2(0,n,s.size()-1,split);
 
       if(!first) { store[last_node].suffix_link = newnode; }
 
@@ -462,7 +477,7 @@ public:
       if(first) first_node = newnode;
       last_node = newnode;
       first=false;
-//      first_insert=false;
+      first_insert=false;
     }
     store[last_node].suffix_link = 0;
     SuffixNode::end_marker_value++;
