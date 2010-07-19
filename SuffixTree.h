@@ -452,31 +452,48 @@ public:
     //  for(int k=0;k<=label_distance;k++) cout << "*";
     //  cout << endl;
 
- int total_len = get_path_label(store[n].parent).size()+label_distance+1;
+      int total_len = get_path_label(store[n].parent).size()+label_distance+1;
+
       // we need to push label_distance down v.
       int v=n;
       int j=0;
+      int count=0;
       for(j=0;j<total_len;) { 
         int va = store[v].children[s[store[first_node].label_start+j-1]];
         if(va != -1) v = va; else break;
         j+=store[v].get_label_length();
+        count++;
       }
       cout << "2222222222222222 path: " << get_path_label(store[v].parent);
       j = get_path_label(store[v].parent).size();
       int start = store[v].label_start;
-    //  cout << "#";
-      //if(start != -1)
-   //   for(int g=0;g<=(label_distance-j);g++) cout << s[start+g];
-  //    cout << ".";
-// cout << endl;
       if(start != -1)
-      for(int g=0;g<(total_len-j);g++) cout << s[start+g];
+      for(int g=0;g<=(total_len-j);g++) cout << s[start+g];
+      cout << " (" << count << ")";
       cout << endl;
-/* cout << "label_distance: " << label_distance << endl;
- cout << "j             : " << j << endl;
- cout << "total_len: " << total_len << endl;
- cout << "start: " << start << endl;*/
     }
+
+    // clear up strings after root.
+    int v=0;
+    for(;i<s.size();i++) {
+
+      int j=0;
+      int count=0;
+      int startpos = i;
+      int total_len = i;
+      for(j=0;j<total_len;) {
+
+        int va = store[v].children[s[startpos+store[v].get_label_length()]];
+        if(va != -1) v = va; else break;
+        j+=store[v].get_label_length();
+        count++;
+      }
+
+      cout << "3333333333333333 path: ";
+      for(int n=startpos;n<s.size();n++) cout << s[n];
+      cout << " (" << count << ")" << endl;
+    }
+
     cout << "All paths complete" << endl;
 
 
