@@ -63,6 +63,16 @@ public:
     return false;
   }
 
+  int child_count() {
+    int i=0;
+
+    for(int64_t n=0;n<symbol_size;n++) {
+      if(children[n] != -1) ++i;
+    }
+
+    return i;
+  }
+
   int get_parent() {
     return parent;
   }
@@ -110,7 +120,7 @@ public:
     SuffixNode root(0);
     root.suffix_link = 0;
     root.parent = 0;
-
+    split_count = 0;
     store.push_back(root);
 
     root_node = 0;
@@ -285,7 +295,8 @@ public:
         store.push_back(sn);
         split = true;
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
-        //cout << "ADD NODE: " << store.size()-1 << endl;
+        cout << "1 ADD NODE: " << store.size()-1 << endl;
+        cout << "extend2 endpoint 1" << endl;
         return store.size()-1;
       }
     }
@@ -309,7 +320,8 @@ public:
         split=true;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
-        //cout << "ADD NODE: " << store.size()-1 << endl;
+        cout << "2ADD NODE: " << store.size()-1 << endl;
+        cout << "extend2 endpoint 2" << endl;
         return store.size()-1;
       } else {
         // Should really never reach this point.
@@ -359,24 +371,32 @@ public:
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
 
-        //cout << "***************************************************** ADD NODE: " << b_idx << endl;
-        //cout << "***************************************************** ADD NODE: " << c_idx << endl;
+        cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
+        cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
         store.push_back(b);
         store.push_back(c);
+        cout << "extend2 endpoint 3" << endl;
         return c_idx;
       }
     }
 
     // Edge label matched insertion string completely.
-    if((edge_length+1) > insert_len) { return insertion_point; }
+    if((edge_length+1) > insert_len) { 
+      split=false;
+      cout << "extend2 endpoint 4" << endl;
+      return insertion_point;
+    }
 
     //cout << "Extend2 condition 2: checking children" << endl;
 
     int pos = symbol_index_start + edge_length + 1;
 
     if(dontdoit) pos--;
-    if(pos > symbol_index_end) return insertion_point;
+    if(pos > symbol_index_end) {
+      cout << "extend2 endpoint 5" << endl;
+      return insertion_point;
+    }
 
     char child_sym = s[pos];
 
@@ -390,8 +410,9 @@ public:
       split=true;
       store.push_back(newnode);
       int n_idx = store.size()-1;
-      //cout << "***************************************************** ADD NODE: " << n_idx << endl;
+      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
       store[insertion_point].children[child_sym] = n_idx;
+      cout << "extend2 endpoint 6" << endl;
       return n_idx;
     }
 
@@ -410,18 +431,57 @@ public:
     int last_node_sl=0;
     vector<int64_t> dome;
     vector<vector<int64_t> > doall;
+    bool nosplitins = true;
 
+
+    cout << "inst: ";
+    string ins_str;
+    for(int i=0;i<=s.size()-1;i++) {
+      ins_str += s[i];
+    }
+    cout << ins_str;
+    cout << endl;
+    int label_distance = get_path_label(first_node).size() - get_path_label(store[first_node].parent).size()-1;
 
     cout << "All paths" << endl;
-    cout << "path: " << get_path_label(first_node) << "(" << first_node << ")" << endl;
+    int i=0;
+    cout << "0000000000000000 path: " << get_path_label(first_node) << endl;
+    for(int n=first_node;(i <= s.size()) && (n != 0);n = store[n].suffix_link,i++) {
 
-    for(int n=first_node;n != store[n].suffix_link;n = store[n].suffix_link) {
-    //  for(int j=0;j<=store[n].get_label_length();j++) 
-      cout << "path: " << get_path_label(n) << "(" << n << "),  lablen: " << store[n].get_label_length() << " parlablen: " << store[store[n].parent].get_label_length() << endl;
+    //  cout << "1111111111111111 path: " << get_path_label(store[n].parent);
+    //  for(int k=0;k<=label_distance;k++) cout << "*";
+    //  cout << endl;
+
+ int total_len = get_path_label(store[n].parent).size()+label_distance+1;
+      // we need to push label_distance down v.
+      int v=n;
+      int j=0;
+      for(j=0;j<total_len;) { 
+        int va = store[v].children[s[store[first_node].label_start+j-1]];
+        if(va != -1) v = va; else break;
+        j+=store[v].get_label_length();
+      }
+      cout << "2222222222222222 path: " << get_path_label(store[v].parent);
+      j = get_path_label(store[v].parent).size();
+      int start = store[v].label_start;
+    //  cout << "#";
+      //if(start != -1)
+   //   for(int g=0;g<=(label_distance-j);g++) cout << s[start+g];
+  //    cout << ".";
+// cout << endl;
+      if(start != -1)
+      for(int g=0;g<(total_len-j);g++) cout << s[start+g];
+      cout << endl;
+/* cout << "label_distance: " << label_distance << endl;
+ cout << "j             : " << j << endl;
+ cout << "total_len: " << total_len << endl;
+ cout << "start: " << start << endl;*/
     }
     cout << "All paths complete" << endl;
 
+
     last_node = first_node;
+    SuffixNode::end_marker_value++;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -460,6 +520,8 @@ public:
       bool split=false;
       newnode = extend2(0,n,s.size()-1,split);
 
+      if(split == true) {cout << "************************************ split located" << endl; split_count = 0; }
+//      if(split && nosplitins) { nosplitins=false; }
       if(!first) { store[last_node].suffix_link = newnode; }
 
       // fix suffix links of ALL children (overkill), some of these can be removed, others replaced by the children we know have been altered.
@@ -480,7 +542,9 @@ public:
       first_insert=false;
     }
     store[last_node].suffix_link = 0;
-    SuffixNode::end_marker_value++;
+    //SuffixNode::end_marker_value++;
+
+    split_count++;
 
     // Tidy up suffix links
     for(int n=doall.size()-1;n>=0;n--) {
@@ -602,6 +666,7 @@ public:
   int posrem;
   bool first_insert;
   int64_t first_node;
+  int64_t split_count;
 };
 
 #endif
