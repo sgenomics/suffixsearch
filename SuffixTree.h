@@ -452,6 +452,7 @@ public:
     //  for(int k=0;k<=label_distance;k++) cout << "*";
     //  cout << endl;
 
+      if(n==0) break;
       int total_len = get_path_label(store[n].parent).size()+label_distance+1;
 
       // we need to push label_distance down v.
@@ -483,7 +484,10 @@ public:
       int total_len = i;
       for(j=0;j<total_len;) {
 
-        int va = store[v].children[s[startpos+store[v].get_label_length()]];
+        int ln = s[startpos+store[v].get_label_length()];
+        if(ln > 255) break;
+        if(ln < 0)   break;
+        int va = store[v].children[ln];
         if(va != -1) v = va; else break;
         j+=store[v].get_label_length();
         count++;
