@@ -674,8 +674,8 @@ public:
    // get my path label
    // get parent chain to root.
 
-    string my_path_label     = get_path_label(store[n].parent) ;
-    string suffix_path_label = get_path_label(store[store[n].suffix_link].parent);
+    string my_path_label     = get_path_label(n) ;
+    string suffix_path_label = get_path_label(store[n].suffix_link);
   
     cout << "validating link from/to: " << n << "," << store[n].suffix_link << " labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
