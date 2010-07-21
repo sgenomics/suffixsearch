@@ -1111,6 +1111,7 @@ int main(int argc,char ** argv) {
     chkstr9.push_back('a');
     res = s9.exists(chkstr9);
     if(res == false) cout << "test 9 passed" << endl; else cout << "test 9E FAILURE" << endl;
+    s9.validate_tree();
   }
 
 
