@@ -373,6 +373,7 @@ public:
         store[insertion_point].parent = b_idx;
         c.parent = b_idx;
         b.parent = old_parent;
+        b.suffix_link = 0;// this needs pointing somewhere.
 /*
 
         b.copy_children(store[insertion_point]);
@@ -579,12 +580,12 @@ public:
 
       // fix suffix links of ALL children (overkill), some of these can be removed, others replaced by the children we know have been altered.
       dome.push_back(store[newnode].parent);
-      dome.push_back(store[store[last_node].parent].suffix_link);
-      for(int n=0;n<255;n++) if(store[newnode].children[n]                 != -1) dome.push_back(store[newnode].children[n]);
-      for(int n=0;n<255;n++) if(store[store[newnode].parent].children[n]   != -1) dome.push_back(store[store[newnode].parent].children[n]);
-      for(int n=0;n<255;n++) if(store[last_node].children[n]               != -1) dome.push_back(store[last_node].children[n]);
-      for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
-      dome.push_back(newnode);
+//      dome.push_back(store[store[last_node].parent].suffix_link);
+ //     for(int n=0;n<255;n++) if(store[newnode].children[n]                 != -1) dome.push_back(store[newnode].children[n]);
+//      for(int n=0;n<255;n++) if(store[store[newnode].parent].children[n]   != -1) dome.push_back(store[store[newnode].parent].children[n]);
+//      for(int n=0;n<255;n++) if(store[last_node].children[n]               != -1) dome.push_back(store[last_node].children[n]);
+//      for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
+//      dome.push_back(newnode);
 
       doall.push_back(dome);
       dome.clear();
@@ -604,7 +605,8 @@ public:
       for(int i=0;i<doall[n].size();i++) {
         shiftdown(doall[n][i]);
       }
-    }*/
+    }
+*/
   }
 
 
