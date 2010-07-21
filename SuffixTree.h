@@ -63,6 +63,14 @@ public:
     return false;
   }
 
+  int find_child(int c) {
+    for(int64_t n=0;n<symbol_size;n++) {
+      if(children[n] == c) return n;
+    }
+
+    return -1;
+  }
+
   int child_count() {
     int i=0;
 
@@ -346,6 +354,26 @@ public:
 
         SuffixNode b(insertion_point,0);
         SuffixNode c(insertion_point,0);
+        b.label_start = old_label_start;
+        b.label_end   = old_label_start+n-1;
+
+        c.label_start = symbol_index_start+n;
+        c.label_end   = SuffixNode::end_marker;
+
+        store[insertion_point].label_start = old_label_start+n;
+
+        int old_parent_child_symbol = store[old_parent].find_child(insertion_point); // TODO: make constant time please?
+
+        store[old_parent].children[old_parent_child_symbol] = b_idx;
+
+        b.children[s[old_label_start+n]] = insertion_point;
+        b.children[s[symbol_index_start+n]] = c_idx;
+
+
+        store[insertion_point].parent = b_idx;
+        c.parent = b_idx;
+        b.parent = old_parent;
+/*
 
         b.copy_children(store[insertion_point]);
         for(int64_t i=0;i<255;i++) if(store[insertion_point].children[i] != -1) { store[store[insertion_point].children[i]].parent = b_idx;  }
@@ -368,7 +396,7 @@ public:
 
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
-
+*/
         cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
         cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
@@ -570,13 +598,13 @@ public:
     //SuffixNode::end_marker_value++;
 
     split_count++;
-
+/*
     // Tidy up suffix links
     for(int n=doall.size()-1;n>=0;n--) {
       for(int i=0;i<doall[n].size();i++) {
         shiftdown(doall[n][i]);
       }
-    }
+    }*/
   }
 
 
