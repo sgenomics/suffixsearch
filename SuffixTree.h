@@ -129,7 +129,6 @@ public:
     split_point_node     = 0;
     split_point_position = 0;
 
-    first = true;
     SuffixNode::end_marker_value = -1;
     posrem=0;
     first_insert = true;
@@ -217,7 +216,6 @@ public:
         end=true;
         break;
       }
-
 
       strleft -= len;
       //cout << "CURRENT_START IS: " << current_start << endl;
@@ -426,7 +424,6 @@ public:
 
     s.push_back(current_symbol);
 
-    bool first=true;
     int last_node=0;
     int last_node_sl=0;
     vector<int64_t> dome;
@@ -441,12 +438,14 @@ public:
     }
     cout << ins_str;
     cout << endl;
+
     int label_distance = get_path_label(first_node).size() - get_path_label(store[first_node].parent).size()-1;
 
     cout << "All paths" << endl;
     int i=0;
     cout << "0000000000000000 path: " << get_path_label(first_node) << endl;
-    for(int n=first_node;(i <= s.size()) && (n != 0);n = store[n].suffix_link,i++) {
+    int n=first_node;
+    for(;(i <= s.size());n = store[n].suffix_link,i++) {
 
     //  cout << "1111111111111111 path: " << get_path_label(store[n].parent);
     //  for(int k=0;k<=label_distance;k++) cout << "*";
@@ -459,19 +458,22 @@ public:
       int v=n;
       int j=0;
       int count=0;
-      for(j=0;j<total_len;) { 
+      for(j=0;;) { 
         int va = store[v].children[s[store[first_node].label_start+j-1]];
         if(va != -1) v = va; else break;
         j+=store[v].get_label_length();
         count++;
       }
+      int t=j;
       cout << "2222222222222222 path: " << get_path_label(store[v].parent);
       j = get_path_label(store[v].parent).size();
       int start = store[v].label_start;
       if(start != -1)
-      for(int g=0;g<=(total_len-j);g++) cout << s[start+g];
-      cout << " (" << count << ")";
+      for(int g=start;g<s.size();g++) cout << s[g];
+      cout << " (" << count << "), (" << v << "), (" << store[v].child_count() << ")";
       cout << endl;
+
+      n=v;
     }
 
     // clear up strings after root.
@@ -481,28 +483,30 @@ public:
       int j=0;
       int count=0;
       int startpos = i;
-      int total_len = i;
-      for(j=0;j<total_len;) {
+      int total_len = s.size()-i;
 
-        int ln = s[startpos+store[v].get_label_length()];
-        if(ln > 255) break;
-        if(ln < 0)   break;
-        int va = store[v].children[ln];
+      cout << "pre v: " << v << endl;
+      for(j=0;;) {
+        int va = store[v].children[s[startpos+j]];
         if(va != -1) v = va; else break;
-        j+=store[v].get_label_length();
+        j+=store[v].get_label_length()+1;
         count++;
       }
+      cout << "post v: " << v << endl;
+      
+      cout << "$$$$$$$$$$$$$$$$ path: " << get_path_label(v) << endl;
 
       cout << "3333333333333333 path: ";
       for(int n=startpos;n<s.size();n++) cout << s[n];
-      cout << " (" << count << ")" << endl;
+      cout << " (" << count << "), (" << v << "), (" << store[v].child_count() << ")" << endl;
+      v=store[v].suffix_link;
     }
 
     cout << "All paths complete" << endl;
 
-
     last_node = first_node;
     SuffixNode::end_marker_value++;
+    bool first=true;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -678,7 +682,6 @@ public:
   vector<char>       s;
   vector<SuffixNode> store;
 
-  bool first;
   int root_node;
   int split_point_node;      ///< Point of last insertion/split in tree (node index)
   int split_point_position;  ///< Point of last insertion/split in tree (label position)
