@@ -450,14 +450,41 @@ public:
 
   void shiftdown2(int n) {
 
+    if(n == 0) return;
+
+    dump();
+    cout << "********************************************************************************************* SHIFTDOWN2 : shifting: " << n << endl;
+
     int n_parent    = store[n].parent;
     int n_parent_sl = store[store[n].parent].suffix_link;
-    int n_symbol    = store[store[n].parent].find_child(n); //TODO: change/make constant time.
+    int n_symbol    = s[store[n].label_start];   //TODO: change/make constant time.
+    int n_symbol_2  = s[store[n].label_start+1]; //TODO: change/make constant time.
 
-    int n_label_len = store[n].get_label_length();
+    int n_label_len = store[n].get_label_length()+1;
 
-    if(n_parent == 0) store[n].suffix_link = 0; else
-                      store[n].suffix_link = store[n_parent_sl].children[n_symbol];
+    if((n_parent == 0) && (n_label_len > 1)) {
+      store[n].suffix_link = store[0].children[n_symbol_2];
+      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
+      cout << "con0 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
+      return;
+    }
+
+    if(n_parent == 0) {
+      store[n].suffix_link = 0;
+      cout << "con1 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
+      return;
+    }
+
+    if(n_parent_sl == 0) {
+      store[n].suffix_link = store[0].children[n_symbol];
+      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
+      cout << "con2 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
+      return;
+    }
+
+    store[n].suffix_link = store[n_parent_sl].children[n_symbol];
+    if(store[n].suffix_link == -1) store[n].suffix_link = 0;
+    cout << "con3 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
   }
 
   void insert(char current_symbol) {
