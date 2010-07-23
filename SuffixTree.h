@@ -84,7 +84,7 @@ public:
   int get_parent() {
     return parent;
   }
-
+  
   int get_label_end() {
     if(label_end == end_marker) {
       return end_marker_value;
@@ -448,6 +448,17 @@ public:
     return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split);
   }
 
+  void shiftdown2(int n) {
+
+    int n_parent    = store[n].parent;
+    int n_parent_sl = store[store[n].parent].suffix_link;
+    int n_symbol    = store[store[n].parent].find_child(n); //TODO: change/make constant time.
+
+    int n_label_len = store[n].get_label_length();
+
+    if(n_parent == 0) store[n].suffix_link = 0; else
+                      store[n].suffix_link = store[n_parent_sl].children[n_symbol];
+  }
 
   void insert(char current_symbol) {
 
@@ -599,14 +610,14 @@ public:
     //SuffixNode::end_marker_value++;
 
     split_count++;
-/*
+
     // Tidy up suffix links
     for(int n=doall.size()-1;n>=0;n--) {
       for(int i=0;i<doall[n].size();i++) {
-        shiftdown(doall[n][i]);
+        shiftdown2(doall[n][i]);
       }
     }
-*/
+
   }
 
 
