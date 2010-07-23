@@ -595,6 +595,7 @@ public:
     last_node = first_node;
     SuffixNode::end_marker_value++;
     bool first=true;
+    bool split=false;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -630,7 +631,8 @@ public:
  //     if(first_insert) newnode = extend2(0,n,s.size()-1); else
  //     if(first       ) newnode = extend2(0,n,s.size()-1);
  //                 else newnode = extend2(store[last_node].suffix_link,s.size()-1,s.size()-1);
-      bool split=false;
+      bool last_split=split;
+      split=false;
       newnode = extend2(0,n,s.size()-1,split);
 
       if(split == true) {cout << "************************************ split located" << endl; split_count = 0; }
@@ -647,7 +649,8 @@ public:
 //      dome.push_back(newnode);
 
 
-      store[store[last_node].parent].suffix_link = store[newnode].parent;
+      if(!first && last_split) store[store[last_node].parent].suffix_link = store[newnode].parent;
+      cout << "SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       doall.push_back(dome);
       dome.clear();
       //shiftdown2(store[newnode].parent);
@@ -657,6 +660,7 @@ public:
       first=false;
       first_insert=false;
     }
+    dump();
     store[last_node].suffix_link = 0;
     //SuffixNode::end_marker_value++;
 
