@@ -63,6 +63,14 @@ public:
     return false;
   }
 
+  int first_child() {
+    for(int64_t n=0;n<symbol_size;n++) {
+      if(children[n] != -1) return n;
+    }
+
+    return -1;
+  }
+
   int find_child(int c) {
     for(int64_t n=0;n<symbol_size;n++) {
       if(children[n] == c) return n;
@@ -463,7 +471,9 @@ public:
     int n_label_len = store[n].get_label_length()+1;
 
     if((n_parent == 0) && (n_label_len > 1)) {
-      store[n].suffix_link = store[0].children[n_symbol_2];
+      int firstchild = store[n].first_child();
+      store[n].suffix_link = store[store[store[n].children[firstchild]].suffix_link].parent;
+      //store[n].suffix_link = store[0].children[n_symbol_2];
       if(store[n].suffix_link == -1) store[n].suffix_link = 0;
       cout << "con0 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
       return;
@@ -472,6 +482,17 @@ public:
     if(n_parent == 0) {
       store[n].suffix_link = 0;
       cout << "con1 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
+      return;
+    }
+
+    if(n_parent != 0) {
+
+      int firstchild = store[n].first_child();
+      cout << "first child is: " << firstchild << endl;
+      store[n].suffix_link = store[store[store[n].children[firstchild]].suffix_link].parent;
+
+      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
+      cout << "con0.1 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
       return;
     }
 
@@ -625,8 +646,11 @@ public:
 //      for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
 //      dome.push_back(newnode);
 
+
+      store[store[last_node].parent].suffix_link = store[newnode].parent;
       doall.push_back(dome);
       dome.clear();
+      //shiftdown2(store[newnode].parent);
 
       if(first) first_node = newnode;
       last_node = newnode;
@@ -641,7 +665,7 @@ public:
     // Tidy up suffix links
     for(int n=doall.size()-1;n>=0;n--) {
       for(int i=0;i<doall[n].size();i++) {
-        shiftdown2(doall[n][i]);
+        //shiftdown2(doall[n][i]);
       }
     }
 
