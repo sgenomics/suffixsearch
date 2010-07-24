@@ -185,20 +185,11 @@ public:
 
   int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split) {
 
-    //cout << "extend2" << endl;
-    //cout << "Insertion point: " << insertion_point << endl;
-    //cout << "symbol            : " << symbol << endl;
-    //cout << "symbol_index_start: " << symbol_index_start << endl;
-    //cout << "symbol_index_end  : " << symbol_index_end   << endl;
-
     int label_start = store[insertion_point].label_start;
     int edge_length = store[insertion_point].get_label_length();
 
     int insert_len = symbol_index_end - symbol_index_start;
     // Check edge label
-
-    //cout << "edge_length: " << edge_length << endl;
-
 
     // this means we're at the root node, it's kind of special!
     if(store[insertion_point].label_start == -1) {
@@ -405,12 +396,16 @@ public:
       if((!first) && last_split) {
         store[store[last_node].parent].suffix_link = store[newnode].parent;
         //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
-      } 
+      }
 
       if(first) first_node = newnode;
       last_node = newnode;
       first=false;
       first_insert=false;
+
+      if(last_split && (!split)) {
+        break;
+      }
     }
     dump();
 
