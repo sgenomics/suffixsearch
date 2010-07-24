@@ -215,8 +215,8 @@ public:
         store.push_back(sn);
         split = true;
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
-        cout << "1 ADD NODE: " << store.size()-1 << endl;
-        cout << "extend2 endpoint 1" << endl;
+        //cout << "1 ADD NODE: " << store.size()-1 << endl;
+        //cout << "extend2 endpoint 1" << endl;
         return store.size()-1;
       }
     }
@@ -240,8 +240,8 @@ public:
         split=true;
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
-        cout << "2ADD NODE: " << store.size()-1 << endl;
-        cout << "extend2 endpoint 2" << endl;
+        //cout << "2ADD NODE: " << store.size()-1 << endl;
+        //cout << "extend2 endpoint 2" << endl;
         return store.size()-1;
       } else {
         // Should really never reach this point.
@@ -289,12 +289,12 @@ public:
         b.parent = old_parent;
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
 
-        cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
-        cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
+        //cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
+        //cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
         store.push_back(b);
         store.push_back(c);
-        cout << "extend2 endpoint 3" << endl;
+        //cout << "extend2 endpoint 3" << endl;
         return c_idx;
       }
     }
@@ -302,7 +302,7 @@ public:
     // Edge label matched insertion string completely.
     if((edge_length+1) > insert_len) { 
       split=false;
-      cout << "extend2 endpoint 4" << endl;
+      //cout << "extend2 endpoint 4" << endl;
       return insertion_point;
     }
 
@@ -312,7 +312,7 @@ public:
 
     if(dontdoit) pos--;
     if(pos > symbol_index_end) {
-      cout << "extend2 endpoint 5" << endl;
+      //cout << "extend2 endpoint 5" << endl;
       return insertion_point;
     }
 
@@ -328,9 +328,9 @@ public:
       split=true;
       store.push_back(newnode);
       int n_idx = store.size()-1;
-      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
+      //cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
       store[insertion_point].children[child_sym] = n_idx;
-      cout << "extend2 endpoint 6" << endl;
+      //cout << "extend2 endpoint 6" << endl;
       return n_idx;
     }
 
@@ -345,83 +345,20 @@ public:
 
     int last_node=0;
     int last_node_sl=0;
-    vector<int64_t> dome;
     vector<vector<int64_t> > doall;
     bool nosplitins = true;
 
 
-    cout << "inst: ";
+    //cout << "inst: ";
     string ins_str;
     for(int i=0;i<=s.size()-1;i++) {
       ins_str += s[i];
     }
-    cout << ins_str;
-    cout << endl;
+    //cout << ins_str;
+    //cout << endl;
 
     int label_distance = get_path_label(first_node).size() - get_path_label(store[first_node].parent).size()-1;
 
-    cout << "All paths" << endl;
-    int i=0;
-    cout << "0000000000000000 path: " << get_path_label(first_node) << endl;
-    int n=first_node;
-    for(;(i <= s.size());n = store[n].suffix_link,i++) {
-
-    //  cout << "1111111111111111 path: " << get_path_label(store[n].parent);
-    //  for(int k=0;k<=label_distance;k++) cout << "*";
-    //  cout << endl;
-
-      if(n==0) break;
-      int total_len = get_path_label(store[n].parent).size()+label_distance+1;
-
-      // we need to push label_distance down v.
-      int v=n;
-      int j=0;
-      int count=0;
-      for(j=0;;) { 
-        int va = store[v].children[s[store[first_node].label_start+j-1]];
-        if(va != -1) v = va; else break;
-        j+=store[v].get_label_length();
-        count++;
-      }
-      int t=j;
-      cout << "2222222222222222 path: " << get_path_label(store[v].parent);
-      j = get_path_label(store[v].parent).size();
-      int start = store[v].label_start;
-      if(start != -1)
-      for(int g=start;g<s.size();g++) cout << s[g];
-      cout << " (" << count << "), (" << v << "), (" << store[v].child_count() << ")";
-      cout << endl;
-
-      n=v;
-    }
-
-    // clear up strings after root.
-    int v=0;
-    for(;i<s.size();i++) {
-
-      int j=0;
-      int count=0;
-      int startpos = i;
-      int total_len = s.size()-i;
-
-      cout << "pre v: " << v << endl;
-      for(j=0;;) {
-        int va = store[v].children[s[startpos+j]];
-        if(va != -1) v = va; else break;
-        j+=store[v].get_label_length()+1;
-        count++;
-      }
-      cout << "post v: " << v << endl;
-      
-      cout << "$$$$$$$$$$$$$$$$ path: " << get_path_label(v) << endl;
-
-      cout << "3333333333333333 path: ";
-      for(int n=startpos;n<s.size();n++) cout << s[n];
-      cout << " (" << count << "), (" << v << "), (" << store[v].child_count() << ")" << endl;
-      v=store[v].suffix_link;
-    }
-
-    cout << "All paths complete" << endl;
 
     last_node = first_node;
     SuffixNode::end_marker_value++;
@@ -439,58 +376,36 @@ public:
       }
       cout << endl;
 
+/*
       string s_path;
       if(first_insert) cout << "0insertion path is: " << endl; else
       if(first       ) { cout << "1insertion path is: "; s_path = get_path_label(first_node); }
                   else { cout << "2insertion path is: "; s_path = get_path_label(store[last_node].suffix_link); }
       cout << s_path << endl;
-
-
-      cout << "ins_str: " << ins_str << endl;
-      cout << " s_path: " << s_path << endl;
-      for(int i=0;i<ins_str.size();i++) {
-        if(ins_str[i] != s_path[i+1]) { cout << "MISMATCH!" << endl; };
-      }
-
-      if(first_insert) cout << "0insertion node is: 0" << endl; else
-      if(first       ) cout << "1insertion node is: " << first_node << endl;
-                  else cout << "2insertion node is: " << store[last_node].suffix_link << endl;
+*/
 
       last_node_sl = store[last_node].suffix_link;
 
       int newnode;
- //     if(first_insert) newnode = extend2(0,n,s.size()-1); else
- //     if(first       ) newnode = extend2(0,n,s.size()-1);
- //                 else newnode = extend2(store[last_node].suffix_link,s.size()-1,s.size()-1);
+
       bool last_split=split;
       split=false;
       newnode = extend2(0,n,s.size()-1,split);
 
-      if(split == true) {cout << "************************************ split located" << endl; split_count = 0; }
-//      if(split && nosplitins) { nosplitins=false; }
-      if((!first) && split) { 
-        store[last_node].suffix_link = newnode;
-        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
+      if(split == true) {
+      //  cout << "************************************ split located" << endl; 
+        split_count = 0;
       }
 
-      // fix suffix links of ALL children (overkill), some of these can be removed, others replaced by the children we know have been altered.
-      dome.push_back(store[newnode].parent);
-//      dome.push_back(store[store[last_node].parent].suffix_link);
- //     for(int n=0;n<255;n++) if(store[newnode].children[n]                 != -1) dome.push_back(store[newnode].children[n]);
-//      for(int n=0;n<255;n++) if(store[store[newnode].parent].children[n]   != -1) dome.push_back(store[store[newnode].parent].children[n]);
-//      for(int n=0;n<255;n++) if(store[last_node].children[n]               != -1) dome.push_back(store[last_node].children[n]);
-//      for(int n=0;n<255;n++) if(store[store[last_node].parent].children[n] != -1) dome.push_back(store[store[last_node].parent].children[n]);
-//      dome.push_back(newnode);
+      if((!first) && split) { 
+        store[last_node].suffix_link = newnode;
+//        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
+      }
 
-
-      //if((!first) && last_split) {
       if((!first) && last_split) {
         store[store[last_node].parent].suffix_link = store[newnode].parent;
-        cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+        //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       } 
-
-      doall.push_back(dome);
-      dome.clear();
 
       if(first) first_node = newnode;
       last_node = newnode;
@@ -500,7 +415,7 @@ public:
     dump();
 
     if(split) {
-      cout << "LAST WAS SPLIT: " << store[last_node].parent << endl;
+      //cout << "LAST WAS SPLIT: " << store[last_node].parent << endl;
       store[last_node].suffix_link = 0;
       store[store[last_node].parent].suffix_link = 0;
     }
@@ -603,8 +518,8 @@ public:
   int root_node;
   int split_point_node;      ///< Point of last insertion/split in tree (node index)
   int split_point_position;  ///< Point of last insertion/split in tree (label position)
-  int split_distance;    ///< distance to last split point
-  int current_node;      ///< Current node in tree (active point?)
+  int split_distance;        ///< distance to last split point
+  int current_node;          ///< Current node in tree (active point?)
   int posrem;
   bool first_insert;
   int64_t first_node;
