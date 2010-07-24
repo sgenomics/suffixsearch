@@ -637,7 +637,10 @@ public:
 
       if(split == true) {cout << "************************************ split located" << endl; split_count = 0; }
 //      if(split && nosplitins) { nosplitins=false; }
-      if(!first) { store[last_node].suffix_link = newnode; }
+      if((!first) && split) { 
+        store[last_node].suffix_link = newnode;
+        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
+      }
 
       // fix suffix links of ALL children (overkill), some of these can be removed, others replaced by the children we know have been altered.
       dome.push_back(store[newnode].parent);
@@ -652,7 +655,7 @@ public:
       //if((!first) && last_split) {
       if((!first) && last_split) {
         store[store[last_node].parent].suffix_link = store[newnode].parent;
-        cout << "SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+        cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       } 
 
       doall.push_back(dome);
