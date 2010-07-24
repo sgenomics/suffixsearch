@@ -183,100 +183,6 @@ public:
     return false;
   }
 
-  void shiftdown(int nodeidx) {
-
-    // take the parents suffixlink and it's label length and use this to update our own suffixlink.
-
-    int64_t old_link = store[nodeidx].suffix_link;
-
-    int64_t parent_idx = store[nodeidx].parent;
-    int64_t parent_len = store[parent_idx].get_label_length()+1;
-    int64_t old_suffix_link = store[parent_idx].suffix_link;
-
-    //cout << "******* PARENT IS: " << parent_idx << endl; 
-    int64_t strleft = parent_len+1;// ??+1 because need to be past parent length
-    bool end=false;
-    int64_t current = old_suffix_link;
-    //cout << "******* DOING THIS THING" << endl;
-    //cout << "IN SHIFTDOWN DUMP BETA END" << endl;
-    //cout << "******* strleft : " << strleft << endl;
-    //cout << "******* link str: " << current << endl;
-    int64_t usedlen = 0;
-
-    if((store[store[nodeidx].parent].parent == 0) && (store[store[nodeidx].parent].get_label_length() <= 0)) { store[nodeidx].suffix_link = 0; return ; }
-    if(store[nodeidx].parent == 0) { store[nodeidx].suffix_link = 0; return ; }
-
-    int64_t current_start = store[parent_idx].label_start;
-    int64_t current_end   = store[parent_idx].label_end;
-
-    bool first=true;
-    if(store[parent_idx].parent == 0) {strleft--; current_start++;} //can believe this is required any longer..
-    int64_t len  = -1;
-    int64_t ocurrent = -1;
-    for(;end==false;) {
-      int64_t olen = len;
-      len = store[current].get_label_length()+1; // +1!!
-      if(current == 0) { current = store[0].children[s[current_start]]; len = store[current].get_label_length()+1; } // AS ALWAYS ROOT IS SPECIAL!
-
-      if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
-      if(strleft <= len) {
-        store[nodeidx].suffix_link = ocurrent;
-        end=true;
-        break;
-      } 
-
-      if(((!first) && !((olen == 1) && (ocurrent != 0))) || first)
-      if((current != 0) && (store[current].label_end == -1)) {
-        //cout << "EXIT ENDLABEL FOUND" << endl;
-        store[nodeidx].suffix_link = current;
-        end=true;
-        break;
-      }
-
-      strleft -= len;
-      //cout << "CURRENT_START IS: " << current_start << endl;
-      usedlen += len;
-      //cout << "USEDLEN IS: " << usedlen << endl;
-
-      if(usedlen > (current_end-current_start)) { current_start = store[nodeidx].label_start; current_end = store[nodeidx].get_label_end(); usedlen=0; }
-      int64_t position = s[current_start+usedlen]; // WAS -1
-
-      ocurrent = current;
-      if(strleft <= 0) {
-        //cout << "EXIT NOTHING LEFT" << endl;
-        if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0)) {
-          store[nodeidx].suffix_link = store[ocurrent].parent;
-          //cout << "EOPTION 1" << endl;
-        }
-        else  { store[nodeidx].suffix_link = ocurrent; current=ocurrent; }
-        break;
-      }
-      //cout << "POSITION IS: " << position << endl;
-      current = store[current].children[position];
-
-      if(current == -1) { 
-        //cout << "ATTEMPTING TO USE CHILD THAT IS NOT PRESENT" << endl; 
-        end=true; 
-        store[nodeidx].suffix_link = ocurrent; break; // TRYING THIS
-        if((store[ocurrent].parent != 0) && (store[store[ocurrent].parent].get_label_length() == 0) && (store[ocurrent].get_label_length() > 0)) {
-          store[nodeidx].suffix_link = store[ocurrent].parent;
-          //cout << "OPTION 1" << endl;
-        }
-        else  { store[nodeidx].suffix_link = ocurrent; }//huh.. 
-
-        break;
-      }
-      first=false;
-    }
-
-    //cout << "**********************************************************************************************       NODEIDX IS: " << nodeidx << endl;
-    //cout << "********************************************************************************************** PRESHIFTDOWN WAS: " << old_link << endl;
-    //cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
-
-    if(current != -1) store[nodeidx].suffix_link = current;
-    //cout << "********************************************************************************************** POSTSHIFTDOWN IS: " << store[nodeidx].suffix_link << endl;
-  }
-
   int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split) {
 
     //cout << "extend2" << endl;
@@ -381,31 +287,8 @@ public:
         store[insertion_point].parent = b_idx;
         c.parent = b_idx;
         b.parent = old_parent;
-        b.suffix_link = 0;// this needs pointing somewhere.
-/*
+        b.suffix_link = 0;// (this is pointed after the next insertion in insert)
 
-        b.copy_children(store[insertion_point]);
-        for(int64_t i=0;i<255;i++) if(store[insertion_point].children[i] != -1) { store[store[insertion_point].children[i]].parent = b_idx;  }
-        store[insertion_point].clear_children();
-        store[insertion_point].children[s[old_label_start+n]]    = b_idx;
-        store[insertion_point].children[s[symbol_index_start+n]] = c_idx;
-
-        store[insertion_point].label_end = old_label_start+n-1;
-
-        //cout << "LABEL LENGTH IS: " << store[insertion_point].get_label_length() << endl;
-        if(store[insertion_point].get_label_length() == 0) {
-          //cout << "PARENT LINK SHIFTED UP" << endl;
-          //cout << "OLD LINK: " << store[insertion_point].suffix_link << endl;
-          store[insertion_point].suffix_link = store[store[insertion_point].suffix_link].parent;
-          //cout << "NEW LINK: " << store[insertion_point].suffix_link << endl;
-        }
-
-        b.label_start = old_label_start+n;
-        b.label_end   = old_label_end;
-
-        c.label_start = symbol_index_start+n;
-        c.label_end   = SuffixNode::end_marker;
-*/
         cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
         cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
@@ -454,58 +337,6 @@ public:
     // if a child does exist, recurse
     //cout << "recursing, position is now: " << pos << endl;
     return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split);
-  }
-
-  void shiftdown2(int n) {
-
-    if(n == 0) return;
-
-    dump();
-    cout << "********************************************************************************************* SHIFTDOWN2 : shifting: " << n << endl;
-
-    int n_parent    = store[n].parent;
-    int n_parent_sl = store[store[n].parent].suffix_link;
-    int n_symbol    = s[store[n].label_start];   //TODO: change/make constant time.
-    int n_symbol_2  = s[store[n].label_start+1]; //TODO: change/make constant time.
-
-    int n_label_len = store[n].get_label_length()+1;
-
-    if((n_parent == 0) && (n_label_len > 1)) {
-      int firstchild = store[n].first_child();
-      store[n].suffix_link = store[store[store[n].children[firstchild]].suffix_link].parent;
-      //store[n].suffix_link = store[0].children[n_symbol_2];
-      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
-      cout << "con0 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
-      return;
-    }
-
-    if(n_parent == 0) {
-      store[n].suffix_link = 0;
-      cout << "con1 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
-      return;
-    }
-
-    if(n_parent != 0) {
-
-      int firstchild = store[n].first_child();
-      cout << "first child is: " << firstchild << endl;
-      store[n].suffix_link = store[store[store[n].children[firstchild]].suffix_link].parent;
-
-      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
-      cout << "con0.1 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
-      return;
-    }
-
-    if(n_parent_sl == 0) {
-      store[n].suffix_link = store[0].children[n_symbol];
-      if(store[n].suffix_link == -1) store[n].suffix_link = 0;
-      cout << "con2 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
-      return;
-    }
-
-    store[n].suffix_link = store[n_parent_sl].children[n_symbol];
-    if(store[n].suffix_link == -1) store[n].suffix_link = 0;
-    cout << "con3 ********************************************************************************************* SHIFTDOWN2 : set to  : " << store[n].suffix_link << endl;
   }
 
   void insert(char current_symbol) {
@@ -660,7 +491,6 @@ public:
 
       doall.push_back(dome);
       dome.clear();
-      //shiftdown2(store[newnode].parent);
 
       if(first) first_node = newnode;
       last_node = newnode;
@@ -675,28 +505,7 @@ public:
       store[store[last_node].parent].suffix_link = 0;
     }
 
-    //SuffixNode::end_marker_value++;
-
     split_count++;
-
-    // Tidy up suffix links
-    for(int n=doall.size()-1;n>=0;n--) {
-      for(int i=0;i<doall[n].size();i++) {
-        //shiftdown2(doall[n][i]);
-      }
-    }
-
-  }
-
-
-  void shiftall(int n=0) {
-
-    shiftdown(n);
-
-    for(int i=0;i<symbol_size;i++) {
-      if(store[n].children[i] != -1) shiftall(store[n].children[i]);
-    }
-
   }
 
   void dump() {
