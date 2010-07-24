@@ -649,8 +649,12 @@ public:
 //      dome.push_back(newnode);
 
 
-      if(!first && last_split) store[store[last_node].parent].suffix_link = store[newnode].parent;
-      cout << "SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+      //if((!first) && last_split) {
+      if((!first) && last_split) {
+        store[store[last_node].parent].suffix_link = store[newnode].parent;
+        cout << "SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+      } 
+
       doall.push_back(dome);
       dome.clear();
       //shiftdown2(store[newnode].parent);
@@ -661,7 +665,13 @@ public:
       first_insert=false;
     }
     dump();
-    store[last_node].suffix_link = 0;
+
+    if(split) {
+      cout << "LAST WAS SPLIT: " << store[last_node].parent << endl;
+      store[last_node].suffix_link = 0;
+      store[store[last_node].parent].suffix_link = 0;
+    }
+
     //SuffixNode::end_marker_value++;
 
     split_count++;
