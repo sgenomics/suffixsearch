@@ -185,6 +185,10 @@ public:
 
   int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split) {
 
+    cout << "extend2, insertion_point   : " << insertion_point << endl;
+    cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
+  //  cout << "extend2, label_start       : " << store[insertion_point].label_start << endl;
+
     int label_start = store[insertion_point].label_start;
     int edge_length = store[insertion_point].get_label_length();
 
@@ -326,7 +330,7 @@ public:
     }
 
     // if a child does exist, recurse
-    //cout << "recursing, position is now: " << pos << endl;
+    cout << "recursing, position is now: " << pos << endl;
     return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split);
   }
 
@@ -339,7 +343,6 @@ public:
     vector<vector<int64_t> > doall;
     bool nosplitins = true;
 
-
     //cout << "inst: ";
     string ins_str;
     for(int i=0;i<=s.size()-1;i++) {
@@ -350,11 +353,11 @@ public:
 
     int label_distance = get_path_label(first_node).size() - get_path_label(store[first_node].parent).size()-1;
 
-
     last_node = first_node;
     SuffixNode::end_marker_value++;
     bool first=true;
     bool split=false;
+    int  new_split_count = split_count;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -377,18 +380,24 @@ public:
 
       last_node_sl = store[last_node].suffix_link;
 
+      if(first) last_node_sl = first_node;
+
       int newnode;
 
       bool last_split=split;
       split=false;
+      cout << "last_node_sl: " << last_node_sl << endl;
+      if(last_node_sl != 0) cout << " predict pos: " << s.size()-split_count << endl;
+                       else cout << " predict pos: " << 0 << endl;
       newnode = extend2(0,n,s.size()-1,split);
 
+
       if(split == true) {
-      //  cout << "************************************ split located" << endl; 
-        split_count = 0;
+      //  cout << "************************************ split located" << endl;
+        new_split_count = 0;
       }
 
-      if((!first) && split) { 
+      if((!first) && split) {
         store[last_node].suffix_link = newnode;
 //        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
       }
@@ -398,7 +407,11 @@ public:
         //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       }
 
-      if(first) first_node = newnode;
+      if(first) {
+        first_node = newnode;
+        cout << "first_node now: " << first_node << endl;
+      }
+      
       last_node = newnode;
       first=false;
       first_insert=false;
@@ -415,7 +428,7 @@ public:
       store[store[last_node].parent].suffix_link = 0;
     }
 
-    split_count++;
+    split_count = new_split_count+1;
   }
 
   void dump() {
