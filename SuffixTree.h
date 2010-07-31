@@ -183,11 +183,14 @@ public:
     return false;
   }
 
-  int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split) {
+  int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split,int &fnode,int &fpos) {
 
     cout << "extend2, insertion_point   : " << insertion_point << endl;
     cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
   //  cout << "extend2, label_start       : " << store[insertion_point].label_start << endl;
+
+    fnode = insertion_point;
+    fpos  = symbol_index_start;
 
     int label_start = store[insertion_point].label_start;
     int edge_length = store[insertion_point].get_label_length();
@@ -201,7 +204,7 @@ public:
       // if a child exists, go to it, without consuming
       int child = store[insertion_point].children[s[symbol_index_start]];
       if(child != -1) {
-        return extend2(child,symbol_index_start,symbol_index_end,split);
+        return extend2(child,symbol_index_start,symbol_index_end,split,fnode,fpos);
       } else {
         // if it doesn't exist add it.
         SuffixNode sn(insertion_point,symbol_index_start);
@@ -331,7 +334,7 @@ public:
 
     // if a child does exist, recurse
     cout << "recursing, position is now: " << pos << endl;
-    return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split);
+    return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split,fnode,fpos);
   }
 
   void insert(char current_symbol) {
@@ -358,6 +361,9 @@ public:
     bool first=true;
     bool split=false;
     int  new_split_count = split_count;
+
+    int predict_node = 0;
+    int predict_pos = 0;
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
@@ -380,16 +386,48 @@ public:
 
       last_node_sl = store[last_node].suffix_link;
 
-      if(first) last_node_sl = first_node;
 
       int newnode;
 
       bool last_split=split;
       split=false;
-      cout << "last_node_sl: " << last_node_sl << endl;
-      if(last_node_sl != 0) cout << " predict pos: " << s.size()-split_count << endl;
-                       else cout << " predict pos: " << 0 << endl;
-      newnode = extend2(0,n,s.size()-1,split);
+
+      predict_node = store[last_node].suffix_link;
+      if(first) predict_node = first_node;
+
+      if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length()+1;} else
+      if(store[predict_node].parent       == 0) {cout << "pred2" << endl; predict_pos = n;} else
+      if(store[predict_node].suffix_link  == 0) {cout << "pred3" << endl; predict_pos = n;}
+
+
+      // Now need to perform 'canonisation' analog.
+      int n_label_length = store[last_node]   .get_label_length();
+      int s_label_length = store[predict_node].get_label_length();
+
+
+      cout << "n_label_length: " << n_label_length << endl;
+      cout << "s_label_length: " << s_label_length << endl;
+      cout << "pre  -can predict_node: " << predict_node << endl;
+      cout << "pre  -can predict_pos : " << predict_pos << endl;
+      if(predict_pos >= (n_label_length-s_label_length)) {
+        // canonisation not required
+      } else {
+        predict_node  = store[predict_node].parent;
+ //       predict_pos  -= store[predict_node].get_label_length();
+      }
+
+      if(n  == (s.size()-1)) predict_node = 0;
+
+      cout << "post-can predict_node: " << predict_node << endl;
+      cout << "post-can predict_pos : " << predict_pos << endl;
+
+      int fnode = 0;
+      int fpos  = 0;
+      newnode = extend2(0,n,s.size()-1,split,fnode,fpos);
+//      newnode = extend2(last_node_sl,predict_pos,s.size()-1,split,fnode,fpos);
+
+      if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
+      if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
 
 
       if(split == true) {
@@ -412,7 +450,7 @@ public:
         cout << "first_node now: " << first_node << endl;
       }
       
-      last_node = newnode;
+      last_node = newnode; // was newnode
       first=false;
       first_insert=false;
 
