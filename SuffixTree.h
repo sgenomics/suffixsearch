@@ -33,7 +33,17 @@ public:
     if(label_start == -1) return 0;
 
     if(label_end == end_marker) {
-      return end_marker_value-label_end;
+      return end_marker_value-label_end; // THIS IS WRONG BUT SOMETHING NEEDS IT ARGH!
+    }
+
+    return label_end-label_start;
+  }
+
+  int get_label_length_r() {
+    if(label_start == -1) return 0;
+
+    if(label_end == end_marker) {
+      return end_marker_value-label_start; 
     }
 
     return label_end-label_start;
@@ -367,7 +377,7 @@ public:
     for(int n=0;n<s.size();n++) {
       int  posremin;
       bool insertion;
-
+dump();
       string ins_str;
       cout << "inserting: ";
       for(int i=n;i<=s.size()-1;i++) {
@@ -395,10 +405,10 @@ public:
       predict_node = store[last_node].suffix_link;
       if(first) predict_node = first_node;
 
-      if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length()+1;} else
-      if(store[predict_node].parent       == 0) {cout << "pred2" << endl; predict_pos = n;} else
-      if(store[predict_node].suffix_link  == 0) {cout << "pred3" << endl; predict_pos = n;}
-
+      int l_predict_pos = predict_pos;
+      if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r()+1;} 
+      if(store[predict_node].parent       == 0) {cout << "pred2" << endl; predict_pos = n;} 
+ //     if(store[predict_node].suffix_link  == 0) {cout << "pred3" << endl; predict_pos = n;}
 
       // Now need to perform 'canonisation' analog.
       int n_label_length = store[last_node]   .get_label_length();
@@ -409,23 +419,41 @@ public:
       cout << "s_label_length: " << s_label_length << endl;
       cout << "pre  -can predict_node: " << predict_node << endl;
       cout << "pre  -can predict_pos : " << predict_pos << endl;
-      if(predict_pos >= (n_label_length-s_label_length)) {
-        // canonisation not required
-      } else {
+
+// condition is wrong!
+
+      int distance_in_current = (s.size()-1) - (l_predict_pos+1);
+      int label_left          = distance_in_current;//(store[last_node].get_label_length() - distance_in_current);
+      cout << "l_predict_pos: " << l_predict_pos << endl;
+      cout << "last_node: " << last_node << endl;
+      cout << "distance_in_current: " << distance_in_current << endl;
+      cout << "label_left: " << label_left << endl;
+      cout << " sl length: " << store[predict_node].get_label_length_r() << endl;
+      cout << " sl start: " << store[predict_node].label_start << endl;
+      cout << " sl end  : " << store[predict_node].label_end << endl;
+      if((store[predict_node].parent != 0) && (store[predict_node].suffix_link != 0))
+      for(;label_left > store[predict_node].get_label_length_r();) {
+        cout << "can loop" << endl;
         predict_node  = store[predict_node].parent;
- //       predict_pos  -= store[predict_node].get_label_length();
+    //    predict_pos  += store[predict_node].get_label_length_r();
+        label_left -= (store[predict_node].get_label_length_r() + 1);
       }
 
+      predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r();
       if(n  == (s.size()-1)) predict_node = 0;
+      if(store[predict_node].parent       == 0) {cout << "pred2a" << endl; predict_pos = n;} 
+ //     if(store[predict_node].suffix_link  == 0) {cout << "pred3a" << endl; predict_pos = n;}
 
       cout << "post-can predict_node: " << predict_node << endl;
       cout << "post-can predict_pos : " << predict_pos << endl;
 
+
       int fnode = 0;
       int fpos  = 0;
-      newnode = extend2(0,n,s.size()-1,split,fnode,fpos);
-//      newnode = extend2(last_node_sl,predict_pos,s.size()-1,split,fnode,fpos);
+      newnode = extend2(0,n,s.size()-1,split,fnode,fpos); // BRUTE
+//      newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
 
+      if(first) cout << "************ FFFFIRRRRSSSSSSSTTTTTTT" << endl;
       if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
       if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
 
