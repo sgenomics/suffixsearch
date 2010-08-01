@@ -420,8 +420,6 @@ dump();
       cout << "pre  -can predict_node: " << predict_node << endl;
       cout << "pre  -can predict_pos : " << predict_pos << endl;
 
-// condition is wrong!
-
       int distance_in_current = (s.size()-1) - (l_predict_pos+1);
       int label_left          = distance_in_current;//(store[last_node].get_label_length() - distance_in_current);
       cout << "l_predict_pos: " << l_predict_pos << endl;
@@ -463,7 +461,8 @@ dump();
         new_split_count = 0;
       }
 
-      if((!first) && split) {
+      //if((!first) && split) {
+      if(!first) {
         store[last_node].suffix_link = newnode;
 //        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
       }
