@@ -224,7 +224,7 @@ public:
         split = true;
         store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
         //cout << "1 ADD NODE: " << store.size()-1 << endl;
-        //cout << "extend2 endpoint 1" << endl;
+        cout << "extend2 endpoint 1" << endl;
         return store.size()-1;
       }
     }
@@ -249,7 +249,7 @@ public:
         store.push_back(sn);
         store[parent].children[s[symbol_index_start]] = store.size()-1;
         //cout << "2ADD NODE: " << store.size()-1 << endl;
-        //cout << "extend2 endpoint 2" << endl;
+        cout << "extend2 endpoint 2" << endl;
         return store.size()-1;
       } else {
         // Should really never reach this point.
@@ -302,7 +302,7 @@ public:
         split=true;
         store.push_back(b);
         store.push_back(c);
-        //cout << "extend2 endpoint 3" << endl;
+        cout << "extend2 endpoint 3" << endl;
         return c_idx;
       }
     }
@@ -310,7 +310,9 @@ public:
     // Edge label matched insertion string completely.
     if((edge_length+1) > insert_len) { 
       split=false;
-      //cout << "extend2 endpoint 4" << endl;
+
+//      if(edge_length == insert_len) split=true; // we matched completely at the last symbol so can be used.
+      cout << "extend2 endpoint 4" << endl;
       return insertion_point;
     }
 
@@ -320,7 +322,8 @@ public:
 
     if(dontdoit) pos--;
     if(pos > symbol_index_end) {
-      //cout << "extend2 endpoint 5" << endl;
+      cout << "extend2 endpoint 5" << endl;
+      cout << "************************************************************************* WHAT MAENS WHAT MEANS?!?" << endl;
       return insertion_point;
     }
 
@@ -338,7 +341,7 @@ public:
       int n_idx = store.size()-1;
       //cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
       store[insertion_point].children[child_sym] = n_idx;
-      //cout << "extend2 endpoint 6" << endl;
+      cout << "extend2 endpoint 6" << endl;
       return n_idx;
     }
 
@@ -420,7 +423,7 @@ dump();
       cout << "pre  -can predict_node: " << predict_node << endl;
       cout << "pre  -can predict_pos : " << predict_pos << endl;
 
-      int distance_in_current = (s.size()-1) - (l_predict_pos+1);
+      int distance_in_current = s.size() - l_predict_pos;
       int label_left          = distance_in_current;//(store[last_node].get_label_length() - distance_in_current);
       cout << "l_predict_pos: " << l_predict_pos << endl;
       cout << "last_node: " << last_node << endl;
@@ -429,6 +432,9 @@ dump();
       cout << " sl length: " << store[predict_node].get_label_length_r() << endl;
       cout << " sl start: " << store[predict_node].label_start << endl;
       cout << " sl end  : " << store[predict_node].label_end << endl;
+
+int precan_predict_node = predict_node;
+int precan_predict_pos  = predict_pos;
       if((store[predict_node].parent != 0) && (store[predict_node].suffix_link != 0))
       for(;label_left > store[predict_node].get_label_length_r();) {
         cout << "can loop" << endl;
@@ -437,7 +443,27 @@ dump();
         label_left -= (store[predict_node].get_label_length_r() + 1);
       }
 
-      predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r();
+      // what this line means: predict_pos is end of current insertion string - length of this string + distance into string.
+      cout << "label_left now   : " << label_left << endl;
+      cout << "prednode labelsiz: " << store[predict_node].get_label_length_r() << endl;
+
+cout << "lastnodesize: " << store[last_node].get_label_length_r()+1 << endl;
+cout << "newnodesize : " << store[predict_node].get_label_length_r()+1 << endl;
+cout << "s.size(): " << s.size() << endl;
+int a = (store[last_node].get_label_length_r()+1) - label_left;
+
+//if(a < 0) a = 0-a;// no idea why, great huh!
+int b = (store[predict_node].get_label_length_r()+1) - a;
+cout << "a: " << a << endl;
+cout << "b: " << b << endl;
+      predict_pos  = s.size() - b;
+cout << "c: " << predict_pos << endl;
+
+
+// if(a < 0) { predict_pos = precan_predict_pos; predict_node = precan_predict_node; } // no clue..
+//      predict_pos  = (s.size()-1) - label_left;
+      if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r()+1;} 
+
       if(n  == (s.size()-1)) predict_node = 0;
       if(store[predict_node].parent       == 0) {cout << "pred2a" << endl; predict_pos = n;} 
  //     if(store[predict_node].suffix_link  == 0) {cout << "pred3a" << endl; predict_pos = n;}
@@ -451,6 +477,7 @@ dump();
       newnode = extend2(0,n,s.size()-1,split,fnode,fpos); // BRUTE
 //      newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
 
+
       if(first) cout << "************ FFFFIRRRRSSSSSSSTTTTTTT" << endl;
       if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
       if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
@@ -461,15 +488,16 @@ dump();
         new_split_count = 0;
       }
 
-      //if((!first) && split) {
-      if(!first) {
+      if((!first) && split) {
         store[last_node].suffix_link = newnode;
-//        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
+       // store[last_node].suffix_link = newnode;
+        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
       }
 
       if((!first) && last_split) {
+        store[last_node].suffix_link = newnode;
         store[store[last_node].parent].suffix_link = store[newnode].parent;
-        //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+        cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       }
 
       if(first) {
