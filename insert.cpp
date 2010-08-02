@@ -16,7 +16,7 @@ int main(int argc,char ** argv) {
     st.insert(s[n]);
   }
 
-  st.dump();
+//  st.dump();
 
 
   vector<char> t;
@@ -25,7 +25,7 @@ int main(int argc,char ** argv) {
   for(size_t n=0;n<ss.size();n++) {
     t.push_back(ss[n]);
   }
-  st.dump();
+ // st.dump();
   st.exists(t);
-  st.validate_tree();
+ // st.validate_tree();
 }
