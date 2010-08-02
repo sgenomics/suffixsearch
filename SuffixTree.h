@@ -253,6 +253,7 @@ public:
         return store.size()-1;
       } else {
         // Should really never reach this point.
+cout << "NEVER EVER GET HERE EVER EVER" << endl;
         exit(0);
       }
     }
@@ -460,7 +461,8 @@ cout << "b: " << b << endl;
 cout << "c: " << predict_pos << endl;
 
 
-// if(a < 0) { predict_pos = precan_predict_pos; predict_node = precan_predict_node; } // no clue..
+if(a <= 0) { cout << "pred5a" << endl; predict_pos = l_predict_pos; } // no clue..
+if(b <= 0) { cout << "pred6a" << endl; predict_pos = l_predict_pos; } // no clue..
 //      predict_pos  = (s.size()-1) - label_left;
       if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r()+1;} 
 
@@ -476,12 +478,16 @@ cout << "c: " << predict_pos << endl;
       int fpos  = 0;
       newnode = extend2(0,n,s.size()-1,split,fnode,fpos); // BRUTE
 //      newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
-
+cout << "LOC: " << n << " " << s.size()-1 << endl;
+if(split) cout << "SPLIT TRUE" << endl; else cout << "SPLIT FALSE" << endl;
 
       if(first) cout << "************ FFFFIRRRRSSSSSSSTTTTTTT" << endl;
+cout << "fnode: " << fnode << endl;
+cout << "fpos : " << fpos << endl;
       if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
       if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
 
+      predict_pos = fpos;
 
       if(split == true) {
       //  cout << "************************************ split located" << endl;
