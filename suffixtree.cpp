@@ -59,7 +59,7 @@ int main() {
     vector<char> chkstr2;
 
     cout << "randomised string: ";
-    for(int n=0;n<150;n++) {
+    for(int n=0;n<20;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
       cout << c;
