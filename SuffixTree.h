@@ -388,7 +388,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
     SuffixNode::end_marker_value++;
     // fix up last suffix link
-
+/*
     if(s.size() > 2) {
 
       vector<char> s2ch;
@@ -407,8 +407,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         cout << "3SETLINK: " << node1 << " to " << node1s << endl;
       }
         cout << "4SETLINK: " << node1 << " to " << node1s << endl;
-    }
-dump();
+    }*/
+//dump();
     int last_node=0;
     int last_node_sl=0;
     vector<vector<int64_t> > doall;
@@ -442,14 +442,14 @@ int c=0;
       bool insertion;
 //dump();
 //validate_tree();
-      string ins_str;
+   /*   string ins_str;
       cout << "inserting: ";
       for(int i=n;i<=s.size()-1;i++) {
         cout << s[i];
         ins_str += s[i];
       }
       cout << endl;
-
+*/
       last_node_sl = store[last_node].suffix_link;
 
       int newnode;
@@ -473,16 +473,19 @@ int c=0;
       int precan_predict_pos  = predict_pos;
 
      // lazy canonisation
-     cout << "pre-can predict_node: " << predict_node << endl;
-     cout << "pre-can predict_pos : " << predict_pos << endl;
+     //cout << "pre-can predict_node: " << predict_node << endl;
+     //cout << "pre-can predict_pos : " << predict_pos << endl;
+        predict_pos = n + (store[predict_node].get_depth()-store[predict_node].get_label_length_r())-1;
      if((store[predict_node].parent != 0) && (store[predict_node].suffix_link != 0))
       for(;;) {
+//cout << "n is:" << n << endl;
+//cout << "cdepth:" << store[predict_node].get_depth() << endl;
         predict_pos = n + (store[predict_node].get_depth()-store[predict_node].get_label_length_r())-1;
-        cout << "precanup: " << predict_pos << endl;
-        int ins_size = s.size()-1-n;
+//        cout << "precanup: " << predict_pos << endl;
+        int ins_size = s.size()-n;
         int c_depth  = store[predict_node].get_depth();
-cout << "ins_size: " << ins_size << endl;
-cout << " c_depth: " << c_depth << endl;
+//cout << "ins_size: " << ins_size << endl;
+//cout << " c_depth: " << c_depth << endl;
         if(ins_size >= c_depth) break;
         predict_node = store[predict_node].parent;
       }
@@ -491,10 +494,10 @@ cout << " c_depth: " << c_depth << endl;
 //      if(first) {cout << "pred1" << endl; predict_pos  = (s.size()-1)-store[predict_node].get_label_length_r()+1;} 
 
       if(n  == (s.size()-1)) predict_node = 0;
-      if(store[predict_node].parent == 0) {/*cout << "pred2a" << endl;*/ predict_pos = n;} 
+      if(store[predict_node].parent == 0) {/*cout << "pred2a" << endl;*/ predict_node = 0; predict_pos = n;} 
 
-      cout << "post-can predict_node: " << predict_node << endl;
-      cout << "post-can predict_pos : " << predict_pos << endl;
+//      cout << "post-can predict_node: " << predict_node << endl;
+//      cout << "post-can predict_pos : " << predict_pos << endl;
 
       int fnode = 0;
       int fpos  = 0;
@@ -502,31 +505,53 @@ cout << " c_depth: " << c_depth << endl;
       newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
 //cout << "LOC: " << n << " " << s.size()-1 << endl;
 //if(split) cout << "SPLIT TRUE" << endl; else cout << "SPLIT FALSE" << endl;
-cout << "s.size(): " << s.size() << endl;
+//cout << "s.size(): " << s.size() << endl;
 last_at_end = at_end;
 at_end = false;
-int ins_len = s.size()-1-predict_pos;
-int lab_len = store[newnode].get_label_length_r();
+//int ins_len = s.size()-1-predict_pos;
+int ins_len = s.size()-1-n+1;
+//int lab_len = store[newnode].get_label_length_r();
+int lab_len = store[newnode].get_depth();
 if(ins_len == lab_len) at_end = true;
-cout << "ins_len: " << ins_len << endl;
-cout << "lab_len: " << lab_len << endl;
+//cout << "ins_len: " << ins_len << endl;
+//cout << "lab_len: " << lab_len << endl;
 //if(store[newnode].isleaf() == false) cout << "is_leaf: false" << endl;
 //if(store[newnode].isleaf() == true ) cout << "is_leaf: true" << endl;
 
 
+      bool ends_at_magic_leaf = (store[newnode].isleaf() && at_end);
+      bool is_the_last_symbol = (n == s.size()-1);
+      bool implicit_match     = first_non_leaf_flag && !at_end;
 
-      if(!first)
-      if(((!(store[newnode].isleaf() && at_end && !first_non_leaf_flag)) && (first_non_leaf_flag && !at_end) || ((n == s.size()-1) && first_non_leaf_flag)) && (n!=0)) {
+/*      if(at_end            ) cout << "at_end             true" << endl;
+      if(ends_at_magic_leaf) cout << "ends_at_magic_leaf true" << endl;
+      if(is_the_last_symbol) cout << "is_the_last_symbol true" << endl;
+      if(implicit_match    ) cout << "implicit_match     true" << endl;
+*/
+      if(!first) {
+
+      //if(!is_the_last_symbol && (ends_at_magic_leaf || implicit_match)) {  
+      if(!is_the_last_symbol && (ends_at_magic_leaf) && !implicit_match) {  
+        // keep going, we don't need to visit these again.
+      } else 
+      if(first_non_leaf_flag) {
+//      if((!ends_at_magic_leaf && implicit_match || (is_the_last_symbol && first_non_leaf_flag))) {
 //cout << "will need to revisit, logging" << endl;
+//cout << "last_node: " << last_node << endl;
+//cout << "n-1: " << n-1 << endl;
         first_non_leaf_node = last_node;
         first_non_leaf_n    = n-1;
        // first_non_leaf_node = newnode;
        // first_non_leaf_n    = n;
         first_non_leaf_flag = false;
       }
+}
+//first_non_leaf_node = 0;
+//first_non_leaf_n = 0;
 //      if(first) cout << "************ FFFFIRRRRSSSSSSSTTTTTTT" << endl;
 //cout << "fnode: " << fnode << endl;
 //cout << "fpos : " << fpos << endl;
+//cout << "newnode: " << newnode << endl;
 //    if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
 //    if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
 
@@ -541,13 +566,13 @@ cout << "lab_len: " << lab_len << endl;
       if((!first) && (split || (at_end && last_at_end && store[newnode].isleaf()))) {
         store[last_node].suffix_link = newnode;
        // store[last_node].suffix_link = newnode;
-        cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
+        //cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
       }
 
       if((!first) && last_split) {
         store[last_node].suffix_link = newnode;
         store[store[last_node].parent].suffix_link = store[newnode].parent;
-        cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
+        //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       }
 
 /*
@@ -557,14 +582,14 @@ cout << "lab_len: " << lab_len << endl;
       }
   */    
       last_node = newnode; // was newnode
-if( split) cout << "SPLIT TRUE" << endl;
-if(!split) cout << "SPLIT FALSE" << endl;
+//if( split) cout << "SPLIT TRUE" << endl;
+//if(!split) cout << "SPLIT FALSE" << endl;
       if((!split) && (c > 0) && !at_end) {
 //      if((!first) && (!split)) {
-cout << "BREAK" << endl;
+//cout << "BREAK" << endl;
       first=false;
       first_insert=false;
-        break;
+      break;
       }
 c++;
       first=false;

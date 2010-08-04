@@ -389,8 +389,8 @@ int main(int argc,char ** argv) {
     cout << "insert b VAL" << endl;
     s1.validate_tree();
     s1.insert('$');
-    s1.dump();
     cout << "final insert $ VAL" << endl;
+    s1.dump();
     s1.validate_tree();
 
     vector<char> chkstr1;
