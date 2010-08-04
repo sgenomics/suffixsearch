@@ -279,10 +279,17 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       }
     }
 
+//cout << "ZZ9 entry" << endl;
+//cout << "ZZ9 len: " << symbol_index_end - symbol_index_start << endl;
+//cout << "ZZ9 thing: " << store[insertion_point].get_label_length_r() << endl;
+
+    int start_val =0;
+    start_val = symbol_index_end - symbol_index_start; 
     // consume edge label
     if(!dontdoit)
-    for(int n=0;(n<=edge_length) && (n<=(insert_len));n++) {
+    for(int n=start_val;(n<=edge_length) && (n<=(insert_len));) {
       if(s[symbol_index_start+n] != s[label_start+n]) {
+//cout << "ZZ9 split at: " << n << endl;
         // mismatch on edge label
         //cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         //cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
@@ -334,6 +341,14 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         //cout << "extend2 endpoint 3" << endl;
         return c_idx;
       }
+
+      int a = store[insertion_point].get_label_length_r()+1;
+      int b = symbol_index_end-symbol_index_start+1; 
+
+   //   if(a < b) n += a;
+   //        else n += b;
+//TODO: skip count not present here
+      n++;
     }
 
     // Edge label matched insertion string completely.
