@@ -26,6 +26,8 @@ int main(int argc,char ** argv) {
     t.push_back(ss[n]);
   }
  // st.dump();
-  st.exists(t);
+  bool r = st.exists(t);
+  if(r == true) cout << "found" << endl;
+  if(r == false) cout << "not found" << endl;
  // st.validate_tree();
 }
