@@ -12,6 +12,10 @@ int main(int argc,char ** argv) {
 
   SuffixTree st;
 
+  int v=1;
+if(argc > 3) v = atoi(argv[3]);
+cout << "v is: " << v << endl;
+for(size_t m=0;m<v;m++)
   for(size_t n=0;n<s.size();n++) {
     st.insert(s[n]);
   }
