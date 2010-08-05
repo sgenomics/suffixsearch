@@ -36,22 +36,18 @@ int test_suffixtree_time(UnitTest &utf) {
 
   utf.begin_test_set("Timing SuffixTree tests");
 
-  long int tree_time100000  = make_tree(100000); 
   long int tree_time200000  = make_tree(200000); 
   long int tree_time300000  = make_tree(300000); 
   long int tree_time400000  = make_tree(400000); 
   long int tree_time500000  = make_tree(500000); 
   long int tree_time600000  = make_tree(600000); 
-  long int tree_time700000  = make_tree(700000); 
   long int tree_time800000  = make_tree(800000); 
-  long int tree_time900000  = make_tree(900000); 
   long int tree_time1000000 = make_tree(1000000); 
 
-  utf.test_approx(tree_time200000 ,tree_time100000*2,static_cast<long int>(1));
-  utf.test_approx(tree_time400000 ,tree_time200000*2,static_cast<long int>(1));
-  utf.test_approx(tree_time600000 ,tree_time300000*2,static_cast<long int>(1));
-  utf.test_approx(tree_time800000 ,tree_time400000*2,static_cast<long int>(1));
-  utf.test_approx(tree_time1000000,tree_time500000*2,static_cast<long int>(1));
+  utf.test_truth(tree_time400000  <= (tree_time200000*2)+1);
+  utf.test_truth(tree_time600000  <= (tree_time300000*2)+1);
+  utf.test_truth(tree_time800000  <= (tree_time400000*2)+1);
+  utf.test_truth(tree_time1000000 <= (tree_time500000*2)+1);
 
   utf.end_test_set();
 
