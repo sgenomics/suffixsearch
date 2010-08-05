@@ -6,6 +6,8 @@
 #include <vector>
 #include <deque>
 #include <stdlib.h>
+#include "SearchStore.h"
+
 
 using namespace std;
 
@@ -140,7 +142,7 @@ public:
 
 
 
-class SuffixTree {
+class SuffixTree : public SearchStore {
 
 public:
   SuffixTree() {
