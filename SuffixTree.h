@@ -673,7 +673,7 @@ c++;
     return my_path_label;
   }
 
-  void validate_suffix_link(int64_t n) {
+  bool validate_suffix_link(int64_t n,bool dump=false) {
  
    // get my path label
    // get parent chain to root.
@@ -681,31 +681,42 @@ c++;
     string my_path_label     = get_path_label(n) ;
     string suffix_path_label = get_path_label(store[n].suffix_link);
   
-    cout << "validating link from/to: " << n << "," << store[n].suffix_link << " labels: " << my_path_label << "," << suffix_path_label << endl;
+    if(dump) cout << "validating link from/to: " << n << "," << store[n].suffix_link << " labels: " << my_path_label << "," << suffix_path_label << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0)
     if((suffix_path_label.size()) < ((my_path_label.size()-1))) {
-        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR1" << endl;
+      if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR1" << endl;
+      return false;
     } else
     if((suffix_path_label.size()) != ((my_path_label.size()-1))) {
-        cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR2" << endl;
+      if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR2" << endl;
+      return false;
     } else
     for(int n=0;n<my_path_label.size()-1;n++) {
-      if(suffix_path_label[n] != my_path_label[n+1]) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
+      if(suffix_path_label[n] != my_path_label[n+1]) {
+        if(dump) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
+        return false;
+      }
     }
+    return true;
   }
 
-  void validate_parent(int64_t n) {
+  bool validate_parent(int64_t n,bool dump=false) {
     int64_t parent =  store[n].parent;
 
     bool ok=false;
     for(int i=0;i<255;i++) { if(store[parent].children[i] == n) ok = true; }
 
     if(n == 0) ok = true;
-    if(ok != true) cout << "************************************************************************************ ERROR PARENT LINK NOT VALIDATED" << endl;
+    if(ok != true) {
+      if(dump) cout << "************************************************************************************ ERROR PARENT LINK NOT VALIDATED" << endl;
+      return false;
+    }
+    return true;
   }
 
-  void validate_depth(int n) {
+  bool validate_depth(int n,bool dump=false) {
 
+    bool valid = true;
     int s_depth = store[n].get_depth();
 
     int depth = 0;
@@ -716,15 +727,24 @@ c++;
       c = store[c].parent;
     }
 
-    if(s_depth != depth) cout << "ERROR, DEPTH VALIDATION FAILED node = " << n << " calc depth: " << depth << " stored depth: " << s_depth << endl;
+    if(s_depth != depth) {
+      if(dump) cout << "ERROR, DEPTH VALIDATION FAILED node = " << n << " calc depth: " << depth << " stored depth: " << s_depth << endl;
+      return false;
+    }
+
+    return true;
   }
 
-  void validate_tree() {
+  bool validate_tree(bool dump=false) {
     for(int64_t n=1;n<store.size();n++) {
-      validate_depth(n);
-      validate_suffix_link(n);
-      validate_parent(n);
+      bool v1 = validate_depth(n,dump);
+      bool v2 = validate_suffix_link(n,dump);
+      bool v3 = validate_parent(n,dump);
+      if(v1 == false) return false;
+      if(v2 == false) return false;
+      if(v3 == false) return false;
     }
+    return true;
   }
 
   vector<char>       s;
