@@ -9,7 +9,7 @@ using namespace std;
 
 int test_suffixtree_simple(UnitTest &utf) {
 
-  utf.begin_test_set("simple SuffixTree tests");
+  utf.begin_test_set("Simple SuffixTree tests");
   int runonly=0;
   bool runall=true;
 

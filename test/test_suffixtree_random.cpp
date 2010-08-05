@@ -4,11 +4,13 @@
 #include <stdlib.h>
 #include "SuffixTree.h"
 
+#include "UnitTest.h"
+
 using namespace std;
 
+int test_suffixtree_random(UnitTest &utf) {
 
-int main() {
-
+  utf.begin_test_set("Random SuffixTree tests");
   SuffixTree s;
 
   s.insert('b');
@@ -19,8 +21,6 @@ int main() {
   s.insert('a');
   s.insert('$');
 
-  s.dump();
-
   // simple existance tests
 
   vector<char> chkstr;
@@ -30,14 +30,15 @@ int main() {
   bool res;
 
   res = s.exists(chkstr);
-  if(res == true) cout << "test 1 passed" << endl; else cout << "test 1 failed" << endl;
+  utf.test_equality(res,true);
 
   chkstr.clear();
   chkstr.push_back('a');
   chkstr.push_back('a');
   chkstr.push_back('a');
   res = s.exists(chkstr);
-  if(res == false) cout << "test 2 passed" << endl; else cout << "test 2 failed" << endl;
+  utf.test_equality(res,false);
+
 /*
   s.process_positions();
   s.process_parents();
@@ -54,44 +55,36 @@ int main() {
 */
   // randomised tests
 
-  for(int i=0;i<100000;i++) {
+  for(int i=0;i<100;i++) {
     vector<char> str2;
     vector<char> chkstr2;
 
-    cout << "randomised string: ";
     for(int n=0;n<2000;n++) {
       char c = (rand()%3)+65;
       str2.push_back(c);
-      cout << c;
     }
     str2.push_back('$');
-    cout << endl;
 
-    cout << "check string: ";
     for(int n=0+(rand()%2);n<(8+rand()%1);n++) {
       chkstr2.push_back(str2[n]);
-      cout << str2[n];
     }
-    cout << endl;
     
     SuffixTree s2;
     for(size_t n=0;n<str2.size();n++) {
       s2.insert(str2[n]);
     }
-    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
-    s2.validate_tree();
+    bool validation = s2.validate_tree();
+    utf.test_equality(validation,true);
 
     res = s2.exists(chkstr2);
-    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
-    cout << "chk  str: "; for(size_t n=0;n<chkstr2.size();n++) cout << chkstr2[n]; cout << endl;
-    if(res == true) cout << "rand 1 passed" << endl; else cout << "rand 1 failed" << endl;
+    utf.test_equality(res,true);
 
     vector<char> chkstr3;
     chkstr3.push_back('z');
     chkstr3.push_back('z');
     chkstr3.push_back('z');
     res = s2.exists(chkstr3);
-    if(res == false) cout << "rand 2 passed" << endl; else cout << "rand 2 failed" << endl;
+    utf.test_equality(res,false);
 
     string s3;
     string s2str;
@@ -115,13 +108,9 @@ int main() {
     }
  
     res = s2.exists(chkstr4);
-    cout << "rand str: "; for(size_t n=0;n<str2.size();n++) cout << str2[n]; cout << endl;
-    cout << "s2str: *" << s2str << "*" << endl;
-    if(findit == false) cout << "shouldn't find it" << endl;
-    if(findit == true ) cout << "should    find it" << endl;
-    if(res == findit) cout << "rand 3 passed" << endl; else cout << "rand 3 failed" << endl;
-
+    utf.test_equality(res,findit);
   }
+  utf.end_test_set();
 
 }
 
