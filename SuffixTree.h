@@ -142,7 +142,7 @@ public:
 
 
 
-class SuffixTree : public SearchStore {
+class SuffixTree {
 
 public:
   SuffixTree() {

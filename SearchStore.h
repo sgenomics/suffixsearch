@@ -12,9 +12,9 @@ public:
     
   } 
 
-  virtual bool exists(vector<char> t) = 0;
+  virtual bool exists(vector<char> t);
 
-  virtual void insert(char current_symbol) = 0;
+  virtual void insert(char current_symbol);
 };
 
 #endif

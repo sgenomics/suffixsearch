@@ -1,12 +1,8 @@
 
-simple: simple.cpp SuffixTree.h
-	g++ -g simple.cpp -o simple
 insert: insert.cpp SuffixTree.h
 	g++ -O3 insert.cpp ./SuffixTree.cpp -o insert
-suffixtree: suffixtree.cpp SuffixTree.h
-	g++ -O3 suffixtree.cpp -o suffixtree
-
-all: simple insert suffixtree
+web: web.cpp SuffixTree.h WebSrvSearch.h
+	g++ -O3 web.cpp ./SuffixTree.cpp -o web
 
 clean:
-	rm simple insert suffixtree
+	rm insert
