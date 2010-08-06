@@ -187,16 +187,14 @@ public:
     nodestack .push_back(SuffixNode::root);
     childstack.push_back(250);
 
+
     int lastleaf = -1;
-cout << "processing right pos" << endl;
     cout << "reverse inorder path: ";
     for(;;) {
-cout << "size: " << nodestack.size() << endl;
 
-      if((nodestack.size() == 0) || (childstack.size() == 0)) break;
+      if(childstack.size() == 0) break;
       int current_node;
       current_node  = nodestack.back();
-      cout << current_node  << endl;
       nodestack.pop_back();
       int current_child;
       current_child = childstack.back();
@@ -208,8 +206,8 @@ cout << "size: " << nodestack.size() << endl;
       store[current_node].next_left_leaf = lastleaf;
 
       if(current_child < 0) {
-//        nodestack .pop_back();
-//        childstack.pop_back();
+        nodestack .pop_back();
+        childstack.pop_back();
 
         current_node  = nodestack.back();
         nodestack.pop_back();
@@ -220,13 +218,11 @@ cout << "size: " << nodestack.size() << endl;
         bool stop = false;
 	nodestack .push_back(current_node);
         childstack.push_back(250);
-
         bool first_pass = false;
         if(current_child == 250) first_pass=true;
         for(;stop == false;) {
 
 	  int nextchild = store[current_node].children[current_child];
-   
           if(current_child < 0) {
             stop = true;
             nodestack.pop_back();
@@ -234,11 +230,11 @@ cout << "size: " << nodestack.size() << endl;
             if(first_pass) { 
               store[current_node]. next_left_leaf  = oldl;
               store[current_node]. next_right_leaf = lastleaf;
-              lastleaf=current_node; cout << "*";
+              lastleaf=current_node;
             }
           }
  
-	  if(nextchild != -1) {
+	  if(nextchild != -1 && (current_child >=0)) {
 	    nodestack .pop_back();
 	    childstack.pop_back();
 	    nodestack .push_back(current_node);
@@ -252,7 +248,6 @@ cout << "size: " << nodestack.size() << endl;
         }
       }
     }
-    cout << endl;
   }
 
   void process_left_positions() {
@@ -272,7 +267,6 @@ cout << "size: " << nodestack.size() << endl;
 
     int lastleaf = -1;
 
-    cout << "inorder path: ";
     for(;;) {
 
       int current_node  = nodestack.back();
@@ -281,7 +275,6 @@ cout << "size: " << nodestack.size() << endl;
       childstack.pop_back(); 
 
       if(current_node == -1) break;
-      cout << current_node << ",";
 
       //store[current_node]. next_left_leaf = lastleaf;
       int oldr = store[current_node].next_right_leaf;
@@ -314,7 +307,7 @@ cout << "size: " << nodestack.size() << endl;
             if(first_pass) { 
               store[current_node]. next_right_leaf = oldr; 
               store[current_node]. next_left_leaf = lastleaf; 
-              lastleaf=current_node; cout << "*";
+              lastleaf=current_node;
             }
           }
  
@@ -332,7 +325,6 @@ cout << "size: " << nodestack.size() << endl;
         }
       }
     }
-    cout << endl;
   }
 
   int find_tree_position(vector<char> ss) {
@@ -362,9 +354,14 @@ cout << "size: " << nodestack.size() << endl;
 
   string get_substr(int start,int end) {
     string res;
-
+cout << "start:" << start << endl;
+cout << "end  :" << end << endl;
+    if(start > s.size()) return res;
+    if(start > end) return res;
+    cout << "s.size():" << s.size() << endl;
+    if(end > s.size()) end = s.size();
     for(int pos=start;pos<=end;pos++) {
-      res += s[pos];
+      if((pos < s.size()) && (pos >= 0)) res += s[pos];
     }
 
     return res;
@@ -400,9 +397,7 @@ cout << "size: " << nodestack.size() << endl;
       if(c==nr) { stop=true; }
 
       bool nochild=true;
-      for(int n=0;n<alphabet_size;n++) {
-        if(store[c].label_start != -1) { res.push_back(store[c].label_start); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
-      }
+      if(store[c].label_start != -1) { res.push_back(store[c].label_start); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
 
       if(nochild==true) {cout << "there are no children" << endl;}
                    else {cout << "there were the children" << endl; }
@@ -876,9 +871,11 @@ c++;
       cout << "label: " << store[n].label_start << " ";
       if(store[n].label_end == SuffixNode::end_marker) cout << store[n].label_end << "(" << SuffixNode::end_marker_value << ")" << endl;
                                                   else cout << store[n].label_end << endl;
-      cout << "suffix_link  : " << store[n].suffix_link   << endl;
-      cout << "parent       : " << store[n].parent        << endl;
-      cout << "depth        : " << store[n].depth         << endl;
+      cout << "suffix_link    : " << store[n].suffix_link    << endl;
+      cout << "parent         : " << store[n].parent         << endl;
+      cout << "depth          : " << store[n].depth          << endl;
+      cout << "next_left_leaf : " << store[n].next_left_leaf << endl;
+      cout << "next_right_leaf: " << store[n].next_right_leaf << endl;
       for(int i=0;i<symbol_size;i++) {
         if(store[n].children[i] != -1) { cout << "children[" << i << "]:" << store[n].children[i] << endl; }
       }

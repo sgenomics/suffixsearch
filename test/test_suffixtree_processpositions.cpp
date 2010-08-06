@@ -21,5 +21,9 @@ int test_suffixtree_processpositions(UnitTest &utf) {
   bool validation = s1.validate_tree();
   utf.test_equality(true,validation);
 
+  s1.dump();
+  s1.process_positions();
+  s1.dump();
+
   utf.end_test_set();
 }

@@ -10,9 +10,6 @@ using namespace std;
 
 #include <netinet/in.h>
 
-
-
-
 class WebSrvSearch {
 
 public:
@@ -106,12 +103,15 @@ public:
         val = write(ConnectFD,(void *) data,strlen(data));
  
         if(found) {
-          for(int i=0;i<foundpos.size();i++) {
-            string fnd = m_store.get_substr(foundpos[i-50],foundpos[i+50]);
+          for(int i=0;(i<foundpos.size()) && (i<100);i++) {
+            cout << "found location: " << foundpos[i] << endl;
+            string fnd = m_store.get_substr(foundpos[i]-50,foundpos[i]+50);
+            cout << "found string: " << fnd << endl;
             fnd.push_back(0);
             strcpy(data,fnd.c_str());
             val = write(ConnectFD,(void *) data,strlen(data));
           }
+          cout << "fin write" << endl;
         }
         if(!found) strcpy(data,"NOTFOUND\n\n");
         val = write(ConnectFD,(void *) data,strlen(data));
