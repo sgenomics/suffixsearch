@@ -6,6 +6,7 @@
 #include "test_suffixtree_simple.h"
 #include "test_suffixtree_random.h"
 #include "test_suffixtree_time.h"
+#include "test_suffixtree_processpositions.h"
 
 using namespace std;
 
@@ -15,5 +16,6 @@ int main(int argc,char ** argv) {
   test_suffixtree_simple(utf);
   test_suffixtree_random(utf);
   test_suffixtree_time(utf);
+  test_suffixtree_processpositions(utf);
   utf.test_report();
 }

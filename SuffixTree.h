@@ -188,25 +188,28 @@ public:
     childstack.push_back(250);
 
     int lastleaf = -1;
-
+cout << "processing right pos" << endl;
     cout << "reverse inorder path: ";
     for(;;) {
+cout << "size: " << nodestack.size() << endl;
 
-      int current_node  = nodestack.back();
+      if((nodestack.size() == 0) || (childstack.size() == 0)) break;
+      int current_node;
+      current_node  = nodestack.back();
+      cout << current_node  << endl;
       nodestack.pop_back();
-      int current_child = childstack.back();
+      int current_child;
+      current_child = childstack.back();
       childstack.pop_back(); 
 
       if(current_node == -1) break;
-      cout << current_node << ",";
-
       //store[current_node]. next_left_leaf = lastleaf;
       int oldl = store[current_node].next_right_leaf;
       store[current_node].next_left_leaf = lastleaf;
 
       if(current_child < 0) {
-        nodestack .pop_back();
-        childstack.pop_back();
+//        nodestack .pop_back();
+//        childstack.pop_back();
 
         current_node  = nodestack.back();
         nodestack.pop_back();
@@ -335,8 +338,8 @@ public:
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
 
-    int current_node = SuffixNode::root;
-    char label = ss[0];
+    int current_node = store[SuffixNode::root].children[ss[0]];
+    char label = ss[1];
  
     int search_string_position = 0;
 
@@ -357,11 +360,24 @@ public:
     }
   }
 
+  string get_substr(int start,int end) {
+    string res;
+
+    for(int pos=start;pos<=end;pos++) {
+      res += s[pos];
+    }
+
+    return res;
+  }
+
   vector<int> all_occurs(vector<char> ss) {
 
     int alphabet_size = 250;
     vector<int> res;
 
+    cout << "all_occurs ss: ";
+    for(int n=0;n<ss.size();n++) cout << ss[n];
+    cout << endl;
     int p = find_tree_position(ss);
 
     cout << "string end node was: " << p << endl;

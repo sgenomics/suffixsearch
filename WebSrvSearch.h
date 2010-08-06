@@ -90,7 +90,11 @@ public:
         for(int n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
         cout << "search_string: " << search_string << endl;
         for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
-        bool found = m_store.exists(ss);
+
+        bool found=false;
+        vector<int> foundpos = m_store.all_occurs(ss);
+        cout << "found count: " << foundpos.size() << endl;
+        if(foundpos.size() > 0) found=true;
 
         char data[2000];
 
@@ -101,7 +105,14 @@ public:
         strcpy(data,"Content-Length: 11\n\n\n");
         val = write(ConnectFD,(void *) data,strlen(data));
  
-        if(found ) strcpy(data,"__FOUND_\n\n");
+        if(found) {
+          for(int i=0;i<foundpos.size();i++) {
+            string fnd = m_store.get_substr(foundpos[i-50],foundpos[i+50]);
+            fnd.push_back(0);
+            strcpy(data,fnd.c_str());
+            val = write(ConnectFD,(void *) data,strlen(data));
+          }
+        }
         if(!found) strcpy(data,"NOTFOUND\n\n");
         val = write(ConnectFD,(void *) data,strlen(data));
       } else {
