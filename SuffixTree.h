@@ -984,6 +984,19 @@ c++;
     cout << "node count : " << store.size() << endl;
   }
 
+  bool validate_positions() {
+    for(int64_t n=1;n<store.size();n++) {
+
+      int left  = store[n].next_left_leaf;
+      int right = store[n].next_right_leaf;
+
+      if((left != -1) && (right != -1)) {
+        if(store[left].next_right_leaf != left) return false;
+        if(store[left].next_left_leaf != right) return false;
+      }
+    }
+  }
+
   bool validate_tree(bool dump=false) {
     for(int64_t n=1;n<store.size();n++) {
       bool v1 = validate_depth(n,dump);
