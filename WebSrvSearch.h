@@ -51,8 +51,7 @@ public:
       exit(EXIT_FAILURE);
     }
  
-    for(;;)
-    {
+    for(;;) {
       int ConnectFD = accept(SocketFD, NULL, NULL);
  
  
@@ -64,27 +63,44 @@ public:
       }
 
       char buf[201];
-      int cnt = read(ConnectFD, buf, 200);
 
-      // parse out search string
-      buf[200] = 0;
-      string s = buf;
-      size_t start = s.find("search=");
-      size_t end   = s.find("0");
-      string search_string = s.substr(start+7,end-start-7);
-      cout << "search_string: " << search_string << endl;
+      string search_string;
+      bool notfound=true;
+      for(int n=0;notfound;n++) {
+        int cnt = read(ConnectFD, buf, 200);
 
-      vector<char> ss;
-      for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]);
-      bool found = m_store.exists(ss);
+        // parse out search string
+        buf[200] = 0;
+        string s = buf;
+        size_t start = s.find("search=");
+        size_t end   = s.find("&");
+        search_string = s.substr(start+7,end-start-7);
+        if(start != string::npos) cout << "search_string: " << search_string << endl;
+        if(start == string::npos) notfound = true; else notfound = false;
+        if(n == 10) break;
+        cout << "process loop" << endl;
+      }
+
+      if(notfound==false) {
+        vector<char> ss;
+        for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]);
+        bool found = m_store.exists(ss);
+
+        char data[2000];
+
+        strcpy(data,"HTTP/1.0 200 \n");
+        int val = write(ConnectFD,(void *) data,strlen(data));
+        strcpy(data,"Content-Type: text/html\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
+        strcpy(data,"Content-Length: 8\n\n\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
  
-      /* perform read write operations ... */
-      char data[20];
-      if(found ) strcpy(data,"FOUND");
-      if(!found) strcpy(data,"NOTFOUND");
-      int val = write(ConnectFD,(void *) data,10);
-      cout << found << endl; 
-
+        /* perform read write operations ... */
+        if(found ) strcpy(data,"__FOUND_");
+        if(!found) strcpy(data,"NOTFOUND");
+        val = write(ConnectFD,(void *) data,8);
+        cout << found << endl; 
+      }
       close(ConnectFD);
     }
  
