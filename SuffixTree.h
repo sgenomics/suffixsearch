@@ -138,6 +138,7 @@ public:
 
   static int end_marker;
   static int end_marker_value;
+  static int root;
 };
 
 
@@ -165,7 +166,237 @@ public:
     first_node = 0;
     first_non_leaf_node = 0;
     first_non_leaf_n = 0;
-  } 
+  }
+
+  void process_positions() {
+    process_right_positions();
+    process_left_positions();
+  }
+
+  void process_right_positions() {
+    int alphabet_size=250;
+
+    // 1. in-order traversal
+
+    deque<int> nodestack;
+    deque<int> childstack;
+
+    nodestack .push_back(-1);
+    childstack.push_back(-1);
+
+    nodestack .push_back(SuffixNode::root);
+    childstack.push_back(250);
+
+    int lastleaf = -1;
+
+    cout << "reverse inorder path: ";
+    for(;;) {
+
+      int current_node  = nodestack.back();
+      nodestack.pop_back();
+      int current_child = childstack.back();
+      childstack.pop_back(); 
+
+      if(current_node == -1) break;
+      cout << current_node << ",";
+
+      //store[current_node]. next_left_leaf = lastleaf;
+      int oldl = store[current_node].next_right_leaf;
+      store[current_node].next_left_leaf = lastleaf;
+
+      if(current_child < 0) {
+        nodestack .pop_back();
+        childstack.pop_back();
+
+        current_node  = nodestack.back();
+        nodestack.pop_back();
+        current_child = childstack.back();
+        childstack.pop_back(); 
+      } else {
+
+        bool stop = false;
+	nodestack .push_back(current_node);
+        childstack.push_back(250);
+
+        bool first_pass = false;
+        if(current_child == 250) first_pass=true;
+        for(;stop == false;) {
+
+	  int nextchild = store[current_node].children[current_child];
+   
+          if(current_child < 0) {
+            stop = true;
+            nodestack.pop_back();
+            childstack.pop_back();
+            if(first_pass) { 
+              store[current_node]. next_left_leaf  = oldl;
+              store[current_node]. next_right_leaf = lastleaf;
+              lastleaf=current_node; cout << "*";
+            }
+          }
+ 
+	  if(nextchild != -1) {
+	    nodestack .pop_back();
+	    childstack.pop_back();
+	    nodestack .push_back(current_node);
+	    childstack.push_back(current_child-1);
+	    nodestack .push_back(nextchild);
+	    childstack.push_back(250);
+	    stop = true;
+	  } else {
+            current_child--;
+	  }
+        }
+      }
+    }
+    cout << endl;
+  }
+
+  void process_left_positions() {
+
+    int alphabet_size=250;
+
+    // 1. in-order traversal
+
+    deque<int> nodestack;
+    deque<int> childstack;
+
+    nodestack .push_back(-1);
+    childstack.push_back(-1);
+
+    nodestack .push_back(SuffixNode::root);
+    childstack.push_back(0);
+
+    int lastleaf = -1;
+
+    cout << "inorder path: ";
+    for(;;) {
+
+      int current_node  = nodestack.back();
+      nodestack.pop_back();
+      int current_child = childstack.back();
+      childstack.pop_back(); 
+
+      if(current_node == -1) break;
+      cout << current_node << ",";
+
+      //store[current_node]. next_left_leaf = lastleaf;
+      int oldr = store[current_node].next_right_leaf;
+      store[current_node].next_right_leaf = lastleaf;
+
+      if(current_child+1 >= alphabet_size) {
+        nodestack .pop_back();
+        childstack.pop_back();
+
+        current_node  = nodestack.back();
+        nodestack.pop_back();
+        current_child = childstack.back();
+        childstack.pop_back(); 
+      } else {
+
+        bool stop = false;
+	nodestack .push_back(current_node);
+        childstack.push_back(0);
+
+        bool first_pass = false;
+        if(current_child == 0) first_pass=true;
+        for(;stop == false;) {
+
+	  int nextchild = store[current_node].children[current_child];
+   
+          if(current_child >= alphabet_size) {
+            stop = true;
+            nodestack.pop_back();
+            childstack.pop_back();
+            if(first_pass) { 
+              store[current_node]. next_right_leaf = oldr; 
+              store[current_node]. next_left_leaf = lastleaf; 
+              lastleaf=current_node; cout << "*";
+            }
+          }
+ 
+	  if(nextchild != -1) {
+	    nodestack .pop_back();
+	    childstack.pop_back();
+	    nodestack .push_back(current_node);
+	    childstack.push_back(current_child+1);
+	    nodestack .push_back(nextchild);
+	    childstack.push_back(0);
+	    stop = true;
+	  } else {
+            current_child++;
+	  }
+        }
+      }
+    }
+    cout << endl;
+  }
+
+  int find_tree_position(vector<char> ss) {
+    // follow labels from root down, edge labels.
+
+    int current_node = SuffixNode::root;
+    char label = ss[0];
+ 
+    int search_string_position = 0;
+
+    for(;search_string_position < ss.size();) {
+      // follow edge label
+      for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
+        if(s[position] != ss[search_string_position]) {return -1;}
+        else {
+          search_string_position++;
+          if(search_string_position == ss.size()) {
+            return current_node;
+          }
+        }
+      }
+
+      current_node = store[current_node].children[label];
+      label = ss[search_string_position];
+    }
+  }
+
+  vector<int> all_occurs(vector<char> ss) {
+
+    int alphabet_size = 250;
+    vector<int> res;
+
+    int p = find_tree_position(ss);
+
+    cout << "string end node was: " << p << endl;
+    if(p == -1) {
+      return res;
+    }
+
+    // grab left and right...
+
+    int nl = store[p].next_left_leaf;
+    int nr = store[p].next_right_leaf;
+
+    // itterate from nl until we reach nr
+
+    int c = nl;
+    bool stop=false;
+    for(;stop==false;) {
+
+      cout << "current: " << c << endl;
+      if(c==nr) { stop=true; }
+
+      bool nochild=true;
+      for(int n=0;n<alphabet_size;n++) {
+        if(store[c].label_start != -1) { res.push_back(store[c].label_start); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
+      }
+
+      if(nochild==true) {cout << "there are no children" << endl;}
+                   else {cout << "there were the children" << endl; }
+
+      c = store[c].next_right_leaf;
+    }
+
+    cout << "res size: " << res.size() << endl;
+    return res;
+  }
 
   bool exists(vector<char> t) {
   

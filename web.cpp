@@ -23,6 +23,8 @@ int main(int argc,char ** argv) {
     st.insert(c);
   }
 
+
+  st.process_positions();
   st.dump_stats();
   WebSrvSearch web(st,1100);
 
