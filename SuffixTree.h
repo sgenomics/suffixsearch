@@ -990,11 +990,12 @@ c++;
       int left  = store[n].next_left_leaf;
       int right = store[n].next_right_leaf;
 
-      if((left != -1) && (right != -1)) {
-        if(store[left].next_right_leaf != left) return false;
-        if(store[left].next_left_leaf != right) return false;
+      if((left != -1) && (right != -1) && store[n].isleaf() && store[left].isleaf() && store[right].isleaf()) {
+        if(store[left].next_right_leaf != n) { cout << "store[" << left  << "].next_right_leaf=" << store[left].next_right_leaf << "!=" << n << endl; return false;}
+        if(store[right].next_left_leaf != n) { cout << "store[" << right << "].next_left_leaf="  << store[left].next_left_leaf  << "!=" << n << endl; return false;}
       }
     }
+    return true;
   }
 
   bool validate_tree(bool dump=false) {
