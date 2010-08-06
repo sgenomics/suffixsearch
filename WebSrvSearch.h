@@ -55,8 +55,7 @@ public:
       int ConnectFD = accept(SocketFD, NULL, NULL);
  
  
-      if(0 > ConnectFD)
-      {
+      if(0 > ConnectFD) {
         perror("error accept failed");
         close(SocketFD);
         exit(EXIT_FAILURE);
@@ -66,44 +65,61 @@ public:
 
       string search_string;
       bool notfound=true;
-      for(int n=0;notfound;n++) {
+
+      string endstr;
+      endstr.push_back((char) 13);
+      endstr.push_back((char) 10);
+      endstr.push_back((char) 13);
+      endstr.push_back((char) 10);
+      for(int n=0;;n++) {
         int cnt = read(ConnectFD, buf, 200);
 
         // parse out search string
         buf[200] = 0;
         string s = buf;
-        size_t start = s.find("search=");
-        size_t end   = s.find("&");
-        search_string = s.substr(start+7,end-start-7);
-        if(start != string::npos) cout << "search_string: " << search_string << endl;
-        if(start == string::npos) notfound = true; else notfound = false;
-        if(n == 10) break;
-        cout << "process loop" << endl;
+        size_t getline = s.find(endstr);
+        size_t start = s.find("arch?q=");
+        size_t end   = s.find("&",start);
+        if(start != string::npos) {notfound=false; search_string = s.substr(start+7,end-start-7);}
+        if(getline != string::npos) { break; }
+        if(n == 100) break;
       }
 
       if(notfound==false) {
         vector<char> ss;
-        for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]);
+        for(int n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
+        cout << "search_string: " << search_string << endl;
+        for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
         bool found = m_store.exists(ss);
 
         char data[2000];
 
-        strcpy(data,"HTTP/1.0 200 \n");
+        strcpy(data,"HTTP/1.0 200\n");
         int val = write(ConnectFD,(void *) data,strlen(data));
         strcpy(data,"Content-Type: text/html\n");
         val = write(ConnectFD,(void *) data,strlen(data));
-        strcpy(data,"Content-Length: 8\n\n\n");
+        strcpy(data,"Content-Length: 11\n\n\n");
         val = write(ConnectFD,(void *) data,strlen(data));
  
-        /* perform read write operations ... */
-        if(found ) strcpy(data,"__FOUND_");
-        if(!found) strcpy(data,"NOTFOUND");
-        val = write(ConnectFD,(void *) data,8);
-        cout << found << endl; 
+        if(found ) strcpy(data,"__FOUND_\n\n");
+        if(!found) strcpy(data,"NOTFOUND\n\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
+      } else {
+        char data[2000];
+
+        strcpy(data,"HTTP/1.0 200\n");
+        int val = write(ConnectFD,(void *) data,strlen(data));
+        strcpy(data,"Content-Type: text/html\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
+        strcpy(data,"Content-Length: 25\n\n\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
+ 
+        strcpy(data,"INCORRECT SEARCH FORMAT\n\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
       }
+
       close(ConnectFD);
     }
- 
     close(SocketFD);
 
   }
