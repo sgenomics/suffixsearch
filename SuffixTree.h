@@ -735,6 +735,11 @@ c++;
     return true;
   }
 
+  void dump_stats() {
+    cout << "string size: " << s.size() << endl; 
+    cout << "node count : " << store.size() << endl;
+  }
+
   bool validate_tree(bool dump=false) {
     for(int64_t n=1;n<store.size();n++) {
       bool v1 = validate_depth(n,dump);
