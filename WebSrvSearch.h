@@ -6,6 +6,7 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+#include "stringify.h"
 using namespace std;
 
 #include <netinet/in.h>
@@ -90,7 +91,7 @@ public:
         for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
         bool found=false;
-        vector<int> foundpos = m_store.all_occurs(ss);
+        vector<int> foundpos = m_store.all_occurs(ss,100);
         cout << "found count: " << foundpos.size() << endl;
         if(foundpos.size() > 0) found=true;
 
@@ -114,11 +115,10 @@ public:
       int val = write(ConnectFD,(void *) data,strlen(data));
       strcpy(data,"Content-Type: text/html\n");
       val = write(ConnectFD,(void *) data,strlen(data));
-      strcpy(data,"Content-Length: 11\n\n\n");
+      strcpy(data,(string("Content-Length: ") + stringify(output_data.size()) + "\n\n\n").c_str());
       val = write(ConnectFD,(void *) data,strlen(data));
 
-      strcpy(data,output_data.c_str());
-      val = write(ConnectFD,(void *) data,strlen(data));
+      val = write(ConnectFD,(void *) output_data.c_str(),output_data.size());
 
       close(ConnectFD);
     }

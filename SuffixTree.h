@@ -375,7 +375,7 @@ cout << "end  :" << end << endl;
     return res;
   }
 
-  vector<int> all_occurs(vector<char> ss) {
+  vector<int> all_occurs(vector<char> ss,size_t max_hits=-1) {
 
     vector<int> res;
 
@@ -416,6 +416,8 @@ cout << "end  :" << end << endl;
                    else {cout << "there were the children" << endl; }
 
       c = store[c].next_right_leaf;
+
+      if(res.size() > max_hits) return res;
     }
 
     cout << "res size: " << res.size() << endl;
@@ -958,6 +960,9 @@ c++;
   void dump_stats() {
     cout << "string size: " << s.size() << endl; 
     cout << "node count : " << store.size() << endl;
+    size_t end_node = 0;
+    for(size_t n=0;n<store.size();n++) if(store[n].label_end == -1) end_node++;
+    cout << "end node count: " << end_node << endl;
   }
 
   bool validate_positions() {
