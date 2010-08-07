@@ -82,6 +82,7 @@ public:
         if(n == 100) break;
       }
 
+      string output_data;
       if(notfound==false) {
         vector<char> ss;
         for(int n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
@@ -93,41 +94,31 @@ public:
         cout << "found count: " << foundpos.size() << endl;
         if(foundpos.size() > 0) found=true;
 
-        char data[2000];
-
-        strcpy(data,"HTTP/1.0 200\n");
-        int val = write(ConnectFD,(void *) data,strlen(data));
-        strcpy(data,"Content-Type: text/html\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
-        strcpy(data,"Content-Length: 11\n\n\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
- 
         if(found) {
           for(int i=0;(i<foundpos.size()) && (i<100);i++) {
             cout << "found location: " << foundpos[i] << endl;
             string fnd = m_store.get_substr(foundpos[i],foundpos[i]+50);
-            cout << "found string: " << fnd << endl;
-            fnd.push_back(0);
-            strcpy(data,fnd.c_str());
-            val = write(ConnectFD,(void *) data,strlen(data));
+            output_data += fnd;
+
+            output_data += "<BR>";
           }
           cout << "fin write" << endl;
         }
-        if(!found) strcpy(data,"NOTFOUND\n\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
+        if(!found) output_data = "NOTFOUND"; 
       } else {
-        char data[2000];
-
-        strcpy(data,"HTTP/1.0 200\n");
-        int val = write(ConnectFD,(void *) data,strlen(data));
-        strcpy(data,"Content-Type: text/html\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
-        strcpy(data,"Content-Length: 25\n\n\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
- 
-        strcpy(data,"INCORRECT SEARCH FORMAT\n\n");
-        val = write(ConnectFD,(void *) data,strlen(data));
+        output_data = "INCORRECT SEARCH FORMAT\n\n";
       }
+
+      char data[20000];
+      strcpy(data,"HTTP/1.0 200\n");
+      int val = write(ConnectFD,(void *) data,strlen(data));
+      strcpy(data,"Content-Type: text/html\n");
+      val = write(ConnectFD,(void *) data,strlen(data));
+      strcpy(data,"Content-Length: 11\n\n\n");
+      val = write(ConnectFD,(void *) data,strlen(data));
+
+      strcpy(data,output_data.c_str());
+      val = write(ConnectFD,(void *) data,strlen(data));
 
       close(ConnectFD);
     }
