@@ -334,10 +334,12 @@ public:
     char label = ss[1];
  
     int search_string_position = 0;
-
+    cout << "current_node: " << current_node << endl;
+    if(current_node == -1) return -1;
     for(;search_string_position < ss.size();) {
       // follow edge label
       for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
+        cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
         if(s[position] != ss[search_string_position]) {return -1;}
         else {
           search_string_position++;
@@ -347,8 +349,11 @@ public:
         }
       }
 
-      current_node = store[current_node].children[label];
       label = ss[search_string_position];
+
+      current_node = store[current_node].children[label];
+      cout << "current_node: " << current_node << endl;
+      if(current_node == -1) return -1;
     }
   }
 
