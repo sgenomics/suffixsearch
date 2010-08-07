@@ -387,6 +387,11 @@ cout << "end  :" << end << endl;
     int nl = store[p].next_left_leaf;
     int nr = store[p].next_right_leaf;
 
+    if(store[p].isleaf()) {
+      res.push_back(s.size()-store[p].get_depth());
+      return res;
+    }
+
     // itterate from nl until we reach nr
 
     int c = nl;
