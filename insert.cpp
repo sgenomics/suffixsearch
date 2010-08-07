@@ -20,7 +20,8 @@ for(size_t m=0;m<v;m++)
     st.insert(s[n]);
   }
 
-//  st.dump();
+  st.finalise();
+  st.dump();
 
 
   vector<char> t;

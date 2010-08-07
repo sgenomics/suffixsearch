@@ -19,7 +19,7 @@ int test_suffixtree_random(UnitTest &utf) {
   s.insert('a');
   s.insert('n');
   s.insert('a');
-  s.insert('$');
+  s.finalise();
 
   // simple existance tests
 
@@ -63,7 +63,6 @@ int test_suffixtree_random(UnitTest &utf) {
       char c = (rand()%3)+65;
       str2.push_back(c);
     }
-    str2.push_back('$');
 
     for(int n=0+(rand()%2);n<(8+rand()%1);n++) {
       chkstr2.push_back(str2[n]);
@@ -73,6 +72,8 @@ int test_suffixtree_random(UnitTest &utf) {
     for(size_t n=0;n<str2.size();n++) {
       s2.insert(str2[n]);
     }
+    s2.finalise();
+
     bool validation = s2.validate_tree();
     utf.test_equality(validation,true);
 

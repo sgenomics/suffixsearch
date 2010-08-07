@@ -23,8 +23,12 @@ int main(int argc,char ** argv) {
     st.insert(c);
   }
 
+  st.finalise();
+  cout << "built suffix tree" << endl;
 
+  cout << "processing positions" << endl;
   st.process_positions();
+  cout << "processed positions" << endl;
   st.dump_stats();
   WebSrvSearch web(st,1100);
 

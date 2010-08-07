@@ -14,13 +14,14 @@ int test_suffixtree_simple(UnitTest &utf) {
   bool runall=true;
 
   if(runonly==-30 || runall) {
-    string ms = "AABACBCCCABCAAABAABA$";
+    string ms = "AABACBCCCABCAAABAABA";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
-
+    s1.finalise();
+s1.dump();
     bool validation = s1.validate_tree();
     utf.test_equality(true,validation);
 
@@ -32,12 +33,13 @@ int test_suffixtree_simple(UnitTest &utf) {
   }
 
   if(runonly==-29 || runall) {
-    string ms = "BBABCBBAABCBCBCBAABBCCAACCCBBBCAAACABBBBAAACCBCCCACBBCCACCBBAACACCBABCAAAACACCACBAACCAACCBAACABBBAACABCBCACCAABCBCCBACBCBAABACAC$";
+    string ms = "BBABCBBAABCBCBCBAABBCCAACCCBBBCAAACABBBBAAACCBCCCACBBCCACCBBAACACCBABCAAAACACCACBAACCAACCBAACABBBAACABCBCACCAABCBCCBACBCBAABACAC";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
+    s1.finalise();
 
     bool validation = s1.validate_tree();
     utf.test_equality(true,validation);
@@ -51,12 +53,13 @@ int test_suffixtree_simple(UnitTest &utf) {
 
 
   if(runonly==-28 || runall) {
-    string ms = "BCCCCCCCCCCCCCC$";
+    string ms = "BCCCCCCCCCCCCCC";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
+    s1.finalise();
 
     bool validation = s1.validate_tree();
     utf.test_equality(true,validation);
@@ -69,12 +72,13 @@ int test_suffixtree_simple(UnitTest &utf) {
   }
 
   if(runonly==-27 || runall) {
-    string ms = "CACACCACACACACA$";
+    string ms = "CACACCACACACACA";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
+    s1.finalise();
 
     bool validation = s1.validate_tree();
     utf.test_equality(true,validation);
@@ -87,12 +91,13 @@ int test_suffixtree_simple(UnitTest &utf) {
   }
 
   if(runonly==-26 || runall) {
-    string ms = "CBACBACBACBCBBA$";
+    string ms = "CBACBACBACBCBBA";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
+    s1.finalise();
 
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
@@ -105,12 +110,13 @@ int test_suffixtree_simple(UnitTest &utf) {
   }
 
   if(runonly==-25 || runall) {
-    string ms = "ACBBAACACACCACCACCACCCBABCBCABCABACCBCAACAAABAABCBACACACBCBCBAAABACCAAAACBBACCBCABACBBCCAABCBAACAAAB$";
+    string ms = "ACBBAACACACCACCACCACCCBABCBCABCABACCBCAACAAABAABCBACACACBCBCBAAABACCAAAACBBACCBCABACBBCCAABCBAACAAAB";
     SuffixTree s1;
 
     for(int n=0;n<ms.size();n++) {
       s1.insert(ms[n]);
     }
+    s1.finalise();
 
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
@@ -137,7 +143,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('b');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -159,7 +165,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('a');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -180,7 +186,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('c');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -202,7 +208,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('c');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -223,7 +229,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('c');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -244,7 +250,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('c');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -264,7 +270,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('a');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -285,7 +291,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('a');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -303,7 +309,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('c');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -325,7 +331,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('c');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -346,7 +352,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('b');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -368,7 +374,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('b');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -389,7 +395,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('c');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -424,7 +430,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('a');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -432,7 +438,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr1.push_back('c');
     chkstr1.push_back('a');
     chkstr1.push_back('c');
-    chkstr1.push_back('$');
     bool res1;
     res1 = s1.exists(chkstr1);
     utf.test_equality(res1,true);
@@ -455,7 +460,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('c');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -463,7 +468,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr1.push_back('b');
     chkstr1.push_back('c');
     chkstr1.push_back('b');
-    chkstr1.push_back('$');
     bool res1;
 
     res1 = s1.exists(chkstr1);
@@ -479,7 +483,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('c');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -487,7 +491,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr1.push_back('b');
     chkstr1.push_back('c');
     chkstr1.push_back('b');
-    chkstr1.push_back('$');
     bool res1;
 
     res1 = s1.exists(chkstr1);
@@ -504,7 +507,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('b');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -527,7 +530,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('c');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -535,7 +538,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr1.push_back('b');
     chkstr1.push_back('c');
     chkstr1.push_back('b');
-    chkstr1.push_back('$');
     bool res1;
 
     res1 = s1.exists(chkstr1);
@@ -544,7 +546,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr1.clear();
     chkstr1.push_back('c');
     chkstr1.push_back('b');
-    chkstr1.push_back('$');
     res1 = s1.exists(chkstr1);
     utf.test_equality(res1,true);
 
@@ -574,7 +575,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('b');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -598,7 +599,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('b');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -621,7 +622,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('c');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -636,7 +637,6 @@ int test_suffixtree_simple(UnitTest &utf) {
 
     vector<char> chkstr2;
     chkstr2.push_back('b');
-    chkstr2.push_back('$');
     bool res2;
 
     res2 = s1.exists(chkstr2);
@@ -657,7 +657,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('b');
     s1.insert('c');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -690,7 +690,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('b');
     s1.insert('a');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -713,7 +713,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('a');
     s1.insert('a');
     s1.insert('b');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -737,7 +737,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s1.insert('c');
     s1.insert('b');
     s1.insert('a');
-    s1.insert('$');
+    s1.finalise();
     bool validation = s1.validate_tree();
     utf.test_equality(validation,true);
 
@@ -762,7 +762,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s2.insert('c');
     s2.insert('b');
     s2.insert('a');
-    s2.insert('$');
+    s2.finalise();
     bool validation = s2.validate_tree();
     utf.test_equality(validation,true);
 
@@ -783,7 +783,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s3.insert('b');
     s3.insert('a');
     s3.insert('a');
-    s3.insert('$');
+    s3.finalise();
     bool validation = s3.validate_tree();
     utf.test_equality(validation,true);
 
@@ -802,7 +802,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     SuffixTree s4;
     s4.insert('a');
     s4.insert('a');
-    s4.insert('$');
+    s4.finalise();
     bool validation = s4.validate_tree();
     utf.test_equality(validation,true);
 
@@ -816,14 +816,9 @@ int test_suffixtree_simple(UnitTest &utf) {
 
     chkstr4.clear();
     chkstr4.push_back('a');
-    chkstr4.push_back('$');
     res4 = s4.exists(chkstr4);
     utf.test_equality(res4,true);
 
-    chkstr4.clear();
-    chkstr4.push_back('$');
-    res4 = s4.exists(chkstr4);
-    utf.test_equality(res4,true);
   }
 
   if(runonly==5 || runall) {
@@ -831,7 +826,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s5.insert('a');
     s5.insert('n');
     s5.insert('a');
-    s5.insert('$');
+    s5.finalise();
 
     vector<char> chkstr5;
     chkstr5.push_back('n');
@@ -864,7 +859,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s6.insert('b');
     s6.insert('c');
     s6.insert('a');
-    s6.insert('$');
+    s6.finalise();
 
     vector<char> chkstr6;
     chkstr6.push_back('a');
@@ -885,7 +880,6 @@ int test_suffixtree_simple(UnitTest &utf) {
 
     chkstr6.clear();
     chkstr6.push_back('a');
-    chkstr6.push_back('$');
     res6 = s6.exists(chkstr6);
     utf.test_equality(res6,true);
 
@@ -894,7 +888,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr6.push_back('b');
     chkstr6.push_back('c');
     chkstr6.push_back('a');
-    chkstr6.push_back('$');
     res6 = s6.exists(chkstr6);
     utf.test_equality(res6,true);
 
@@ -906,7 +899,6 @@ int test_suffixtree_simple(UnitTest &utf) {
     chkstr6.push_back('b');
     chkstr6.push_back('c');
     chkstr6.push_back('a');
-    chkstr6.push_back('$');
     res6 = s6.exists(chkstr6);
     utf.test_equality(res6,true);
   }
@@ -918,7 +910,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s7.insert('n');
     s7.insert('a');
     s7.insert('n');
-    s7.insert('$');
+    s7.finalise();
 
     vector<char> chkstr7;
     chkstr7.push_back('a');
@@ -942,7 +934,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s8.insert('a');
     s8.insert('b');
     s8.insert('c');
-    s8.insert('$');
+    s8.finalise();
 
     vector<char> chkstr8;
     chkstr8.push_back('z');
@@ -975,7 +967,7 @@ int test_suffixtree_simple(UnitTest &utf) {
     s9.insert('a');
     s9.insert('n');
     s9.insert('a');
-    s9.insert('$');
+    s9.finalise();
 
     vector<char> chkstr9;
     chkstr9.push_back('a');

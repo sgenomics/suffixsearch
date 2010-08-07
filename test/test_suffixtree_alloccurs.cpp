@@ -12,12 +12,13 @@ int test_suffixtree_alloccurs(UnitTest &utf) {
 
   utf.begin_test_set("All Occurs SuffixTree tests");
 
-  string ms = "banana$";
+  string ms = "banana";
   SuffixTree s1;
 
   for(int n=0;n<ms.size();n++) {
     s1.insert(ms[n]);
   }
+  s1.finalise();
 
   bool validation = s1.validate_tree();
   utf.test_equality(true,validation);
@@ -33,11 +34,12 @@ int test_suffixtree_alloccurs(UnitTest &utf) {
 
   utf.test_equality(static_cast<size_t>(2),p.size());
 
-  string m2 = "zzzcoopcoopcoop$";
+  string m2 = "zzzcoopcoopcoop";
   SuffixTree s2;
   for(int n=0;n<m2.size();n++) {
     s2.insert(m2[n]);
   }
+  s2.finalise();
   s2.process_positions();
 
   ss.clear();

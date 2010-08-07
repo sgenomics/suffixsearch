@@ -7,12 +7,13 @@
 #include <deque>
 #include <stdlib.h>
 #include "SearchStore.h"
-
+#include "Transcode.h"
+#include "TranscodingStore.h"
 
 using namespace std;
 
-#define symbol_size 255
-#define infinity 100000
+#define symbol_size  45
+#define final_symbol 39
 
 class SuffixNode {
 
@@ -65,7 +66,7 @@ public:
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
-    for(int n=0;n<255;n++) {
+    for(int n=0;n<symbol_size;n++) {
       if(children[n] == old_id) children[n] = new_id;
     }
   }
@@ -170,11 +171,12 @@ public:
 
   void process_positions() {
     process_right_positions();
+cout << "processed right positions" << endl;
     process_left_positions();
+cout << "processed left positions" << endl;
   }
 
   void process_right_positions() {
-    int alphabet_size=250;
 
     // 1. in-order traversal
 
@@ -184,12 +186,11 @@ public:
     nodestack .push_back(-1);
     childstack.push_back(-1);
 
+int alphabet_size = symbol_size-1;
     nodestack .push_back(SuffixNode::root);
-    childstack.push_back(250);
-
+    childstack.push_back(alphabet_size);
 
     int lastleaf = -1;
-    cout << "reverse inorder path: ";
     for(;;) {
 
       if(childstack.size() == 0) break;
@@ -201,7 +202,6 @@ public:
       childstack.pop_back(); 
 
       if(current_node == -1) break;
-      //store[current_node]. next_left_leaf = lastleaf;
       int oldl = store[current_node].next_right_leaf;
       store[current_node].next_left_leaf = lastleaf;
 
@@ -217,12 +217,14 @@ public:
 
         bool stop = false;
 	nodestack .push_back(current_node);
-        childstack.push_back(250);
+        childstack.push_back(alphabet_size);
         bool first_pass = false;
-        if(current_child == 250) first_pass=true;
+        if(current_child == (alphabet_size)) first_pass=true; // should be symbol_size-1?
         for(;stop == false;) {
 
-	  int nextchild = store[current_node].children[current_child];
+	  int nextchild = -1;
+          if(current_child >= 0) nextchild = store[current_node].children[current_child];
+
           if(current_child < 0) {
             stop = true;
             nodestack.pop_back();
@@ -232,15 +234,16 @@ public:
               store[current_node]. next_right_leaf = lastleaf;
               lastleaf=current_node;
             }
-          }
- 
-	  if(nextchild != -1 && (current_child >=0)) {
+          } else
+	  if(nextchild != -1) {
 	    nodestack .pop_back();
 	    childstack.pop_back();
-	    nodestack .push_back(current_node);
-	    childstack.push_back(current_child-1);
+	    if((current_child-1) >= 0) {
+              nodestack .push_back(current_node);
+	      childstack.push_back(current_child-1);
+            }
 	    nodestack .push_back(nextchild);
-	    childstack.push_back(250);
+	    childstack.push_back(alphabet_size);
 	    stop = true;
 	  } else {
             current_child--;
@@ -251,8 +254,6 @@ public:
   }
 
   void process_left_positions() {
-
-    int alphabet_size=250;
 
     // 1. in-order traversal
 
@@ -267,6 +268,7 @@ public:
 
     int lastleaf = -1;
 
+    int alphabet_size = symbol_size-1;
     for(;;) {
 
       int current_node  = nodestack.back();
@@ -339,7 +341,7 @@ public:
     for(;search_string_position < ss.size();) {
       // follow edge label
       for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
-        cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
+    //    cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
         if(s[position] != ss[search_string_position]) {return -1;}
         else {
           search_string_position++;
@@ -366,7 +368,8 @@ cout << "end  :" << end << endl;
     cout << "s.size():" << s.size() << endl;
     if(end > s.size()) end = s.size();
     for(int pos=start;pos<=end;pos++) {
-      if((pos < s.size()) && (pos >= 0)) res += s[pos];
+      if((pos < s.size()) && (pos >= 0)) res += s.get_uncoded(pos);
+     // if((pos < s.size()) && (pos >= 0)) res += s[pos];
     }
 
     return res;
@@ -374,11 +377,11 @@ cout << "end  :" << end << endl;
 
   vector<int> all_occurs(vector<char> ss) {
 
-    int alphabet_size = 250;
     vector<int> res;
 
     cout << "all_occurs ss: ";
     for(int n=0;n<ss.size();n++) cout << ss[n];
+    for(int n=0;n<ss.size();n++) ss[n] =  transcoder.convert(ss[n]);
     cout << endl;
     int p = find_tree_position(ss);
 
@@ -420,7 +423,9 @@ cout << "end  :" << end << endl;
   }
 
   bool exists(vector<char> t) {
-  
+ 
+    for(size_t n=0;n<t.size();n++) t[n] = transcoder.convert(t[n]);
+
     int res = exists_node(t);
 
     if(res == -1) return false;
@@ -518,7 +523,6 @@ cout << "end  :" << end << endl;
         store[parent].children[s[symbol_index_start]] = store.size()-1;
         store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 //cout << "n2" << endl;
-//validate_tree();
         //cout << "2ADD NODE: " << store.size()-1 << endl;
        // cout << "extend2 endpoint 2" << endl;
         return store.size()-1;
@@ -639,7 +643,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       store[insertion_point].children[child_sym] = n_idx;
       store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 	//cout << "n4" << endl;
-	//validate_tree();
       //cout << "extend2 endpoint 6" << endl;
       return n_idx;
     }
@@ -649,49 +652,23 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split,fnode,fpos);
   }
 
-  void insert(char current_symbol) {
+  void finalise() {
+    insert(final_symbol,true);
+  }
+
+  void insert(char current_symbol,bool finalise=false) {
 
     s.push_back(current_symbol);
+    if(!finalise) current_symbol = transcoder.convert(current_symbol);
+
 
     SuffixNode::end_marker_value++;
-    // fix up last suffix link
-/*
-    if(s.size() > 2) {
 
-      vector<char> s2ch;
-      vector<char> s1ch;
-
-      s2ch.push_back(s[s.size()-2]);
-      s2ch.push_back(s[s.size()-1]);
-
-      s1ch.push_back(s[s.size()-1]);
-
-      int node1   = exists_node(s2ch);
-      int node1s  = exists_node(s1ch);
-
-      if(node1s != -1) {
-        store[node1].suffix_link = node1s;
-        cout << "3SETLINK: " << node1 << " to " << node1s << endl;
-      }
-        cout << "4SETLINK: " << node1 << " to " << node1s << endl;
-    }*/
-//dump();
     int last_node=0;
     int last_node_sl=0;
     vector<vector<int64_t> > doall;
     bool nosplitins = true;
-/*
-    //cout << "inst: ";
-    string ins_str;
-    for(int i=0;i<=s.size()-1;i++) {
-      ins_str += s[i];
-    }
-    //cout << ins_str;
-    //cout << endl;
-*/
-//    int label_distance = get_path_label(first_node).size() - get_path_label(store[first_node].parent).size()-1;
 
-//    last_node = first_node;
     last_node = first_non_leaf_node;
     bool first=true;
     bool split=false;
@@ -707,15 +684,7 @@ int c=0;
     for(int n=first_non_leaf_n;n<s.size();n++) {
       int  posremin;
       bool insertion;
-//validate_tree();
-   /*   string ins_str;
-      cout << "inserting: ";
-      for(int i=n;i<=s.size()-1;i++) {
-        cout << s[i];
-        ins_str += s[i];
-      }
-      cout << endl;
-*/
+
       last_node_sl = store[last_node].suffix_link;
 
       int newnode;
@@ -869,7 +838,6 @@ c++;
     }
 */
     split_count = new_split_count+1;
-    //validate_tree();
   }
 
   void dump() {
@@ -956,7 +924,7 @@ c++;
     int64_t parent =  store[n].parent;
 
     bool ok=false;
-    for(int i=0;i<255;i++) { if(store[parent].children[i] == n) ok = true; }
+    for(int i=0;i<symbol_size;i++) { if(store[parent].children[i] == n) ok = true; }
 
     if(n == 0) ok = true;
     if(ok != true) {
@@ -1011,15 +979,18 @@ c++;
       bool v1 = validate_depth(n,dump);
       bool v2 = validate_suffix_link(n,dump);
       bool v3 = validate_parent(n,dump);
-      if(v1 == false) return false;
-      if(v2 == false) return false;
-      if(v3 == false) return false;
+      if(v1 == false) {cout << "failed depth validation" << endl;       return false;}
+      if(v2 == false) {cout << "failed suffix link validation" << endl; return false;}
+      if(v3 == false) {cout << "failed parent validation" << endl;      return false;}
     }
     return true;
   }
 
-  vector<char>       s;
+  TranscodingStore   s;
+  //vector<char> s;
   vector<SuffixNode> store;
+
+  Transcode transcoder;
 
   int root_node;
   int split_point_node;      ///< Point of last insertion/split in tree (node index)
