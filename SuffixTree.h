@@ -9,6 +9,7 @@
 #include "SearchStore.h"
 #include "Transcode.h"
 #include "TranscodingStore.h"
+#include "SuffixNodeStore.h"
 
 using namespace std;
 
@@ -993,7 +994,8 @@ c++;
 
   TranscodingStore   s;
   //vector<char> s;
-  vector<SuffixNode> store;
+  SuffixNodeStore store;
+  //vector<SuffixNode> store;
 
   Transcode transcoder;
 
