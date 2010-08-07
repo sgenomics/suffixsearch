@@ -964,6 +964,13 @@ c++;
     size_t end_node = 0;
     for(size_t n=0;n<store.size();n++) if(store[n].label_end == -1) end_node++;
     cout << "end node count: " << end_node << endl;
+    size_t unset_children=0;
+    size_t set_children=0;
+    for(size_t n=0;n<store.size();n++) {
+      for(size_t m=0;m<symbol_size;m++) if(store[n].children[m] == -1) unset_children++; else set_children++;
+    }
+    cout << "unset children: " << unset_children << endl;
+    cout << "set children  : " << set_children << endl;
   }
 
   bool validate_positions() {
