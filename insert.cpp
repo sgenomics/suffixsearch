@@ -33,5 +33,12 @@ for(size_t m=0;m<v;m++)
   bool r = st.exists(t);
   if(r == true) cout << "found" << endl;
   if(r == false) cout << "not found" << endl;
+
+  st.process_positions();
+  st.dump();
+  vector<int> poss = st.all_occurs(t);
+
+  for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
+
  // st.validate_tree();
 }
