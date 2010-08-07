@@ -36,9 +36,9 @@ int test_suffixtree_time(UnitTest &utf) {
 
   utf.begin_test_set("Timing SuffixTree tests");
 
-  long int tree_time50000  = make_tree(50000); 
   long int tree_time100000 = make_tree(100000); 
-  utf.test_truth(tree_time100000 <= (tree_time50000*2)+1000);
+  long int tree_time200000 = make_tree(200000); 
+  utf.test_truth(tree_time200000 <= (tree_time100000*2)+60000);
 
   utf.end_test_set();
 }
