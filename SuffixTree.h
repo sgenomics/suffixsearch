@@ -397,7 +397,7 @@ cout << "end  :" << end << endl;
       if(c==nr) { stop=true; }
 
       bool nochild=true;
-      if(store[c].label_start != -1) { res.push_back(store[c].label_start); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
+      if(store[c].label_start != -1) { res.push_back(s.size()-store[c].get_depth()); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
 
       if(nochild==true) {cout << "there are no children" << endl;}
                    else {cout << "there were the children" << endl; }
@@ -697,7 +697,6 @@ int c=0;
     for(int n=first_non_leaf_n;n<s.size();n++) {
       int  posremin;
       bool insertion;
-//dump();
 //validate_tree();
    /*   string ins_str;
       cout << "inserting: ";
@@ -852,7 +851,6 @@ c++;
       first=false;
       first_insert=false;
     }
-    //dump();
 /*
     if(split) {
       //cout << "LAST WAS SPLIT: " << store[last_node].parent << endl;
