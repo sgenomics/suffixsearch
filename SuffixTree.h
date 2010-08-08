@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <map>
 #include <deque>
 #include <stdlib.h>
 #include "SearchStore.h"
@@ -59,8 +60,7 @@ public:
 
   void clear_children() {
 
-    if(m_children != NULL)
-    for(int64_t n=0;n<symbol_size;n++) m_children->clear();
+    if(m_children != NULL) m_children->clear();
   }
 
   void copy_children(SuffixNode &other) {
@@ -68,16 +68,16 @@ public:
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
-    for(int n=0;n<m_children->size();n++) {
-      if((*m_children)[n] == old_id) (*m_children)[n] = new_id;
+    for(int n=0;n<symbol_size;n++) {
+      if(get_child(n) == old_id) set_child(n,new_id);
     }
   }
 
   int first_child() {
 
     if(m_children != NULL)
-    for(int64_t n=0;n<m_children->size();n++) {
-      if((*m_children)[n] != -1) return n;
+    for(int64_t n=0;n<symbol_size;n++) {
+      if(get_child(n) != -1) return n;
     }
 
     return -1;
@@ -86,8 +86,8 @@ public:
   int find_child(int c) {
 
     if(m_children != NULL)
-    for(int64_t n=0;n<m_children->size();n++) {
-      if((*m_children)[n] == c) return n;
+    for(int64_t n=0;n<symbol_size;n++) {
+      if(get_child(n) == c) return n;
     }
 
     return -1;
@@ -106,11 +106,11 @@ public:
   int child_count() {
     int i=0;
 
-    if(m_children != NULL)
-    for(int64_t n=0;n<m_children->size();n++) {
+    if(m_children != NULL) return m_children->size();
+/*    for(int64_t n=0;n<m_children->size();n++) {
       if((*m_children)[n] != -1) ++i;
     }
-
+*/
     return i;
   }
 
@@ -128,18 +128,23 @@ public:
   int get_child(int n) {
     if(isleaf()) return -1;
 
-    return (*m_children)[n];
+    map<int,int>::iterator i = m_children->find(n);
+    if(i != m_children->end()) return i->second;
+    else return -1;
+
+//    return (*m_children)[n];
   }
 
   void set_child(int n,int m) {
-    if(m_children == NULL) m_children = new vector<int>(symbol_size,-1);
+    if(m_children == NULL) m_children = new map<int,int>();
     (*m_children)[n] = m;
   }
 
   int parent;
   int label_start;
   int label_end  ;
-  vector<int> *m_children;
+//  vector<int> *m_children;
+  map<int,int> *m_children;
   int suffix_link;
   int next_left_leaf;
   int next_right_leaf;
