@@ -11,10 +11,11 @@
 #include "Transcode.h"
 #include "TranscodingStore.h"
 #include "SuffixNodeStore.h"
+#include "ChildStore.h"
 
 using namespace std;
 
-#define symbol_size  45
+#define symbol_size  41
 #define final_symbol 39
 
 class SuffixNode {
@@ -34,7 +35,6 @@ public:
 
   bool isleaf() {
     if(m_children == NULL) return true;
-   // if(label_end == end_marker) return true;
     return false;
   }
 
@@ -107,10 +107,6 @@ public:
     int i=0;
 
     if(m_children != NULL) return m_children->size();
-/*    for(int64_t n=0;n<m_children->size();n++) {
-      if((*m_children)[n] != -1) ++i;
-    }
-*/
     return i;
   }
 
@@ -128,23 +124,18 @@ public:
   int get_child(int n) {
     if(isleaf()) return -1;
 
-    map<int,int>::iterator i = m_children->find(n);
-    if(i != m_children->end()) return i->second;
-    else return -1;
-
-//    return (*m_children)[n];
+    return m_children->get(n);
   }
 
   void set_child(int n,int m) {
-    if(m_children == NULL) m_children = new map<int,int>();
-    (*m_children)[n] = m;
+    if(m_children == NULL) m_children = new ChildStore();
+    m_children->set(n,m);
   }
 
   int parent;
   int label_start;
   int label_end  ;
-//  vector<int> *m_children;
-  map<int,int> *m_children;
+  ChildStore *m_children;
   int suffix_link;
   int next_left_leaf;
   int next_right_leaf;
@@ -983,6 +974,9 @@ c++;
     }
     cout << "unset children: " << unset_children << endl;
     cout << "set children  : " << set_children << endl;
+
+    cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
+    cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;
   }
 
   bool validate_positions() {
