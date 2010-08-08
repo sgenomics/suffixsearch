@@ -32,7 +32,8 @@ public:
   }
 
   bool isleaf() {
-    if(label_end == end_marker) return true;
+    if(m_children.size() == 0) return true;
+   // if(label_end == end_marker) return true;
     return false;
   }
 
@@ -57,40 +58,30 @@ public:
   }
 
   void clear_children() {
-    for(int64_t n=0;n<symbol_size;n++) children   [n] = -1;
+    for(int64_t n=0;n<symbol_size;n++) m_children.clear();
   }
 
   void copy_children(SuffixNode &other) {
-    for(int64_t n=0;n<symbol_size;n++) {
-      children[n] = other.children[n];
-    }
+    m_children = other.m_children;
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
-    for(int n=0;n<symbol_size;n++) {
-      if(children[n] == old_id) children[n] = new_id;
+    for(int n=0;n<m_children.size();n++) {
+      if(m_children[n] == old_id) m_children[n] = new_id;
     }
-  }
-
-  bool has_children() {
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(children[n] != -1) return true;
-    }
-
-    return false;
   }
 
   int first_child() {
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(children[n] != -1) return n;
+    for(int64_t n=0;n<m_children.size();n++) {
+      if(m_children[n] != -1) return n;
     }
 
     return -1;
   }
 
   int find_child(int c) {
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(children[n] == c) return n;
+    for(int64_t n=0;n<m_children.size();n++) {
+      if(m_children[n] == c) return n;
     }
 
     return -1;
@@ -109,8 +100,8 @@ public:
   int child_count() {
     int i=0;
 
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(children[n] != -1) ++i;
+    for(int64_t n=0;n<m_children.size();n++) {
+      if(m_children[n] != -1) ++i;
     }
 
     return i;
@@ -127,12 +118,22 @@ public:
     return label_end;
   }
 
-  int get_child(int n) { return children[n]; }
+  int get_child(int n) {
+    if(isleaf()) return -1;
+
+    return m_children[n];
+  }
+
+  void set_child(int n,int m) {
+    if(m_children.size() == 0) m_children = vector<int>(symbol_size,-1);
+    m_children[n] = m;
+
+  }
 
   int parent;
   int label_start;
   int label_end  ;
-  int children   [symbol_size];
+  vector<int> m_children;
   int suffix_link;
   int next_left_leaf;
   int next_right_leaf;
@@ -224,7 +225,7 @@ int alphabet_size = symbol_size-1;
         for(;stop == false;) {
 
 	  int nextchild = -1;
-          if(current_child >= 0) nextchild = store[current_node].children[current_child];
+          if(current_child >= 0) nextchild = store[current_node].get_child(current_child);
 
           if(current_child < 0) {
             stop = true;
@@ -301,7 +302,7 @@ int alphabet_size = symbol_size-1;
         if(current_child == 0) first_pass=true;
         for(;stop == false;) {
 
-	  int nextchild = store[current_node].children[current_child];
+	  int nextchild = store[current_node].get_child(current_child);
    
           if(current_child >= alphabet_size) {
             stop = true;
@@ -333,7 +334,7 @@ int alphabet_size = symbol_size-1;
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
 
-    int current_node = store[SuffixNode::root].children[ss[0]];
+    int current_node = store[SuffixNode::root].get_child(ss[0]);
     char label = ss[1];
  
     int search_string_position = 0;
@@ -354,7 +355,7 @@ int alphabet_size = symbol_size-1;
 
       label = ss[search_string_position];
 
-      current_node = store[current_node].children[label];
+      current_node = store[current_node].get_child(label);
       cout << "current_node: " << current_node << endl;
       if(current_node == -1) return -1;
     }
@@ -439,7 +440,7 @@ cout << "end  :" << end << endl;
 
     // follow labels from root down, edge labels.
 
-    int current_node = store[0].children[t[0]];
+    int current_node = store[0].get_child(t[0]);
  
     if(current_node == -1) return -1;
 
@@ -458,7 +459,7 @@ cout << "end  :" << end << endl;
         }
       }
 
-      current_node = store[current_node].children[t[search_string_position]];
+      current_node = store[current_node].get_child(t[search_string_position]);
       //cout << "1navigating to: " << current_node << endl;
       if(current_node == -1) return -1;
     }
@@ -485,7 +486,7 @@ cout << "end  :" << end << endl;
     if(store[insertion_point].label_start == -1) {
 
       // if a child exists, go to it, without consuming
-      int child = store[insertion_point].children[s[symbol_index_start]];
+      int child = store[insertion_point].get_child(s[symbol_index_start]);
       if(child != -1) {
         return extend2(child,symbol_index_start,symbol_index_end,split,fnode,fpos);
       } else {
@@ -495,7 +496,7 @@ cout << "end  :" << end << endl;
         sn.suffix_link = 0;
         store.push_back(sn);
         split = true;
-        store[insertion_point].children[s[symbol_index_start]] = store.size()-1;
+        store[insertion_point].set_child(s[symbol_index_start],store.size()-1);
         store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 //cout << "n1" << endl;
 //validate_tree();
@@ -523,7 +524,7 @@ cout << "end  :" << end << endl;
         sn.label_start = symbol_index_start;
         split=true;
         store.push_back(sn);
-        store[parent].children[s[symbol_index_start]] = store.size()-1;
+        store[parent].set_child(s[symbol_index_start],store.size()-1);
         store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 //cout << "n2" << endl;
         //cout << "2ADD NODE: " << store.size()-1 << endl;
@@ -574,10 +575,10 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
         int old_parent_child_symbol = store[old_parent].find_child(insertion_point); // TODO: make constant time please?
 
-        store[old_parent].children[old_parent_child_symbol] = b_idx;
+        store[old_parent].set_child(old_parent_child_symbol,b_idx);
 
-        b.children[s[old_label_start+n]] = insertion_point;
-        b.children[s[symbol_index_start+n]] = c_idx;
+        b.set_child(s[old_label_start+n],insertion_point);
+        b.set_child(s[symbol_index_start+n],c_idx);
 
 
         store[insertion_point].parent = b_idx;
@@ -633,7 +634,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     char child_sym = s[pos];
 
     // if a child does not exist add
-    if(store[insertion_point].children[child_sym] == -1) {
+    if(store[insertion_point].get_child(child_sym) == -1) {
       //cout << "Extend2 condition 2b: no children at point past edge label" << endl;
       //cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
       SuffixNode newnode(insertion_point,pos,0);
@@ -643,7 +644,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       store.push_back(newnode);
       int n_idx = store.size()-1;
       //cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
-      store[insertion_point].children[child_sym] = n_idx;
+      store[insertion_point].set_child(child_sym,n_idx);
       store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 	//cout << "n4" << endl;
       //cout << "extend2 endpoint 6" << endl;
@@ -652,7 +653,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
     // if a child does exist, recurse
     //cout << "recursing, position is now: " << pos << endl;
-    return extend2(store[insertion_point].children[child_sym],pos,symbol_index_end,split,fnode,fpos);
+    return extend2(store[insertion_point].get_child(child_sym),pos,symbol_index_end,split,fnode,fpos);
   }
 
   void finalise() {
@@ -856,7 +857,7 @@ c++;
       cout << "next_left_leaf : " << store[n].next_left_leaf << endl;
       cout << "next_right_leaf: " << store[n].next_right_leaf << endl;
       for(int i=0;i<symbol_size;i++) {
-        if(store[n].children[i] != -1) { cout << "children[" << i << "]:" << store[n].children[i] << endl; }
+        if(store[n].get_child(i) != -1) { cout << "children[" << i << "]:" << store[n].get_child(i) << endl; }
       }
     }
     cout << "****************************** Tree dump complete" << endl;
@@ -927,7 +928,7 @@ c++;
     int64_t parent =  store[n].parent;
 
     bool ok=false;
-    for(int i=0;i<symbol_size;i++) { if(store[parent].children[i] == n) ok = true; }
+    for(int i=0;i<symbol_size;i++) { if(store[parent].get_child(i) == n) ok = true; }
 
     if(n == 0) ok = true;
     if(ok != true) {
@@ -967,7 +968,7 @@ c++;
     size_t unset_children=0;
     size_t set_children=0;
     for(size_t n=0;n<store.size();n++) {
-      for(size_t m=0;m<symbol_size;m++) if(store[n].children[m] == -1) unset_children++; else set_children++;
+      for(size_t m=0;m<symbol_size;m++) if(store[n].get_child(m) == -1) unset_children++; else set_children++;
     }
     cout << "unset children: " << unset_children << endl;
     cout << "set children  : " << set_children << endl;
