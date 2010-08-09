@@ -1,8 +1,8 @@
 
-insert: insert.cpp SuffixTree.h
-	g++ -g insert.cpp ./SuffixTree.cpp -o insert
-web: web.cpp SuffixTree.h WebSrvSearch.h Transcode.h ChildStore.h
-	g++ -O3 web.cpp ./SuffixTree.cpp -o web
+insert: insert.cpp SuffixTree.h SuffixNode.h
+	g++ -g insert.cpp ./SuffixNode.cpp -o insert
+web: web.cpp SuffixTree.h WebSrvSearch.h Transcode.h ChildStore.h SuffixNode.h
+	g++ -O3 web.cpp ./SuffixNode.cpp -o web
 
 clean:
 	rm insert web

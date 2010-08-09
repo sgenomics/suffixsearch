@@ -5,7 +5,7 @@
 
 using namespace std;
 
-class SuffixNode;
+#include "SuffixNode.h"
 
 class SuffixNodeStore {
 
@@ -17,8 +17,12 @@ public:
     m_store.push_back(s);
   }
 
-  SuffixNode &operator[](size_t i) {
-    return m_store[i];
+  SuffixNode get(int idx) {
+    return m_store[idx];
+  }
+
+  void set(int idx, SuffixNode &s) {
+    m_store[idx] = s;
   }
 
   int size() {

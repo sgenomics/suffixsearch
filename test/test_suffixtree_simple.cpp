@@ -21,7 +21,6 @@ int test_suffixtree_simple(UnitTest &utf) {
       s1.insert(ms[n]);
     }
     s1.finalise();
-s1.dump();
     bool validation = s1.validate_tree();
     utf.test_equality(true,validation);
 

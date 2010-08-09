@@ -41,5 +41,5 @@ for(size_t m=0;m<v;m++)
 
   for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 
- // st.validate_tree();
+  st.validate_tree();
 }
