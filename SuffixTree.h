@@ -210,21 +210,19 @@ cout << "processed left positions" << endl;
       }
     }
   }
-
+/*
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
 
-    int current_node = store.get(SuffixNode::root).get_child(ss[0]);
-
+    int current_node = store[SuffixNode::root].get_child(ss[0]);
     char label = ss[1];
- 
+
     int search_string_position = 0;
     cout << "current_node: " << current_node << endl;
-    SuffixNode current_node_tmp = store.get(current_node);
     if(current_node == -1) return -1;
     for(;search_string_position < ss.size();) {
       // follow edge label
-      for(int position=current_node_tmp.label_start;position <= current_node_tmp.get_label_end();position++) {
+      for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
     //    cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
         if(s[position] != ss[search_string_position]) {return -1;}
         else {
@@ -237,8 +235,41 @@ cout << "processed left positions" << endl;
 
       label = ss[search_string_position];
 
-      current_node = current_node_tmp.get_child(label);
+      current_node = store[current_node].get_child(label);
       cout << "current_node: " << current_node << endl;
+      if(current_node == -1) return -1;
+    }
+  }
+*/
+
+  int find_tree_position(vector<char> ss) {
+    // follow labels from root down, edge labels.
+
+    int current_node = store.get(SuffixNode::root).get_child(ss[0]);
+    char label = ss[1];
+ 
+    int search_string_position = 0;
+//    cout << "current_node: " << current_node << endl;
+    if(current_node == -1) return -1;
+    SuffixNode current_node_tmp = store.get(current_node);
+    for(;search_string_position < ss.size();) {
+      // follow edge label
+      for(int position=current_node_tmp.label_start;position <= current_node_tmp.get_label_end();position++) {
+   //     cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
+        if(s[position] != ss[search_string_position]) {return -1;}
+        else {
+          search_string_position++;
+          if(search_string_position == ss.size()) {
+            return current_node;
+          }
+        }
+      }
+
+      label = ss[search_string_position];
+
+      current_node = current_node_tmp.get_child(label);
+      current_node_tmp = store.get(current_node);
+  //    cout << "current_node: " << current_node << endl;
       if(current_node == -1) return -1;
     }
   }
