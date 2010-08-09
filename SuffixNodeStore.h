@@ -13,8 +13,14 @@ public:
   SuffixNodeStore() {
   }
 
-  void push_back(SuffixNode &s) {
+  size_t push_back() {
+    m_store.push_back(SuffixNode(0,0,0));
+    return m_store.size()-1;
+  }
+
+  size_t push_back(SuffixNode &s) {
     m_store.push_back(s);
+    return m_store.size()-1;
   }
 
   SuffixNode get(int idx) {

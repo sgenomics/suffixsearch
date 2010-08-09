@@ -13,16 +13,15 @@ int main(int argc,char ** argv) {
   SuffixTree st;
 
   int v=1;
-if(argc > 3) v = atoi(argv[3]);
-cout << "v is: " << v << endl;
-for(size_t m=0;m<v;m++)
-  for(size_t n=0;n<s.size();n++) {
-    st.insert(s[n]);
+  if(argc > 3) v = atoi(argv[3]);
+  cout << "v is: " << v << endl;
+  for(size_t m=0;m<v;m++) {
+    for(size_t n=0;n<s.size();n++) {
+      st.insert(s[n]);
+    }
   }
 
   st.finalise();
-  st.dump();
-
 
   vector<char> t;
   string ss = argv[2];
@@ -30,16 +29,14 @@ for(size_t m=0;m<v;m++)
   for(size_t n=0;n<ss.size();n++) {
     t.push_back(ss[n]);
   }
- // st.dump();
+
   bool r = st.exists(t);
   if(r == true) cout << "found" << endl;
   if(r == false) cout << "not found" << endl;
 
   st.process_positions();
-  st.dump();
   vector<int> poss = st.all_occurs(t);
 
   for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 
-  st.validate_tree();
 }

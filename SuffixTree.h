@@ -28,9 +28,7 @@ public:
     root.suffix_link = 0;
     root.parent = 0;
     split_count = 0;
-    store.push_back(root);
-
-    root_node = 0;
+    root_node = store.push_back(root);
 
     split_distance = 0;
     split_point_node     = 0;
@@ -210,37 +208,6 @@ cout << "processed left positions" << endl;
       }
     }
   }
-/*
-  int find_tree_position(vector<char> ss) {
-    // follow labels from root down, edge labels.
-
-    int current_node = store[SuffixNode::root].get_child(ss[0]);
-    char label = ss[1];
-
-    int search_string_position = 0;
-    cout << "current_node: " << current_node << endl;
-    if(current_node == -1) return -1;
-    for(;search_string_position < ss.size();) {
-      // follow edge label
-      for(int position=store[current_node].label_start;position <= store[current_node].get_label_end();position++) {
-    //    cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
-        if(s[position] != ss[search_string_position]) {return -1;}
-        else {
-          search_string_position++;
-          if(search_string_position == ss.size()) {
-            return current_node;
-          }
-        }
-      }
-
-      label = ss[search_string_position];
-
-      current_node = store[current_node].get_child(label);
-      cout << "current_node: " << current_node << endl;
-      if(current_node == -1) return -1;
-    }
-  }
-*/
 
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
@@ -307,7 +274,6 @@ cout << "end  :" << end << endl;
 
     // grab left and right...
 
-
     SuffixNode p_tmp = store.get(p);
     int nl = p_tmp.next_left_leaf;
     int nr = p_tmp.next_right_leaf;
@@ -325,14 +291,10 @@ cout << "end  :" << end << endl;
     bool stop=false;
     for(;stop==false;) {
 
-      cout << "current: " << c << endl;
       if(c==nr) { stop=true; }
 
       bool nochild=true;
       if(c_tmp.label_start != -1) { res.push_back(s.size()-c_tmp.get_depth()); nochild=false; }//TODO: err somehow convert this back in to correct location?!?
-
-      if(nochild==true) {cout << "there are no children" << endl;}
-                   else {cout << "there were the children" << endl; }
 
       c = c_tmp.next_right_leaf;
       c_tmp = store.get(c);
@@ -340,7 +302,6 @@ cout << "end  :" << end << endl;
       if(res.size() > max_hits) return res;
     }
 
-    cout << "res size: " << res.size() << endl;
     return res;
   }
 
@@ -362,30 +323,25 @@ cout << "end  :" << end << endl;
  
     if(current_node == -1) return -1;
 
-    //cout << "0navigating to: " << current_node << endl;
     int64_t search_string_position = 0;
 
     for(;search_string_position < t.size();) {
       // follow edge label
-      //cout << "label is: " << store[current_node].label_start << ":" << store[current_node].get_label_end() << endl;
 
       SuffixNode current_node_tmp = store.get(current_node);
       for(int position=current_node_tmp.label_start;position <= current_node_tmp.get_label_end();position++) {
         if(s[position] != t[search_string_position]) { return -1; }
         else {
-          //cout << "comparison to position: " << position << endl;
           search_string_position++;
           if(search_string_position == t.size()) { return current_node; }
         }
       }
 
       current_node = current_node_tmp.get_child(t[search_string_position]);
-      //cout << "1navigating to: " << current_node << endl;
       if(current_node == -1) return -1;
       current_node_tmp = store.get(current_node);
     }
 
-    //cout << "NOT FOUND" << endl;
     return -1;
   }
 
@@ -393,7 +349,6 @@ cout << "end  :" << end << endl;
   //  cout << "extend2, insertion_point   : " << insertion_point << endl;
   //  cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
   //  cout << "extend2, label_start       : " << store.get(insertion_point).label_start << endl;
-//dump();
     fnode = insertion_point;
     fpos  = symbol_index_start;
 
@@ -420,15 +375,14 @@ cout << "end  :" << end << endl;
         sn.suffix_link = 0;
         split = true;
         sn.set_depth(insertion_point_tmp.get_depth());
-        store.push_back(sn);
-        insertion_point_tmp.set_child(s[symbol_index_start],store.size()-1);// next insert
+        int sn_idx = store.push_back(sn);
+        insertion_point_tmp.set_child(s[symbol_index_start],sn_idx);// next insert
         store.set(insertion_point,insertion_point_tmp);
 //        store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
        // cout << "n1" << endl;
 //        cout << "1 ADD NODE: " << store.size()-1 << endl;
-        //dump();
         //cout << "extend2 endpoint 1" << endl;
-        return store.size()-1;
+        return sn_idx;
       }
     }
 
@@ -451,14 +405,13 @@ cout << "end  :" << end << endl;
         sn.label_start = symbol_index_start;
         split=true;
         sn.set_depth(parent_tmp.get_depth());
-        store.push_back(sn);
-        parent_tmp.set_child(s[symbol_index_start],store.size()-1);
+        int sn_idx = store.push_back(sn);
+        parent_tmp.set_child(s[symbol_index_start],sn_idx);
         store.set(parent,parent_tmp);
         //store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
        // cout << "2ADD NODE: " << store.size()-1 << endl;
- //       dump();
        // cout << "extend2 endpoint 2" << endl;
-        return store.size()-1;
+        return sn_idx;
       } else {
         // Should really never reach this point.
 cout << "NEVER EVER GET HERE EVER EVER" << endl;
@@ -478,9 +431,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         //cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         //cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
 
-        // new bit...
-        int b_idx = store.size();
-        int c_idx = store.size()+1;
+        int b_idx = store.push_back();
+        int c_idx = store.push_back();
 
         int64_t old_parent        = insertion_point_tmp.parent;
         SuffixNode old_parent_tmp = store.get(insertion_point_tmp.parent);
@@ -516,21 +468,14 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
 
 
-/*
-        store[b_idx].set_depth(store[store[b_idx].parent].get_depth()+store[b_idx].get_label_length_r()+1);
-        store[c_idx].set_depth(store[store[c_idx].parent].get_depth());
-        if(store[insertion_point].label_end == SuffixNode::end_marker) store[insertion_point].set_depth(store[store[insertion_point].parent].get_depth());
-        else store[insertion_point].set_depth(store[store[insertion_point].parent].get_depth()+store[insertion_point].get_label_length_r()+1);
-
-*/
      //   cout << "INSERTION POINT: " << insertion_point << endl;
      //   cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
      //   cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
         b.set_depth(old_parent_tmp.get_depth()+b.get_label_length_r()+1);
         c.set_depth(b.get_depth());
-        store.push_back(b);
-        store.push_back(c);
+        store.set(b_idx,b);
+        store.set(c_idx,c);
 
         if(insertion_point_tmp.label_end == SuffixNode::end_marker) { insertion_point_tmp.set_depth(b.get_depth());}
         else                                                        { insertion_point_tmp.set_depth(b.get_depth()+insertion_point_tmp.get_label_length_r()+1);}
@@ -539,7 +484,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         //cout << "b_idx: " << b_idx << endl;
         //cout << "c_idx: " << c_idx << endl;
         //cout << "extend2 endpoint 3" << endl;
-       // dump();
         return c_idx;
       }
 
@@ -577,10 +521,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
       split=true;
       newnode.set_depth(insertion_point_tmp.get_depth());
-      store.push_back(newnode);
-      int n_idx = store.size()-1;
+      int n_idx = store.push_back(newnode);
 //      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
-      //dump();
       insertion_point_tmp.set_child(child_sym,n_idx);
       store.set(insertion_point,insertion_point_tmp);
 //      store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
