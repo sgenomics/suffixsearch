@@ -8,6 +8,8 @@
 #include <deque>
 #include <stdlib.h>
 #include "ChildStore.h"
+#include <stdint.h>
+
 
 using namespace std;
 
@@ -128,18 +130,18 @@ public:
     m_children->set(n,m);
   }
 
-  int parent;
-  int label_start;
-  int label_end  ;
+  int32_t parent;
+  int32_t label_start;
+  int32_t label_end  ;
   ChildStore *m_children;
-  int suffix_link;
-  int next_left_leaf;
-  int next_right_leaf;
-  int depth;
+  int32_t suffix_link;
+  int32_t next_left_leaf;
+  int32_t next_right_leaf;
+  int32_t depth;
 
-  static int end_marker;
-  static int end_marker_value;
-  static int root;
+  static int32_t end_marker;
+  static int32_t end_marker_value;
+  static int32_t root;
 };
 
 #endif

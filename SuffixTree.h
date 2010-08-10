@@ -834,6 +834,7 @@ c++;
 
     cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
     cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;
+    cout << "Size of ChildStore pointer    : " << sizeof(ChildStore *) << endl;
   }
 
   bool validate_positions() {

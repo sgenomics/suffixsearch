@@ -7,17 +7,18 @@ using namespace std;
 
 #include "SuffixNode.h"
 
+#include <stdint.h>
 
 class EndSuffixNode {
 
   public:
 
-    int parent;
-    int label_start;
-    int suffix_link;
-    int next_left_leaf;
-    int next_right_leaf;
-    int depth;
+    int32_t parent;
+    int32_t label_start;
+    int32_t suffix_link;
+    int32_t next_left_leaf;
+    int32_t next_right_leaf;
+    int32_t depth;
 
     EndSuffixNode(SuffixNode &s) {
       parent          = s.parent;
