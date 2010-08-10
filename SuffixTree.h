@@ -831,24 +831,13 @@ c++;
     cout << "string size: " << s.size() << endl; 
     cout << "node count : " << store.size() << endl;
     size_t end_node = 0;
-/*    for(size_t n=0;n<store.size();n++) if(store.get(n).label_end == -1) end_node++;
-    cout << "end node count: " << end_node << endl;
-    size_t unset_children=0;
-    size_t set_children=0;
-    for(size_t n=0;n<store.size();n++) {
-      for(size_t m=0;m<symbol_size;m++) if(store.get(n).get_child(m) == -1) unset_children++; else set_children++;
-    }
 
-    cout << "unset children: " << unset_children << endl;
-    cout << "set children  : " << set_children << endl;
-*/
     cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
     cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;
   }
 
   bool validate_positions() {
- /*   for(int64_t n=1;n<store.size();n++) {
-
+    for(int64_t n=1;n!=store.last_idx();n=store.next_idx(n)) {
 
       SuffixNode n_tmp = store.get(n);
       int left  = n_tmp.next_left_leaf;
@@ -860,18 +849,18 @@ c++;
         if(left_tmp.next_right_leaf != n) { cout << "store[" << left  << "].next_right_leaf=" << left_tmp.next_right_leaf << "!=" << n << endl; return false;}
         if(right_tmp.next_left_leaf != n) { cout << "store[" << right << "].next_left_leaf="  << left_tmp.next_left_leaf  << "!=" << n << endl; return false;}
       }
-    }*/
+    }
     return true;
   }
 
   bool validate_tree(bool dump=false) {
-    for(int64_t n=1;n<store.size();n++) {
-//      bool v1 = validate_depth(n,dump);
-//      bool v2 = validate_suffix_link(n,dump);
-//      bool v3 = validate_parent(n,dump);
-//      if(v1 == false) {cout << "failed depth validation" << endl;       return false;}
-//      if(v2 == false) {cout << "failed suffix link validation" << endl; return false;}
-//      if(v3 == false) {cout << "failed parent validation" << endl;      return false;}
+    for(int64_t n=1;n!=store.last_idx();n=store.next_idx(n)) {
+      bool v1 = validate_depth(n,dump);
+      bool v2 = validate_suffix_link(n,dump);
+      bool v3 = validate_parent(n,dump);
+      if(v1 == false) {cout << "failed depth validation" << endl;       return false;}
+      if(v2 == false) {cout << "failed suffix link validation" << endl; return false;}
+      if(v3 == false) {cout << "failed parent validation" << endl;      return false;}
     }
     return true;
   }

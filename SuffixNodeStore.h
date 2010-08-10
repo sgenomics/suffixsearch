@@ -88,6 +88,19 @@ public:
     return (0xFF000000 & i) >> 24;
   }
 
+  int next_idx(int i) {
+    int id = get_store_id(i);
+
+    if(id == 0) {
+      if(i+1 < m_store1.size()) return i+1;
+      return 0x01000000;
+    } else return i++;
+  }
+
+  bool last_idx() {
+    return 0x01000000+m_store2.size();
+  }
+
   vector<SuffixNode>    m_store1;
   vector<EndSuffixNode> m_store2;
 };
