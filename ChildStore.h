@@ -12,8 +12,8 @@ class SymbolPair {
   SymbolPair(char s,int i) : symbol(s),index(i) {
   }
 
-  char symbol;
-  int index;
+  uint8_t symbol;
+  int32_t index;
 };
 
 class ChildStore {

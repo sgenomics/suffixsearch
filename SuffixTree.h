@@ -429,8 +429,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         //cout << "Extend2 condition 1: Mismatch in edge label" << endl;
         //cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
 
-        int b_idx = store.push_back();
-        int c_idx = store.push_back();
+        int b_idx = store.push_back_norm();
+        int c_idx = store.push_back_end();
 
         int64_t old_parent        = insertion_point_tmp.parent;
         SuffixNode old_parent_tmp = store.get(insertion_point_tmp.parent);
@@ -831,6 +831,8 @@ c++;
     cout << "string size: " << s.size() << endl; 
     cout << "node count : " << store.size() << endl;
     size_t end_node = 0;
+
+    store.stats();
 
     cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
     cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;

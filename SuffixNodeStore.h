@@ -20,6 +20,9 @@ class EndSuffixNode {
     int32_t next_right_leaf;
     int32_t depth;
 
+    EndSuffixNode() {
+    }
+
     EndSuffixNode(SuffixNode &s) {
       parent          = s.parent;
       label_start     = s.label_start;
@@ -49,16 +52,20 @@ public:
   SuffixNodeStore() {
   }
 
-  size_t push_back() {
+  size_t push_back_norm() {
     m_store1.push_back(SuffixNode(0,0,0));
     return m_store1.size()-1;
+  }
+
+  size_t push_back_end() {
+    m_store2.push_back(EndSuffixNode());
+    return 0x01000000 + (m_store2.size()-1);
   }
 
   size_t push_back(SuffixNode &s) {
 
     if((s.label_end == -1) && (s.label_start != -1)) {
       EndSuffixNode s2(s);
-
 
       m_store2.push_back(s2);
       return m_store2.size()-1 + 0x01000000;
@@ -100,6 +107,12 @@ public:
 
   bool last_idx() {
     return 0x01000000+m_store2.size();
+  }
+
+
+  void stats() {
+    cout << "Normal node count: " << m_store1.size() << endl;
+    cout << "End    node count: " << m_store2.size() << endl;
   }
 
   vector<SuffixNode>    m_store1;
