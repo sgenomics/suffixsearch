@@ -1,4 +1,4 @@
-#ifndef SUFFIXTREEDDDDDD
+#ifndef SUFFIXTREE
 #define SUFFIXTREE
 
 #include <iostream>
@@ -378,9 +378,8 @@ cout << "end  :" << end << endl;
         int sn_idx = store.push_back(sn);
         insertion_point_tmp.set_child(s[symbol_index_start],sn_idx);// next insert
         store.set(insertion_point,insertion_point_tmp);
-//        store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
        // cout << "n1" << endl;
-//        cout << "1 ADD NODE: " << store.size()-1 << endl;
+//        cout << "1 ADD NODE: " << sn_idx << endl;
         //cout << "extend2 endpoint 1" << endl;
         return sn_idx;
       }
@@ -408,8 +407,7 @@ cout << "end  :" << end << endl;
         int sn_idx = store.push_back(sn);
         parent_tmp.set_child(s[symbol_index_start],sn_idx);
         store.set(parent,parent_tmp);
-        //store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
-       // cout << "2ADD NODE: " << store.size()-1 << endl;
+//        cout << "2ADD NODE: " << endl;
        // cout << "extend2 endpoint 2" << endl;
         return sn_idx;
       } else {
@@ -469,8 +467,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
 
      //   cout << "INSERTION POINT: " << insertion_point << endl;
-     //   cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
-     //   cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
+//        cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
+//        cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
         split=true;
         b.set_depth(old_parent_tmp.get_depth()+b.get_label_length_r()+1);
         c.set_depth(b.get_depth());
@@ -525,7 +523,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 //      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
       insertion_point_tmp.set_child(child_sym,n_idx);
       store.set(insertion_point,insertion_point_tmp);
-//      store[store.size()-1].set_depth(store[store[store.size()-1].parent].get_depth());
 	//cout << "n4" << endl;
       //cout << "extend2 endpoint 6" << endl;
       return n_idx;
@@ -622,7 +619,9 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       int fnode = 0;
       int fpos  = 0;
       newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
+     // cout << "newnode is: " << newnode << endl;
       SuffixNode newnode_tmp = store.get(newnode);
+     // cout << "newnode sl: " << newnode_tmp.suffix_link << endl;
       last_node_tmp = store.get(last_node); // required.
 
       last_at_end = at_end;
@@ -832,22 +831,23 @@ c++;
     cout << "string size: " << s.size() << endl; 
     cout << "node count : " << store.size() << endl;
     size_t end_node = 0;
-    for(size_t n=0;n<store.size();n++) if(store.get(n).label_end == -1) end_node++;
+/*    for(size_t n=0;n<store.size();n++) if(store.get(n).label_end == -1) end_node++;
     cout << "end node count: " << end_node << endl;
     size_t unset_children=0;
     size_t set_children=0;
     for(size_t n=0;n<store.size();n++) {
       for(size_t m=0;m<symbol_size;m++) if(store.get(n).get_child(m) == -1) unset_children++; else set_children++;
     }
+
     cout << "unset children: " << unset_children << endl;
     cout << "set children  : " << set_children << endl;
-
+*/
     cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
     cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;
   }
 
   bool validate_positions() {
-    for(int64_t n=1;n<store.size();n++) {
+ /*   for(int64_t n=1;n<store.size();n++) {
 
 
       SuffixNode n_tmp = store.get(n);
@@ -860,18 +860,18 @@ c++;
         if(left_tmp.next_right_leaf != n) { cout << "store[" << left  << "].next_right_leaf=" << left_tmp.next_right_leaf << "!=" << n << endl; return false;}
         if(right_tmp.next_left_leaf != n) { cout << "store[" << right << "].next_left_leaf="  << left_tmp.next_left_leaf  << "!=" << n << endl; return false;}
       }
-    }
+    }*/
     return true;
   }
 
   bool validate_tree(bool dump=false) {
     for(int64_t n=1;n<store.size();n++) {
-      bool v1 = validate_depth(n,dump);
-      bool v2 = validate_suffix_link(n,dump);
-      bool v3 = validate_parent(n,dump);
-      if(v1 == false) {cout << "failed depth validation" << endl;       return false;}
-      if(v2 == false) {cout << "failed suffix link validation" << endl; return false;}
-      if(v3 == false) {cout << "failed parent validation" << endl;      return false;}
+//      bool v1 = validate_depth(n,dump);
+//      bool v2 = validate_suffix_link(n,dump);
+//      bool v3 = validate_parent(n,dump);
+//      if(v1 == false) {cout << "failed depth validation" << endl;       return false;}
+//      if(v2 == false) {cout << "failed suffix link validation" << endl; return false;}
+//      if(v3 == false) {cout << "failed parent validation" << endl;      return false;}
     }
     return true;
   }
