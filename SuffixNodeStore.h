@@ -16,7 +16,7 @@ class EndSuffixNode {
     int32_t parent;
     int32_t label_start;
     int32_t suffix_link;
-    int32_t next_left_leaf;
+//    int32_t next_left_leaf;
     int32_t next_right_leaf;
     int32_t depth;
 
@@ -27,7 +27,7 @@ class EndSuffixNode {
       parent          = s.parent;
       label_start     = s.label_start;
       suffix_link     = s.suffix_link;
-      next_left_leaf  = s.next_left_leaf;
+//      next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
       depth           = s.depth;
     }
@@ -38,7 +38,7 @@ class EndSuffixNode {
       s.parent          = parent;
       s.label_start     = label_start;
       s.suffix_link     = suffix_link;
-      s.next_left_leaf  = next_left_leaf;
+      s.next_left_leaf  = next_right_leaf;//next_left_leaf
       s.next_right_leaf = next_right_leaf;
       s.depth           = depth;
 
@@ -113,6 +113,16 @@ public:
   void stats() {
     cout << "Normal node count: " << m_store1.size() << endl;
     cout << "End    node count: " << m_store2.size() << endl;
+
+    int count[100];
+    for(int n=0;n<100;n++) count[n] = 0;
+    for(size_t n=0;n<m_store1.size();n++) {
+      int d = m_store1[n].child_count();
+      count[d]++;
+    }
+
+    cout << "counts" << endl;
+    for(int n=0;n<100;n++) cout << n << " " << count[n] << endl;
   }
 
   vector<SuffixNode>    m_store1;
