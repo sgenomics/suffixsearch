@@ -27,7 +27,6 @@ class EndSuffixNode {
       parent          = s.parent;
       label_start     = s.label_start;
       suffix_link     = s.suffix_link;
-//      next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
       depth           = s.depth;
     }
@@ -38,7 +37,7 @@ class EndSuffixNode {
       s.parent          = parent;
       s.label_start     = label_start;
       s.suffix_link     = suffix_link;
-      s.next_left_leaf  = next_right_leaf;//next_left_leaf
+      s.next_left_leaf  = next_right_leaf;
       s.next_right_leaf = next_right_leaf;
       s.depth           = depth;
 

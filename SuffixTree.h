@@ -261,13 +261,9 @@ cout << "end  :" << end << endl;
 
     vector<int> res;
 
-    cout << "all_occurs ss: ";
-    for(int n=0;n<ss.size();n++) cout << ss[n];
     for(int n=0;n<ss.size();n++) ss[n] =  transcoder.convert(ss[n]);
-    cout << endl;
     int p = find_tree_position(ss);
 
-    cout << "string end node was: " << p << endl;
     if(p == -1) {
       return res;
     }
