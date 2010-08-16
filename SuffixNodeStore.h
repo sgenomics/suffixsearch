@@ -374,6 +374,10 @@ class NormalSuffixNodeContainer {
       }
     }
 
+    int32_t get_depth() {
+      return depth;
+    }
+
     NormalSuffixNodeContainer(SuffixNode &s,ChildListStore &c) {
 
       parent          = s.parent;
@@ -418,7 +422,6 @@ class EndSuffixNodeContainer {
     int32_t label_start;
     int32_t suffix_link;
     int32_t next_right_leaf;
-    int32_t depth;
 
     EndSuffixNodeContainer() {
     }
@@ -428,19 +431,17 @@ class EndSuffixNodeContainer {
       label_start     = s.label_start;
       suffix_link     = s.suffix_link;
       next_right_leaf = s.next_right_leaf;
-      depth           = s.depth;
     }
 
 
-    SuffixNode get_suffixnode() {
+    SuffixNode get_suffixnode(vector<NormalSuffixNodeContainer> &m_store1) {
       SuffixNode s(0,0,0);
       s.parent          = parent;
       s.label_start     = label_start;
       s.suffix_link     = suffix_link;
       s.next_left_leaf  = next_right_leaf;
       s.next_right_leaf = next_right_leaf;
-      s.depth           = depth;
-
+      s.depth = m_store1[s.parent].get_depth();
       return s;
     }
 };
@@ -491,7 +492,7 @@ public:
 
     int id = get_store_id(idx);
     if(id == 0) return m_store1[idx           ].get_suffixnode(m_childstore);
-    if(id == 1) return m_store2[idx-0x01000000].get_suffixnode();
+    if(id == 1) return m_store2[idx-0x01000000].get_suffixnode(m_store1);
   }
 
   void set(int idx, SuffixNode &s) {
@@ -573,6 +574,5 @@ public:
   ChildListStore m_childstore;
 };
 
-int32_t NormalSuffixNodeContainer::invalidation_count = 0;
 
 #endif
