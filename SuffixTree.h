@@ -342,9 +342,9 @@ cout << "end  :" << end << endl;
   }
 
   int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split,int &fnode,int &fpos) {
-  //  cout << "extend2, insertion_point   : " << insertion_point << endl;
-  //  cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
-  //  cout << "extend2, label_start       : " << store.get(insertion_point).label_start << endl;
+    //cout << "extend2, insertion_point   : " << insertion_point << endl;
+    //cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
+    //cout << "extend2, label_start       : " << store.get(insertion_point).label_start << endl;
     fnode = insertion_point;
     fpos  = symbol_index_start;
 
@@ -368,6 +368,7 @@ cout << "end  :" << end << endl;
         // if it doesn't exist add it.
         SuffixNode sn(insertion_point,symbol_index_start,0);
         sn.label_start = symbol_index_start;
+        sn.label_end   = -1;
         sn.suffix_link = 0;
         split = true;
         sn.set_depth(insertion_point_tmp.get_depth());
@@ -381,14 +382,16 @@ cout << "end  :" << end << endl;
       }
     }
 
+ //   cout << "********************************************* edge_length: " << edge_length << endl;
     bool dontdoit=false;
+    if(edge_length == 0) {
     // match at label start position?
-    if(edge_length == 0 && s[insertion_point_tmp.label_start] == s[symbol_index_start]) {
+    if((edge_length == 0) && (s[insertion_point_tmp.label_start] == s[symbol_index_start])) {
       symbol_index_start++;
       dontdoit=true;
     } else
-    if(edge_length == 0 && s[insertion_point_tmp.label_start] != s[symbol_index_start]) {
-
+    if((edge_length == 0) && (s[insertion_point_tmp.label_start] != s[symbol_index_start])) {
+//cout << "****************************************** I SHOULD BE HERE" << endl;
       // mismatch at label start position - add new child to parent!
 
       int parent = insertion_point_tmp.get_parent();
@@ -403,16 +406,19 @@ cout << "end  :" << end << endl;
         int sn_idx = store.push_back(sn);
         parent_tmp.set_child(s[symbol_index_start],sn_idx);
         store.set(parent,parent_tmp);
-//        cout << "2ADD NODE: " << endl;
+       // cout << "2ADD NODE: " << endl;
        // cout << "extend2 endpoint 2" << endl;
         return sn_idx;
       } else {
+        return extend2(child,symbol_index_start+1,symbol_index_end,split,fnode,fpos);
+
         // Should really never reach this point.
 cout << "NEVER EVER GET HERE EVER EVER" << endl;
 dump();
 cout << "NEVER EVER GET HERE EVER EVER" << endl;
         exit(0);
       }
+    }
     }
 
     int start_val =0;
@@ -508,20 +514,65 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
     // if a child does not exist add
     if(insertion_point_tmp.get_child(child_sym) == -1) {
+
+// we seem to get here even though insertion point has a label length of 0... how?
+      // we should replace the edge label with our own...
+
+      if(insertion_point_tmp.label_end == -1) {
+        store.set(insertion_point,insertion_point_tmp);
+        return insertion_point;
+      }
+
+      int l = insertion_point_tmp.get_label_length_r();
+ 
+      if(insertion_point_tmp.isleaf()) {
+        cout << "WTF it's a leaf?!?" << endl;
+        cout << "orig name: " << l << endl;
+        cout << "1insstart: " << insertion_point_tmp.label_start << endl;
+        cout << "1insend  : " << insertion_point_tmp.label_end << endl;
+        cout << "1s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
+
+        cout << "2insstart: " << symbol_index_start << endl;
+        cout << "2insend  : " << symbol_index_end << endl;
+        cout << "2s[labelstart]: " << (int) s[symbol_index_start] << endl;
+        exit(0);
+      }
+/*
+      int l = insertion_point_tmp.get_label_length_r();
+      cout << "orig name: " << l << endl;
+      cout << "1insstart: " << insertion_point_tmp.label_start << endl;
+      cout << "1insend  : " << insertion_point_tmp.label_end << endl;
+      cout << "1s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
+      insertion_point_tmp.label_start = symbol_index_start;
+      insertion_point_tmp.label_end   = symbol_index_end;
+      cout << "2insstart: " << insertion_point_tmp.label_start << endl;
+      cout << "2insend  : " << insertion_point_tmp.label_end << endl;
+      cout << "2s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
+      l = insertion_point_tmp.get_label_length_r();
+      cout << "new  name: " << l << endl;
+      store.set(insertion_point,insertion_point_tmp);
+
+      return insertion_point;
+*/
       //cout << "Extend2 condition 2b: no children at point past edge label" << endl;
       //cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
+      //
+
+      // if we get here we really MUST have other children.
       SuffixNode newnode(insertion_point,pos,0);
       newnode.label_end   = SuffixNode::end_marker;
 
       split=true;
       newnode.set_depth(insertion_point_tmp.get_depth());
       int n_idx = store.push_back(newnode);
+//dump();
 //      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
       insertion_point_tmp.set_child(child_sym,n_idx);
       store.set(insertion_point,insertion_point_tmp);
 	//cout << "n4" << endl;
       //cout << "extend2 endpoint 6" << endl;
       return n_idx;
+
     }
 
     // if a child does exist, recurse
@@ -668,7 +719,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       if((!first) && last_split) {
         last_node_tmp.suffix_link = newnode;
         store.set(last_node,last_node_tmp);
-
         SuffixNode last_node_tmp_parent = store.get(last_node_tmp.parent);
         last_node_tmp_parent.suffix_link = newnode_tmp.parent;
         store.set(last_node_tmp.parent,last_node_tmp_parent);
@@ -696,7 +746,7 @@ c++;
 
   void dump() {
     cout << "****************************** Tree dump" << endl;
-    for(int64_t n=0;n<store.size();n++) {
+    for(int64_t n=0;n!=store.last_idx();n=store.next_idx(n)) {
       cout << "node: " << n << endl;
       SuffixNode n_tmp = store.get(n);
       cout << "label: " << n_tmp.label_start << " ";

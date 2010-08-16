@@ -38,6 +38,8 @@ int test_suffixtree_time(UnitTest &utf) {
 
   long int tree_time100000 = make_tree(100000); 
   long int tree_time200000 = make_tree(200000); 
+  cout << "100000 time: " << tree_time100000 << endl;
+  cout << "200000 time: " << tree_time200000 << endl;
   utf.test_truth(tree_time200000 <= (tree_time100000*2)+60000);
 
   utf.end_test_set();

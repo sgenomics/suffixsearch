@@ -20,7 +20,7 @@ class SuffixNode {
 
 public:
 
-  SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in),m_children(NULL) {
+  SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
     clear_children();
 
@@ -32,7 +32,7 @@ public:
   }
 
   bool isleaf() {
-    if(m_children == NULL) return true;
+    if(m_children.size() ==0 ) return true;
     return false;
   }
 
@@ -57,12 +57,11 @@ public:
   }
 
   void clear_children() {
-
-    if(m_children != NULL) m_children->clear();
+    m_children.clear();
   }
 
   void copy_children(SuffixNode &other) {
-    *m_children = *(other.m_children);
+    m_children = other.m_children;
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
@@ -73,7 +72,6 @@ public:
 
   int first_child() {
 
-    if(m_children != NULL)
     for(int64_t n=0;n<symbol_size;n++) {
       if(get_child(n) != -1) return n;
     }
@@ -83,7 +81,6 @@ public:
 
   int find_child(int c) {
 
-    if(m_children != NULL)
     for(int64_t n=0;n<symbol_size;n++) {
       if(get_child(n) == c) return n;
     }
@@ -102,10 +99,7 @@ public:
   }
 
   int child_count() {
-    int i=0;
-
-    if(m_children != NULL) return m_children->size();
-    return i;
+    return m_children.size();
   }
 
   int get_parent() {
@@ -122,18 +116,17 @@ public:
   int get_child(int n) {
     if(isleaf()) return -1;
 
-    return m_children->get(n);
+    return m_children.get(n);
   }
 
   void set_child(int n,int m) {
-    if(m_children == NULL) m_children = new ChildStore();
-    m_children->set(n,m);
+    m_children.set(n,m);
   }
 
   int32_t parent;
   int32_t label_start;
   int32_t label_end  ;
-  ChildStore *m_children;
+  ChildStore m_children;
   int32_t suffix_link;
   int32_t next_left_leaf;
   int32_t next_right_leaf;
