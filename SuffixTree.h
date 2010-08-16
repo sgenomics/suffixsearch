@@ -914,6 +914,10 @@ c++;
     return true;
   }
 
+  void compact() {
+    store.compact();
+  }
+
   TranscodingStore   s;
   SuffixNodeStore store;
 

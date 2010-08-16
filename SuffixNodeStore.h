@@ -48,8 +48,8 @@ class ChildList {
     }
 
     bool isvalid() {
-      if(index[0] == -1) return false;
-      return true;
+      for(size_t n=0;n<childcount;n++) {if (index[n] != -1) return true;}
+      return false;
     }
 
     int32_t symbol[childcount];
@@ -258,6 +258,8 @@ public:
     compact_vec(children_38,mapping,0x26000000);
     compact_vec(children_39,mapping,0x27000000);
     compact_vec(children_40,mapping,0x28000000);
+
+    return mapping;
   }
 
 
@@ -268,13 +270,17 @@ public:
     size_t new_idx = 0;
     for(size_t n=0;n<v.size();n++) {
       if(v[n].isvalid()) {
-        new_idx++;
+        //cout << "mapping: " << n+id << " to " << new_idx+id << endl;
         mapping[n+id] = new_idx + id;
+        new_idx++;
       }
     }
 
     // Clean up the vector
+    size_t old_size = v.size();
+    cout << "pre compact child store size: " << v.size();
     v.erase(remove_if(v.begin(), v.end(), isinvalid<typename vec_type::value_type> ), v.end());
+    cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
   }
 
   vector<ChildList<2> >  children_2;
@@ -332,6 +338,8 @@ class NormalSuffixNodeContainer {
 
     int32_t childlist_idx;
 
+    static int32_t invalidation_count;
+
     NormalSuffixNodeContainer(SuffixNode &s,ChildListStore &c,int32_t cidx) {
 
       parent          = s.parent;
@@ -350,6 +358,7 @@ class NormalSuffixNodeContainer {
 
         // I might need to settle for periodically garbage collecting these guys.
         c.invalidate(cidx);
+        invalidation_count++;
         // add new children idx
         childlist_idx = c.push_back(s.m_children.m_symbols);
         return;
@@ -488,6 +497,7 @@ public:
   void set(int idx, SuffixNode &s) {
     int id = get_store_id(idx);
 
+    compact();
     if(idx == 0) {
       m_rootnode = s;
       return;
@@ -536,8 +546,10 @@ public:
   }
 
   void apply_mapping(map<int32_t,int32_t> &mapping) {
+ //   cout << "mapping size: " << mapping.size() << endl;
+
     for(size_t n=0;n<m_store1.size();n++) {
-      m_store1[n].childlist_idx = mapping[m_store1[n].childlist_idx];
+      if(m_store1[n].childlist_idx != -1) m_store1[n].childlist_idx = mapping[m_store1[n].childlist_idx];
     }
   }
 
@@ -545,9 +557,12 @@ public:
     // remove invalidated items from childstore.
     // note: this should not invalidate any SuffixNode objects that have been returned.
 
-    map<int32_t,int32_t> id_mapping = m_childstore.compact();
-    
-    apply_mapping(id_mapping);
+    if(NormalSuffixNodeContainer::invalidation_count == 100000) {
+      map<int32_t,int32_t> id_mapping = m_childstore.compact();
+      apply_mapping(id_mapping);
+
+      NormalSuffixNodeContainer::invalidation_count = 0;
+    }
   }
 
   vector<NormalSuffixNodeContainer> m_store1;
@@ -557,5 +572,7 @@ public:
 
   ChildListStore m_childstore;
 };
+
+int32_t NormalSuffixNodeContainer::invalidation_count = 0;
 
 #endif

@@ -17,10 +17,12 @@ int main(int argc,char ** argv) {
 
   SuffixTree st;
 
-  for(;!infile.eof();) {
+  for(size_t n=0;!infile.eof();n++) {
     char c;
     infile.get(c);
     st.insert(c);
+
+   // if(n%10000 == 0) st.compact();
   }
 
   st.finalise();
@@ -29,6 +31,7 @@ int main(int argc,char ** argv) {
   cout << "processing positions" << endl;
   st.process_positions();
   cout << "processed positions" << endl;
+  st.dump_stats();
   st.dump_stats();
   WebSrvSearch web(st,1100);
 

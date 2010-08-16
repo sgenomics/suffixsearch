@@ -22,6 +22,7 @@ int main(int argc,char ** argv) {
   }
 
   st.finalise();
+  st.compact();
 
   vector<char> t;
   string ss = argv[2];
@@ -36,6 +37,7 @@ int main(int argc,char ** argv) {
 
   st.process_positions();
   vector<int> poss = st.all_occurs(t);
+
 
   for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 
