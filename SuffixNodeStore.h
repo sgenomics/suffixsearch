@@ -52,7 +52,7 @@ class ChildList {
       return false;
     }
 
-    int32_t symbol[childcount];
+    int8_t  symbol[childcount];
     int32_t index [childcount];
 };
 
@@ -330,7 +330,7 @@ class NormalSuffixNodeContainer {
 
     int32_t parent;
     int32_t label_start;
-    int32_t label_end;
+//    int32_t label_end;
     int32_t suffix_link;
     int32_t next_left_leaf;
     int32_t next_right_leaf;
@@ -344,7 +344,7 @@ class NormalSuffixNodeContainer {
 
       parent          = s.parent;
       label_start     = s.label_start;
-      label_end       = s.label_end;
+//      label_end       = s.label_end;
       suffix_link     = s.suffix_link;
       next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
@@ -381,7 +381,7 @@ class NormalSuffixNodeContainer {
 
       parent          = s.parent;
       label_start     = s.label_start;
-      label_end       = s.label_end;
+ //     label_end       = s.label_end;
       suffix_link     = s.suffix_link;
       next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
@@ -399,11 +399,14 @@ class NormalSuffixNodeContainer {
       return c.get_store_id(childlist_idx);
     }
 
-    SuffixNode get_suffixnode(ChildListStore &c) {
+    SuffixNode get_suffixnode(ChildListStore &c,vector<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent = parent;
       s.label_start = label_start;
-      s.label_end   = label_end;
+
+      int32_t pred_end = label_start + (depth - store[parent].depth)-1;
+      s.label_end   = pred_end; //label_end;
+  //    if(label_end != pred_end) cout << "EEEEEEEEEEERRRRRRRRRRRRRRRORRRR: " << label_end << "!=" << pred_end << endl;
       s.next_left_leaf = next_left_leaf;
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
@@ -490,7 +493,7 @@ public:
     }
 
     int id = get_store_id(idx);
-    if(id == 0) return m_store1[idx           ].get_suffixnode(m_childstore);
+    if(id == 0) return m_store1[idx           ].get_suffixnode(m_childstore,m_store1);
     if(id == 1) return m_store2[idx-0x01000000].get_suffixnode(m_store1);
   }
 
