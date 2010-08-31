@@ -2,6 +2,7 @@
 #define CHILDSTORE
 
 #include <vector>
+#include <stdint.h>
 
 using namespace std;
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "SuffixTree.h"
+#include <stdint.h>
 
 using namespace std;
 

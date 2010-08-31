@@ -375,14 +375,12 @@ cout << "end  :" << end << endl;
         int sn_idx = store.push_back(sn);
         insertion_point_tmp.set_child(s[symbol_index_start],sn_idx);// next insert
         store.set(insertion_point,insertion_point_tmp);
-       // cout << "n1" << endl;
 //        cout << "1 ADD NODE: " << sn_idx << endl;
         //cout << "extend2 endpoint 1" << endl;
         return sn_idx;
       }
     }
 
- //   cout << "********************************************* edge_length: " << edge_length << endl;
     bool dontdoit=false;
     if(edge_length == 0) {
     // match at label start position?
@@ -391,7 +389,6 @@ cout << "end  :" << end << endl;
       dontdoit=true;
     } else
     if((edge_length == 0) && (s[insertion_point_tmp.label_start] != s[symbol_index_start])) {
-//cout << "****************************************** I SHOULD BE HERE" << endl;
       // mismatch at label start position - add new child to parent!
 
       int parent = insertion_point_tmp.get_parent();

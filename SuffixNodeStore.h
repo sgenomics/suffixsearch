@@ -330,13 +330,12 @@ class NormalSuffixNodeContainer {
 
     int32_t parent;
     int32_t label_start;
-//    int32_t label_end;
     int32_t suffix_link;
     int32_t next_left_leaf;
     int32_t next_right_leaf;
     int32_t depth;
 
-    int32_t childlist_idx;
+    int32_t  childlist_idx;
 
     static int32_t invalidation_count;
 
@@ -344,7 +343,6 @@ class NormalSuffixNodeContainer {
 
       parent          = s.parent;
       label_start     = s.label_start;
-//      label_end       = s.label_end;
       suffix_link     = s.suffix_link;
       next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
@@ -381,7 +379,6 @@ class NormalSuffixNodeContainer {
 
       parent          = s.parent;
       label_start     = s.label_start;
- //     label_end       = s.label_end;
       suffix_link     = s.suffix_link;
       next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
@@ -399,14 +396,27 @@ class NormalSuffixNodeContainer {
       return c.get_store_id(childlist_idx);
     }
 
+    int32_t leaf_child_count(ChildListStore &c) {
+
+      if(childlist_idx == -1) return 50;
+      vector<SymbolPair> s = c.get_children(childlist_idx);
+
+      int32_t end_children = 0;
+      for(size_t n=0;n<s.size();n++) {
+        if((s[n].index & 0xFF000000) > 0) end_children++;
+//        else {end_children = 51; break;}
+      }
+
+      return end_children;
+    }
+
     SuffixNode get_suffixnode(ChildListStore &c,vector<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent = parent;
       s.label_start = label_start;
 
       int32_t pred_end = label_start + (depth - store[parent].depth)-1;
-      s.label_end   = pred_end; //label_end;
-  //    if(label_end != pred_end) cout << "EEEEEEEEEEERRRRRRRRRRRRRRRORRRR: " << label_end << "!=" << pred_end << endl;
+      s.label_end   = pred_end; 
       s.next_left_leaf = next_left_leaf;
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
@@ -436,14 +446,39 @@ class EndSuffixNodeContainer {
     }
 
 
-    SuffixNode get_suffixnode(vector<NormalSuffixNodeContainer> &m_store1) {
+    SuffixNode get_suffixnode(ChildListStore &c,vector<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent          = parent;
       s.label_start     = label_start;
       s.suffix_link     = suffix_link;
       s.next_left_leaf  = next_right_leaf;
       s.next_right_leaf = next_right_leaf;
-      s.depth = m_store1[s.parent].get_depth();
+      s.depth = store[s.parent].get_depth();
+
+
+      SuffixNode parent = store[s.parent].get_suffixnode(c,store);
+      SuffixNode parentsl = store[store[s.parent].suffix_link].get_suffixnode(c,store);
+
+      bool ucomp=true;
+      bool found = false;
+      if(store[s.parent].suffix_link == suffix_link) found=true;
+      for(int n=0;n<=40;n++) {
+        int32_t id = parentsl.get_child(n);
+        if(id == suffix_link) found = true;
+      }
+      if(!found) {cout << "slincomp" << endl; ucomp=false;}
+      if(found) cout << "slcomp" << endl;
+
+//      if(label_start != parent.label_start) { cout << "label_start: " << label_start << " par: " << parent.label_end << endl; ucomp=false;}
+
+      found = false;
+      for(int n=0;n<=40;n++) {
+        if(next_right_leaf == parent.get_child(n)) found = true;
+      }
+      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
+      if(found) cout << "nrcomp" << endl;
+  //    if(ucomp == true) cout << "ULTRACOMPRESS!" << endl;
+
       return s;
     }
 };
@@ -493,8 +528,8 @@ public:
     }
 
     int id = get_store_id(idx);
-    if(id == 0) return m_store1[idx           ].get_suffixnode(m_childstore,m_store1);
-    if(id == 1) return m_store2[idx-0x01000000].get_suffixnode(m_store1);
+    if(id == 0) return m_store1[idx                 ].get_suffixnode(m_childstore,m_store1);
+    if(id >  0) return m_store2[idx & 0x00FFFFFF].get_suffixnode(m_childstore,m_store1);
   }
 
   void set(int idx, SuffixNode &s) {
@@ -506,9 +541,9 @@ public:
       return;
     }
 
-
-    if(id == 0) m_store1[idx           ] = NormalSuffixNodeContainer(s,m_childstore,m_store1[idx].childlist_idx);
-    if(id == 1) m_store2[idx-0x01000000] = EndSuffixNodeContainer(s);
+    // insane in the membrane
+    if(id == 0) m_store1[idx             ] = NormalSuffixNodeContainer(s,m_childstore,m_store1[idx].childlist_idx);
+    if(id >  0) m_store2[idx & 0x00FFFFFF] = EndSuffixNodeContainer(s);
   }
 
   int size() {
@@ -532,10 +567,11 @@ public:
     return 0x01000000+m_store2.size();
   }
 
-
   void stats() {
     cout << "Normal node count: " << m_store1.size() << endl;
     cout << "End    node count: " << m_store2.size() << endl;
+    cout << "Normal node size : " << sizeof(NormalSuffixNodeContainer) << endl;
+    cout << "End    node size : " << sizeof(EndSuffixNodeContainer) << endl;
 
     int count[100];
     for(int n=0;n<100;n++) count[n] = 0;
@@ -546,10 +582,19 @@ public:
 
     cout << "counts" << endl;
     for(int n=0;n<100;n++) cout << n << " " << count[n] << endl;
+
+    int leaf_count[100];
+    for(int n=0;n<100;n++) leaf_count[n] = 0;
+    for(size_t n=0;n<m_store1.size();n++) {
+      int d = m_store1[n].leaf_child_count(m_childstore);
+      leaf_count[d]++;
+    }
+    cout << "leaf only counts: " << endl;
+    for(int n=0;n<100;n++) cout << n << " " << leaf_count[n] << endl;
+
   }
 
   void apply_mapping(map<int32_t,int32_t> &mapping) {
- //   cout << "mapping size: " << mapping.size() << endl;
 
     for(size_t n=0;n<m_store1.size();n++) {
       if(m_store1[n].childlist_idx != -1) m_store1[n].childlist_idx = mapping[m_store1[n].childlist_idx];
@@ -569,7 +614,7 @@ public:
   }
 
   vector<NormalSuffixNodeContainer> m_store1;
-  vector<EndSuffixNodeContainer   > m_store2;
+  vector<EndSuffixNodeContainer>   m_store2;
 
   SuffixNode m_rootnode;
 
