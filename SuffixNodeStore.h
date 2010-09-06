@@ -466,8 +466,8 @@ class EndSuffixNodeContainer {
         int32_t id = parentsl.get_child(n);
         if(id == suffix_link) found = true;
       }
-      if(!found) {cout << "slincomp" << endl; ucomp=false;}
-      if(found) cout << "slcomp" << endl;
+//      if(!found) {cout << "slincomp" << endl; ucomp=false;}
+//      if(found) cout << "slcomp" << endl;
 
 //      if(label_start != parent.label_start) { cout << "label_start: " << label_start << " par: " << parent.label_end << endl; ucomp=false;}
 
@@ -475,8 +475,8 @@ class EndSuffixNodeContainer {
       for(int n=0;n<=40;n++) {
         if(next_right_leaf == parent.get_child(n)) found = true;
       }
-      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
-      if(found) cout << "nrcomp" << endl;
+//      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
+//      if(found) cout << "nrcomp" << endl;
   //    if(ucomp == true) cout << "ULTRACOMPRESS!" << endl;
 
       return s;
