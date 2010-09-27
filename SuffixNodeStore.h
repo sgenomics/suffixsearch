@@ -4,6 +4,7 @@
 #include <vector>
 #include <map>
 #include <algorithm>
+#include "ObjectStore.h"
 
 using namespace std;
 
@@ -63,47 +64,48 @@ public:
   vector<SymbolPair> get_children(int32_t idx) {
 
     int id = get_store_id(idx);
-    if(id == 1) {cout << "GETerror nodes with one child should not be possible" << endl; children_2[10000000] = -1; }
-    if(id == 2 ) return children_2 [0x00FFFFFF & idx].get_childlist();
-    if(id == 3 ) return children_3 [0x00FFFFFF & idx].get_childlist();
-    if(id == 4 ) return children_4 [0x00FFFFFF & idx].get_childlist();
-    if(id == 5 ) return children_5 [0x00FFFFFF & idx].get_childlist();
-    if(id == 6 ) return children_6 [0x00FFFFFF & idx].get_childlist();
-    if(id == 7 ) return children_7 [0x00FFFFFF & idx].get_childlist();
-    if(id == 8 ) return children_8 [0x00FFFFFF & idx].get_childlist();
-    if(id == 9 ) return children_9 [0x00FFFFFF & idx].get_childlist();
-    if(id == 10) return children_10[0x00FFFFFF & idx].get_childlist();
-    if(id == 11) return children_11[0x00FFFFFF & idx].get_childlist();
-    if(id == 12) return children_12[0x00FFFFFF & idx].get_childlist();
-    if(id == 13) return children_13[0x00FFFFFF & idx].get_childlist();
-    if(id == 14) return children_14[0x00FFFFFF & idx].get_childlist();
-    if(id == 15) return children_15[0x00FFFFFF & idx].get_childlist();
-    if(id == 16) return children_16[0x00FFFFFF & idx].get_childlist();
-    if(id == 17) return children_17[0x00FFFFFF & idx].get_childlist();
-    if(id == 18) return children_18[0x00FFFFFF & idx].get_childlist();
-    if(id == 19) return children_19[0x00FFFFFF & idx].get_childlist();
-    if(id == 20) return children_20[0x00FFFFFF & idx].get_childlist();
-    if(id == 21) return children_21[0x00FFFFFF & idx].get_childlist();
-    if(id == 22) return children_22[0x00FFFFFF & idx].get_childlist();
-    if(id == 23) return children_23[0x00FFFFFF & idx].get_childlist();
-    if(id == 24) return children_24[0x00FFFFFF & idx].get_childlist();
-    if(id == 25) return children_25[0x00FFFFFF & idx].get_childlist();
-    if(id == 26) return children_26[0x00FFFFFF & idx].get_childlist();
-    if(id == 27) return children_27[0x00FFFFFF & idx].get_childlist();
-    if(id == 28) return children_28[0x00FFFFFF & idx].get_childlist();
-    if(id == 29) return children_29[0x00FFFFFF & idx].get_childlist();
-    if(id == 30) return children_30[0x00FFFFFF & idx].get_childlist();
-    if(id == 31) return children_31[0x00FFFFFF & idx].get_childlist();
-    if(id == 32) return children_32[0x00FFFFFF & idx].get_childlist();
-    if(id == 33) return children_33[0x00FFFFFF & idx].get_childlist();
-    if(id == 34) return children_34[0x00FFFFFF & idx].get_childlist();
-    if(id == 35) return children_35[0x00FFFFFF & idx].get_childlist();
-    if(id == 36) return children_36[0x00FFFFFF & idx].get_childlist();
-    if(id == 37) return children_37[0x00FFFFFF & idx].get_childlist();
-    if(id == 38) return children_38[0x00FFFFFF & idx].get_childlist();
-    if(id == 39) return children_39[0x00FFFFFF & idx].get_childlist();
-    if(id == 40) return children_40[0x00FFFFFF & idx].get_childlist();
-    cout << "1error invalid id" << endl; children_2[10000000] = -1;
+    if(id == 0) {cout << "GETerror nodes with 0   child should not be possible" << endl; int *i=0;*i=1; }
+    if(id == 1) {cout << "GETerror nodes with one child should not be possible" << endl; int *i=0;*i=1; }
+    if(id == 2 ) return children_2 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 3 ) return children_3 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 4 ) return children_4 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 5 ) return children_5 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 6 ) return children_6 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 7 ) return children_7 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 8 ) return children_8 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 9 ) return children_9 .get(0x00FFFFFF & idx).get_childlist();
+    if(id == 10) return children_10.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 11) return children_11.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 12) return children_12.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 13) return children_13.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 14) return children_14.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 15) return children_15.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 16) return children_16.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 17) return children_17.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 18) return children_18.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 19) return children_19.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 20) return children_20.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 21) return children_21.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 22) return children_22.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 23) return children_23.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 24) return children_24.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 25) return children_25.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 26) return children_26.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 27) return children_27.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 28) return children_28.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 29) return children_29.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 30) return children_30.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 31) return children_31.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 32) return children_32.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 33) return children_33.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 34) return children_34.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 35) return children_35.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 36) return children_36.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 37) return children_37.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 38) return children_38.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 39) return children_39.get(0x00FFFFFF & idx).get_childlist();
+    if(id == 40) return children_40.get(0x00FFFFFF & idx).get_childlist();
+    cout << "1error invalid id" << endl; children_2.set(10000000,-1);
   }
 
   void set_children(int32_t idx,vector<SymbolPair> &p) {
@@ -111,54 +113,54 @@ public:
     int32_t id = get_store_id(idx);
     if(id != p.size()) { cout << "ERROR: new size does not equal old size cannot use same idx" << endl; return; }
 
-    if(id == 1) {cout << "error nodes with one child should not be possible" << endl; children_2[10000000] = -1; } else
-    if(id == 2) { for(size_t i=0;i<p.size();i++) { children_2 [idx-0x02000000].symbol[i] = p[i].symbol; children_2 [idx-0x02000000].index[i] = p[i].index; } } else
-    if(id == 3) { for(size_t i=0;i<p.size();i++) { children_3 [idx-0x03000000].symbol[i] = p[i].symbol; children_3 [idx-0x03000000].index[i] = p[i].index; } } else
-    if(id == 4) { for(size_t i=0;i<p.size();i++) { children_4 [idx-0x04000000].symbol[i] = p[i].symbol; children_4 [idx-0x04000000].index[i] = p[i].index; } } else
-    if(id == 5) { for(size_t i=0;i<p.size();i++) { children_5 [idx-0x05000000].symbol[i] = p[i].symbol; children_5 [idx-0x05000000].index[i] = p[i].index; } } else
-    if(id == 6) { for(size_t i=0;i<p.size();i++) { children_6 [idx-0x06000000].symbol[i] = p[i].symbol; children_6 [idx-0x06000000].index[i] = p[i].index; } } else
-    if(id == 7) { for(size_t i=0;i<p.size();i++) { children_7 [idx-0x07000000].symbol[i] = p[i].symbol; children_7 [idx-0x07000000].index[i] = p[i].index; } } else
-    if(id == 8) { for(size_t i=0;i<p.size();i++) { children_8 [idx-0x08000000].symbol[i] = p[i].symbol; children_8 [idx-0x08000000].index[i] = p[i].index; } } else
-    if(id == 9) { for(size_t i=0;i<p.size();i++) { children_9 [idx-0x09000000].symbol[i] = p[i].symbol; children_9 [idx-0x09000000].index[i] = p[i].index; } } else
-    if(id ==10) { for(size_t i=0;i<p.size();i++) { children_10[idx-0x0A000000].symbol[i] = p[i].symbol; children_10[idx-0x0A000000].index[i] = p[i].index; } } else
-    if(id ==11) { for(size_t i=0;i<p.size();i++) { children_11[idx-0x0B000000].symbol[i] = p[i].symbol; children_11[idx-0x0B000000].index[i] = p[i].index; } } else
-    if(id ==12) { for(size_t i=0;i<p.size();i++) { children_12[idx-0x0C000000].symbol[i] = p[i].symbol; children_12[idx-0x0C000000].index[i] = p[i].index; } } else
-    if(id ==13) { for(size_t i=0;i<p.size();i++) { children_13[idx-0x0D000000].symbol[i] = p[i].symbol; children_13[idx-0x0D000000].index[i] = p[i].index; } } else
-    if(id ==14) { for(size_t i=0;i<p.size();i++) { children_14[idx-0x0E000000].symbol[i] = p[i].symbol; children_14[idx-0x0E000000].index[i] = p[i].index; } } else
-    if(id ==15) { for(size_t i=0;i<p.size();i++) { children_15[idx-0x0F000000].symbol[i] = p[i].symbol; children_15[idx-0x0F000000].index[i] = p[i].index; } } else
-    if(id ==16) { for(size_t i=0;i<p.size();i++) { children_16[idx-0x10000000].symbol[i] = p[i].symbol; children_16[idx-0x10000000].index[i] = p[i].index; } } else
-    if(id ==17) { for(size_t i=0;i<p.size();i++) { children_17[idx-0x11000000].symbol[i] = p[i].symbol; children_17[idx-0x11000000].index[i] = p[i].index; } } else
-    if(id ==18) { for(size_t i=0;i<p.size();i++) { children_18[idx-0x12000000].symbol[i] = p[i].symbol; children_18[idx-0x12000000].index[i] = p[i].index; } } else
-    if(id ==19) { for(size_t i=0;i<p.size();i++) { children_19[idx-0x13000000].symbol[i] = p[i].symbol; children_19[idx-0x13000000].index[i] = p[i].index; } } else
-    if(id ==20) { for(size_t i=0;i<p.size();i++) { children_20[idx-0x14000000].symbol[i] = p[i].symbol; children_20[idx-0x14000000].index[i] = p[i].index; } } else
-    if(id ==21) { for(size_t i=0;i<p.size();i++) { children_21[idx-0x15000000].symbol[i] = p[i].symbol; children_21[idx-0x15000000].index[i] = p[i].index; } } else
-    if(id ==22) { for(size_t i=0;i<p.size();i++) { children_22[idx-0x16000000].symbol[i] = p[i].symbol; children_22[idx-0x16000000].index[i] = p[i].index; } } else
-    if(id ==23) { for(size_t i=0;i<p.size();i++) { children_23[idx-0x17000000].symbol[i] = p[i].symbol; children_23[idx-0x17000000].index[i] = p[i].index; } } else
-    if(id ==24) { for(size_t i=0;i<p.size();i++) { children_24[idx-0x18000000].symbol[i] = p[i].symbol; children_24[idx-0x18000000].index[i] = p[i].index; } } else
-    if(id ==25) { for(size_t i=0;i<p.size();i++) { children_25[idx-0x19000000].symbol[i] = p[i].symbol; children_25[idx-0x19000000].index[i] = p[i].index; } } else
-    if(id ==26) { for(size_t i=0;i<p.size();i++) { children_26[idx-0x1A000000].symbol[i] = p[i].symbol; children_26[idx-0x1A000000].index[i] = p[i].index; } } else
-    if(id ==27) { for(size_t i=0;i<p.size();i++) { children_27[idx-0x1B000000].symbol[i] = p[i].symbol; children_27[idx-0x1B000000].index[i] = p[i].index; } } else
-    if(id ==28) { for(size_t i=0;i<p.size();i++) { children_28[idx-0x1C000000].symbol[i] = p[i].symbol; children_28[idx-0x1C000000].index[i] = p[i].index; } } else
-    if(id ==29) { for(size_t i=0;i<p.size();i++) { children_29[idx-0x1D000000].symbol[i] = p[i].symbol; children_29[idx-0x1D000000].index[i] = p[i].index; } } else
-    if(id ==30) { for(size_t i=0;i<p.size();i++) { children_30[idx-0x1E000000].symbol[i] = p[i].symbol; children_30[idx-0x1E000000].index[i] = p[i].index; } } else
-    if(id ==31) { for(size_t i=0;i<p.size();i++) { children_31[idx-0x1F000000].symbol[i] = p[i].symbol; children_31[idx-0x1F000000].index[i] = p[i].index; } } else
-    if(id ==32) { for(size_t i=0;i<p.size();i++) { children_32[idx-0x20000000].symbol[i] = p[i].symbol; children_32[idx-0x20000000].index[i] = p[i].index; } } else
-    if(id ==33) { for(size_t i=0;i<p.size();i++) { children_33[idx-0x21000000].symbol[i] = p[i].symbol; children_33[idx-0x21000000].index[i] = p[i].index; } } else
-    if(id ==34) { for(size_t i=0;i<p.size();i++) { children_34[idx-0x22000000].symbol[i] = p[i].symbol; children_34[idx-0x22000000].index[i] = p[i].index; } } else
-    if(id ==35) { for(size_t i=0;i<p.size();i++) { children_35[idx-0x23000000].symbol[i] = p[i].symbol; children_35[idx-0x23000000].index[i] = p[i].index; } } else
-    if(id ==36) { for(size_t i=0;i<p.size();i++) { children_36[idx-0x24000000].symbol[i] = p[i].symbol; children_36[idx-0x24000000].index[i] = p[i].index; } } else
-    if(id ==37) { for(size_t i=0;i<p.size();i++) { children_37[idx-0x25000000].symbol[i] = p[i].symbol; children_37[idx-0x25000000].index[i] = p[i].index; } } else
-    if(id ==38) { for(size_t i=0;i<p.size();i++) { children_38[idx-0x26000000].symbol[i] = p[i].symbol; children_38[idx-0x26000000].index[i] = p[i].index; } } else
-    if(id ==39) { for(size_t i=0;i<p.size();i++) { children_39[idx-0x27000000].symbol[i] = p[i].symbol; children_38[idx-0x27000000].index[i] = p[i].index; } } else
-    if(id ==40) { for(size_t i=0;i<p.size();i++) { children_40[idx-0x28000000].symbol[i] = p[i].symbol; children_38[idx-0x28000000].index[i] = p[i].index; } } else
-    { cout << "2error invalid id" << endl; children_2[10000000] = -1; }
+    if(id == 1) {cout << "error nodes with one child should not be possible" << endl; children_2.set(10000000,-1); } else
+    if(id == 2) { for(size_t i=0;i<p.size();i++) { ChildList<2> original = children_2 .get(idx-0x02000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_2 .set(idx-0x02000000,original); } } else
+    if(id == 3) { for(size_t i=0;i<p.size();i++) { ChildList<3> original = children_3 .get(idx-0x03000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_3 .set(idx-0x03000000,original); } } else
+    if(id == 4) { for(size_t i=0;i<p.size();i++) { ChildList<4> original = children_4 .get(idx-0x04000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_4 .set(idx-0x04000000,original); } } else
+    if(id == 5) { for(size_t i=0;i<p.size();i++) { ChildList<5> original = children_5 .get(idx-0x05000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_5 .set(idx-0x05000000,original); } } else
+    if(id == 6) { for(size_t i=0;i<p.size();i++) { ChildList<6> original = children_6 .get(idx-0x06000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_6 .set(idx-0x06000000,original); } } else
+    if(id == 7) { for(size_t i=0;i<p.size();i++) { ChildList<7> original = children_7 .get(idx-0x07000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_7 .set(idx-0x07000000,original); } } else
+    if(id == 8) { for(size_t i=0;i<p.size();i++) { ChildList<8> original = children_8 .get(idx-0x08000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_8 .set(idx-0x08000000,original); } } else
+    if(id == 9) { for(size_t i=0;i<p.size();i++) { ChildList<9> original = children_9 .get(idx-0x09000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_9 .set(idx-0x09000000,original); } } else
+    if(id ==10) { for(size_t i=0;i<p.size();i++) { ChildList<10>original = children_10.get(idx-0x0A000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_10.set(idx-0x0A000000,original); } } else
+    if(id ==11) { for(size_t i=0;i<p.size();i++) { ChildList<11>original = children_11.get(idx-0x0B000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_11.set(idx-0x0B000000,original); } } else
+    if(id ==12) { for(size_t i=0;i<p.size();i++) { ChildList<12>original = children_12.get(idx-0x0C000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_12.set(idx-0x0C000000,original); } } else
+    if(id ==13) { for(size_t i=0;i<p.size();i++) { ChildList<13>original = children_13.get(idx-0x0D000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_13.set(idx-0x0D000000,original); } } else
+    if(id ==14) { for(size_t i=0;i<p.size();i++) { ChildList<14>original = children_14.get(idx-0x0E000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_14.set(idx-0x0E000000,original); } } else
+    if(id ==15) { for(size_t i=0;i<p.size();i++) { ChildList<15>original = children_15.get(idx-0x0F000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_15.set(idx-0x0F000000,original); } } else
+    if(id ==16) { for(size_t i=0;i<p.size();i++) { ChildList<16>original = children_16.get(idx-0x10000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_16.set(idx-0x10000000,original); } } else
+    if(id ==17) { for(size_t i=0;i<p.size();i++) { ChildList<17>original = children_17.get(idx-0x11000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_17.set(idx-0x11000000,original); } } else
+    if(id ==18) { for(size_t i=0;i<p.size();i++) { ChildList<18>original = children_18.get(idx-0x12000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_18.set(idx-0x12000000,original); } } else
+    if(id ==19) { for(size_t i=0;i<p.size();i++) { ChildList<19>original = children_19.get(idx-0x13000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_19.set(idx-0x13000000,original); } } else
+    if(id ==20) { for(size_t i=0;i<p.size();i++) { ChildList<20>original = children_20.get(idx-0x14000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_20.set(idx-0x14000000,original); } } else
+    if(id ==21) { for(size_t i=0;i<p.size();i++) { ChildList<21>original = children_21.get(idx-0x15000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_21.set(idx-0x15000000,original); } } else
+    if(id ==22) { for(size_t i=0;i<p.size();i++) { ChildList<22>original = children_22.get(idx-0x16000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_22.set(idx-0x16000000,original); } } else
+    if(id ==23) { for(size_t i=0;i<p.size();i++) { ChildList<23>original = children_23.get(idx-0x17000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_23.set(idx-0x17000000,original); } } else
+    if(id ==24) { for(size_t i=0;i<p.size();i++) { ChildList<24>original = children_24.get(idx-0x18000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_24.set(idx-0x18000000,original); } } else
+    if(id ==25) { for(size_t i=0;i<p.size();i++) { ChildList<25>original = children_25.get(idx-0x19000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_25.set(idx-0x19000000,original); } } else
+    if(id ==26) { for(size_t i=0;i<p.size();i++) { ChildList<26>original = children_26.get(idx-0x1A000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_26.set(idx-0x1A000000,original); } } else
+    if(id ==27) { for(size_t i=0;i<p.size();i++) { ChildList<27>original = children_27.get(idx-0x1B000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_27.set(idx-0x1B000000,original); } } else
+    if(id ==28) { for(size_t i=0;i<p.size();i++) { ChildList<28>original = children_28.get(idx-0x1C000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_28.set(idx-0x1C000000,original); } } else
+    if(id ==29) { for(size_t i=0;i<p.size();i++) { ChildList<29>original = children_29.get(idx-0x1D000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_29.set(idx-0x1D000000,original); } } else
+    if(id ==30) { for(size_t i=0;i<p.size();i++) { ChildList<30>original = children_30.get(idx-0x1E000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_30.set(idx-0x1E000000,original); } } else
+    if(id ==31) { for(size_t i=0;i<p.size();i++) { ChildList<31>original = children_31.get(idx-0x1F000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_31.set(idx-0x1F000000,original); } } else
+    if(id ==32) { for(size_t i=0;i<p.size();i++) { ChildList<32>original = children_32.get(idx-0x20000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_32.set(idx-0x20000000,original); } } else
+    if(id ==33) { for(size_t i=0;i<p.size();i++) { ChildList<33>original = children_33.get(idx-0x21000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_33.set(idx-0x21000000,original); } } else
+    if(id ==34) { for(size_t i=0;i<p.size();i++) { ChildList<34>original = children_34.get(idx-0x22000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_34.set(idx-0x22000000,original); } } else
+    if(id ==35) { for(size_t i=0;i<p.size();i++) { ChildList<35>original = children_35.get(idx-0x23000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_35.set(idx-0x23000000,original); } } else
+    if(id ==36) { for(size_t i=0;i<p.size();i++) { ChildList<36>original = children_36.get(idx-0x24000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_36.set(idx-0x24000000,original); } } else
+    if(id ==37) { for(size_t i=0;i<p.size();i++) { ChildList<37>original = children_37.get(idx-0x25000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_37.set(idx-0x25000000,original); } } else
+    if(id ==38) { for(size_t i=0;i<p.size();i++) { ChildList<38>original = children_38.get(idx-0x26000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_38.set(idx-0x26000000,original); } } else
+    if(id ==39) { for(size_t i=0;i<p.size();i++) { ChildList<39>original = children_39.get(idx-0x27000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_39.set(idx-0x27000000,original); } } else
+    if(id ==40) { for(size_t i=0;i<p.size();i++) { ChildList<40>original = children_40.get(idx-0x28000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_40.set(idx-0x28000000,original); } } else
+    { cout << "2error invalid id" << endl; children_2.set(10000000,-1); }
   }
 
   int32_t push_back(vector<SymbolPair> &p) {
 
     // 1. find our which storage section to put it in.
     int id = p.size();
-    if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2[10000000] = -1; }
+    if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2.set(10000000,-1); }
     // 2. put it there
     // 3. return the size()-1
     if(id == 2) {children_2 .push_back(ChildList<2 >().set_children(p)); return 0x02000000+(children_2 .size()-1);}
@@ -200,7 +202,7 @@ public:
     if(id ==38) {children_38.push_back(ChildList<38>().set_children(p)); return 0x26000000+(children_38.size()-1);}
     if(id ==39) {children_39.push_back(ChildList<39>().set_children(p)); return 0x27000000+(children_39.size()-1);}
     if(id ==40) {children_40.push_back(ChildList<40>().set_children(p)); return 0x28000000+(children_40.size()-1);}
-    cout << "0error invalid id" << endl; children_2[10000000] = -1;
+    cout << "0error invalid id" << endl; exit(0);
   }
 
   void invalidate(int32_t i) {
@@ -265,11 +267,11 @@ public:
 
   template<class vec_type>
   void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
-
+/*
     // Generate mapping information
     size_t new_idx = 0;
     for(size_t n=0;n<v.size();n++) {
-      if(v[n].isvalid()) {
+      if(v.get(n).isvalid()) {
         //cout << "mapping: " << n+id << " to " << new_idx+id << endl;
         mapping[n+id] = new_idx + id;
         new_idx++;
@@ -281,47 +283,48 @@ public:
     cout << "pre compact child store size: " << v.size();
     v.erase(remove_if(v.begin(), v.end(), isinvalid<typename vec_type::value_type> ), v.end());
     cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
+    */
   }
 
-  vector<ChildList<2> >  children_2;
-  vector<ChildList<3> >  children_3;
-  vector<ChildList<4> >  children_4;
-  vector<ChildList<5> >  children_5;
-  vector<ChildList<6> >  children_6;
-  vector<ChildList<7> >  children_7;
-  vector<ChildList<8> >  children_8;
-  vector<ChildList<9> >  children_9;
-  vector<ChildList<10> > children_10;
-  vector<ChildList<11> > children_11;
-  vector<ChildList<12> > children_12;
-  vector<ChildList<13> > children_13;
-  vector<ChildList<14> > children_14;
-  vector<ChildList<15> > children_15;
-  vector<ChildList<16> > children_16;
-  vector<ChildList<17> > children_17;
-  vector<ChildList<18> > children_18;
-  vector<ChildList<19> > children_19;
-  vector<ChildList<20> > children_20;
-  vector<ChildList<21> > children_21;
-  vector<ChildList<22> > children_22;
-  vector<ChildList<23> > children_23;
-  vector<ChildList<24> > children_24;
-  vector<ChildList<25> > children_25;
-  vector<ChildList<26> > children_26;
-  vector<ChildList<27> > children_27;
-  vector<ChildList<28> > children_28;
-  vector<ChildList<29> > children_29;
-  vector<ChildList<30> > children_30;
-  vector<ChildList<31> > children_31;
-  vector<ChildList<32> > children_32;
-  vector<ChildList<33> > children_33;
-  vector<ChildList<34> > children_34;
-  vector<ChildList<35> > children_35;
-  vector<ChildList<36> > children_36;
-  vector<ChildList<37> > children_37;
-  vector<ChildList<38> > children_38;
-  vector<ChildList<39> > children_39;
-  vector<ChildList<40> > children_40;
+  ObjectStore<ChildList<2> >  children_2;
+  ObjectStore<ChildList<3> >  children_3;
+  ObjectStore<ChildList<4> >  children_4;
+  ObjectStore<ChildList<5> >  children_5;
+  ObjectStore<ChildList<6> >  children_6;
+  ObjectStore<ChildList<7> >  children_7;
+  ObjectStore<ChildList<8> >  children_8;
+  ObjectStore<ChildList<9> >  children_9;
+  ObjectStore<ChildList<10> > children_10;
+  ObjectStore<ChildList<11> > children_11;
+  ObjectStore<ChildList<12> > children_12;
+  ObjectStore<ChildList<13> > children_13;
+  ObjectStore<ChildList<14> > children_14;
+  ObjectStore<ChildList<15> > children_15;
+  ObjectStore<ChildList<16> > children_16;
+  ObjectStore<ChildList<17> > children_17;
+  ObjectStore<ChildList<18> > children_18;
+  ObjectStore<ChildList<19> > children_19;
+  ObjectStore<ChildList<20> > children_20;
+  ObjectStore<ChildList<21> > children_21;
+  ObjectStore<ChildList<22> > children_22;
+  ObjectStore<ChildList<23> > children_23;
+  ObjectStore<ChildList<24> > children_24;
+  ObjectStore<ChildList<25> > children_25;
+  ObjectStore<ChildList<26> > children_26;
+  ObjectStore<ChildList<27> > children_27;
+  ObjectStore<ChildList<28> > children_28;
+  ObjectStore<ChildList<29> > children_29;
+  ObjectStore<ChildList<30> > children_30;
+  ObjectStore<ChildList<31> > children_31;
+  ObjectStore<ChildList<32> > children_32;
+  ObjectStore<ChildList<33> > children_33;
+  ObjectStore<ChildList<34> > children_34;
+  ObjectStore<ChildList<35> > children_35;
+  ObjectStore<ChildList<36> > children_36;
+  ObjectStore<ChildList<37> > children_37;
+  ObjectStore<ChildList<38> > children_38;
+  ObjectStore<ChildList<39> > children_39;
+  ObjectStore<ChildList<40> > children_40;
 };
 
 class NormalSuffixNodeContainer {
@@ -338,6 +341,9 @@ class NormalSuffixNodeContainer {
     int32_t  childlist_idx;
 
     static int32_t invalidation_count;
+
+    NormalSuffixNodeContainer() {
+    }
 
     NormalSuffixNodeContainer(SuffixNode &s,ChildListStore &c,int32_t cidx) {
 
@@ -410,12 +416,12 @@ class NormalSuffixNodeContainer {
       return end_children;
     }
 
-    SuffixNode get_suffixnode(ChildListStore &c,vector<NormalSuffixNodeContainer> &store) {
+    SuffixNode get_suffixnode(ChildListStore &c,ObjectStore<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent = parent;
       s.label_start = label_start;
 
-      int32_t pred_end = label_start + (depth - store[parent].depth)-1;
+      int32_t pred_end = label_start + (depth - store.get(parent).depth)-1;
       s.label_end   = pred_end; 
       s.next_left_leaf = next_left_leaf;
       s.next_right_leaf = next_right_leaf;
@@ -436,9 +442,12 @@ class EndSuffixNodeContainer {
     int32_t next_right_leaf;
 
     EndSuffixNodeContainer() {
+  //    cout << "ENDNODE default constructor" << endl;
+      parent = -2;
     }
 
     EndSuffixNodeContainer(SuffixNode &s) {
+      if(s.parent == -1) cout << "CREATING AN ENDNODE WITH PARENT OF -1 WEIRD!!!" << endl;
       parent          = s.parent;
       label_start     = s.label_start;
       suffix_link     = s.suffix_link;
@@ -446,37 +455,41 @@ class EndSuffixNodeContainer {
     }
 
 
-    SuffixNode get_suffixnode(ChildListStore &c,vector<NormalSuffixNodeContainer> &store) {
+    SuffixNode get_suffixnode(ChildListStore &c,ObjectStore<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent          = parent;
       s.label_start     = label_start;
       s.suffix_link     = suffix_link;
       s.next_left_leaf  = next_right_leaf;
       s.next_right_leaf = next_right_leaf;
-      s.depth = store[s.parent].get_depth();
+      s.depth = store.get(s.parent).get_depth();
 
 
-      SuffixNode parent = store[s.parent].get_suffixnode(c,store);
-      SuffixNode parentsl = store[store[s.parent].suffix_link].get_suffixnode(c,store);
+//      cout << "fetching parent, id of which is: " << s.parent << endl;
+      if(s.parent == -2) {int *i=0; *i=1;}
+      SuffixNode parent = store.get(s.parent).get_suffixnode(c,store);
+//      SuffixNode parentsl = store.get(store.get(s.parent).suffix_link).get_suffixnode(c,store);
 
       bool ucomp=true;
       bool found = false;
-      if(store[s.parent].suffix_link == suffix_link) found=true;
+      if(store.get(s.parent).suffix_link == suffix_link) found=true;
+/*
       for(int n=0;n<=40;n++) {
         int32_t id = parentsl.get_child(n);
         if(id == suffix_link) found = true;
       }
-//      if(!found) {cout << "slincomp" << endl; ucomp=false;}
-//      if(found) cout << "slcomp" << endl;
-
+      if(!found) {cout << "slincomp" << endl; ucomp=false;}
+      if(found) cout << "slcomp" << endl;
+*/
 //      if(label_start != parent.label_start) { cout << "label_start: " << label_start << " par: " << parent.label_end << endl; ucomp=false;}
 
+/*
       found = false;
       for(int n=0;n<=40;n++) {
         if(next_right_leaf == parent.get_child(n)) found = true;
       }
-//      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
-//      if(found) cout << "nrcomp" << endl;
+      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
+      if(found) cout << "nrcomp" << endl;*/
   //    if(ucomp == true) cout << "ULTRACOMPRESS!" << endl;
 
       return s;
@@ -493,8 +506,8 @@ public:
 
   size_t push_back_norm() {
     SuffixNode s(0,0,0);
-    m_store1.push_back(NormalSuffixNodeContainer(s,m_childstore,-1));
-    return m_store1.size()-1;
+    size_t idx = m_store1.push_back(NormalSuffixNodeContainer(s,m_childstore,-1));
+    return idx;
   }
 
   size_t push_back_end() {
@@ -516,8 +529,7 @@ public:
       return m_store2.size()-1 + 0x01000000;
 
     } else {
-      m_store1.push_back(NormalSuffixNodeContainer(s,m_childstore,-1));
-      return m_store1.size()-1;
+      return m_store1.push_back(NormalSuffixNodeContainer(s,m_childstore,-1));
     }
   }
 
@@ -527,14 +539,16 @@ public:
       return m_rootnode;
     }
 
+    //cout << "get suffixnode: " << idx << endl;
     int id = get_store_id(idx);
-    if(id == 0) return m_store1[idx                 ].get_suffixnode(m_childstore,m_store1);
-    if(id >  0) return m_store2[idx & 0x00FFFFFF].get_suffixnode(m_childstore,m_store1);
+    if(id == 0) return m_store1.get(idx             ).get_suffixnode(m_childstore,m_store1);
+    if(id >  0) return m_store2.get(idx & 0x00FFFFFF).get_suffixnode(m_childstore,m_store1);
   }
 
   void set(int idx, SuffixNode &s) {
     int id = get_store_id(idx);
 
+    //cout << "set suffixnode: " << idx << endl;
     compact();
     if(idx == 0) {
       m_rootnode = s;
@@ -542,8 +556,8 @@ public:
     }
 
     // insane in the membrane
-    if(id == 0) m_store1[idx             ] = NormalSuffixNodeContainer(s,m_childstore,m_store1[idx].childlist_idx);
-    if(id >  0) m_store2[idx & 0x00FFFFFF] = EndSuffixNodeContainer(s);
+    if(id == 0) m_store1.set(idx             ,NormalSuffixNodeContainer(s,m_childstore,m_store1.get(idx).childlist_idx));
+    if(id >  0) m_store2.set(idx & 0x00FFFFFF,EndSuffixNodeContainer(s));
   }
 
   int size() {
@@ -576,7 +590,7 @@ public:
     int count[100];
     for(int n=0;n<100;n++) count[n] = 0;
     for(size_t n=0;n<m_store1.size();n++) {
-      int d = m_store1[n].child_count(m_childstore);
+      int d = m_store1.get(n).child_count(m_childstore);
       count[d]++;
     }
 
@@ -586,7 +600,7 @@ public:
     int leaf_count[100];
     for(int n=0;n<100;n++) leaf_count[n] = 0;
     for(size_t n=0;n<m_store1.size();n++) {
-      int d = m_store1[n].leaf_child_count(m_childstore);
+      int d = m_store1.get(n).leaf_child_count(m_childstore);
       leaf_count[d]++;
     }
     cout << "leaf only counts: " << endl;
@@ -597,7 +611,7 @@ public:
   void apply_mapping(map<int32_t,int32_t> &mapping) {
 
     for(size_t n=0;n<m_store1.size();n++) {
-      if(m_store1[n].childlist_idx != -1) m_store1[n].childlist_idx = mapping[m_store1[n].childlist_idx];
+      if(m_store1.get(n).childlist_idx != -1) m_store1.get(n).childlist_idx = mapping[m_store1.get(n).childlist_idx];
     }
   }
 
@@ -613,8 +627,8 @@ public:
     }
   }
 
-  vector<NormalSuffixNodeContainer> m_store1;
-  vector<EndSuffixNodeContainer>   m_store2;
+  ObjectStore<NormalSuffixNodeContainer> m_store1;
+  ObjectStore<EndSuffixNodeContainer>    m_store2;
 
   SuffixNode m_rootnode;
 
