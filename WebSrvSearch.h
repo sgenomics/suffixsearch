@@ -14,7 +14,7 @@ using namespace std;
 class WebSrvSearch {
 
 public:
-  WebSrvSearch(SuffixTree &store,int port) : m_store(store) {
+  WebSrvSearch(SuffixTree &store,int port) : m_store(store),m_port(port) {
     
   } 
 
@@ -32,7 +32,7 @@ public:
     memset(&stSockAddr, 0, sizeof(struct sockaddr_in));
  
     stSockAddr.sin_family = AF_INET;
-    stSockAddr.sin_port = htons(1100);
+    stSockAddr.sin_port = htons(m_port);
     stSockAddr.sin_addr.s_addr = INADDR_ANY;
  
     if(-1 == bind(SocketFD,(const struct sockaddr *)&stSockAddr, sizeof(struct sockaddr_in)))
@@ -127,6 +127,7 @@ public:
   }
 
   SuffixTree &m_store;
+  int         m_port;
 };
 
 #endif

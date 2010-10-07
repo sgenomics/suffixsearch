@@ -114,6 +114,7 @@ public:
   }
 
   int get_child(int n) {
+//    cout << "SuffixNode getting child: " << n << endl;
     if(isleaf()) return -1;
 
     return m_children.get(n);

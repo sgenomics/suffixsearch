@@ -39,7 +39,7 @@ int main(int argc,char ** argv) {
   st.process_positions();
   vector<int> poss = st.all_occurs(t);
 
-
+  st.dump();
   for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 
 }

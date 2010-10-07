@@ -2,6 +2,7 @@
 #define SUFFIX4_OBJECTSTORE
 
 #include <vector>
+#include <iostream>
 
 using namespace std;
 
@@ -16,25 +17,32 @@ private:
 
 public:
 
-  ObjectStore(size_t storage_size = 50000) : current_max(0) {
+  ObjectStore(size_t storage_size = 50) : current_max(0) {
     initialise(storage_size);
   }
 
-//  static ObjectStore<object_type> *m_instance;
-
   void initialise(size_t storage_size) {
     object_size = sizeof(object_type);
-    storage_area = vector<char>(object_size*storage_size);
+    size_t total_size = object_size*storage_size;
+    cout << "Object store allocating: " << total_size << endl;
+    storage_area = vector<char>(total_size);
   }
-
- /* static ObjectStore<object_type> &get_instance() {
-    if(m_instance == 0) m_instance = new ObjectStore();
-    return *m_instance;
-  }
-  */
 
   void set(size_t index,const object_type &o) {
-    
+
+    size_t write_end_position = (index+2)*(object_size);
+
+    bool expanding = false;
+    if(write_end_position > storage_area.size()) {
+      expanding = true;
+    }
+    if(expanding) cout << "Storage area osize: " << storage_area.size() << endl;
+    for(;write_end_position > storage_area.size();) {
+      storage_area.push_back(0);
+    }
+ //   cout << "write_end_position: " << write_end_position << endl;
+    if(expanding) cout << "Storage area nsize: " << storage_area.size() << endl;
+
     for(size_t n=0;n<object_size;n++) {
       storage_area[(index*object_size)+n] = ((const char *)(&o))[n];
     }
@@ -51,6 +59,7 @@ public:
   }
 
   size_t push_back(const object_type &o) {
+cout << "objectstore pushback" << endl;
     size_t addr = add();
     set(addr,o);
 

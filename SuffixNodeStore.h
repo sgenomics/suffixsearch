@@ -61,13 +61,31 @@ class ChildListStore {
 
 public:
 
+  ChildListStore() {
+  //  cout << "creating a ChildListStore" << endl;
+  }
+
   vector<SymbolPair> get_children(int32_t idx) {
+//cout << "CHILD LIST STORE GET" << endl;
+//    cout << "getting children id: " << idx << endl;
 
     int id = get_store_id(idx);
+//    cout << " id is: "  << id << endl;
     if(id == 0) {cout << "GETerror nodes with 0   child should not be possible" << endl; int *i=0;*i=1; }
     if(id == 1) {cout << "GETerror nodes with one child should not be possible" << endl; int *i=0;*i=1; }
     if(id == 2 ) return children_2 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 3 ) return children_3 .get(0x00FFFFFF & idx).get_childlist();
+/* {
+      vector<SymbolPair> ii =children_3 .get(0x00FFFFFF & idx).get_childlist();
+
+
+      cout << "ChildListStore::get_children dump at id 3" << endl;
+      for(size_t n=0;n<ii.size();n++) {
+        cout << static_cast<int>(ii[n].symbol) << "," << ii[n].index << endl;
+      }
+
+      return ii;
+    }*/
     if(id == 4 ) return children_4 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 5 ) return children_5 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 6 ) return children_6 .get(0x00FFFFFF & idx).get_childlist();
@@ -109,6 +127,8 @@ public:
   }
 
   void set_children(int32_t idx,vector<SymbolPair> &p) {
+
+//    cout << "setting children id: " << idx << endl;
 
     int32_t id = get_store_id(idx);
     if(id != p.size()) { cout << "ERROR: new size does not equal old size cannot use same idx" << endl; return; }
@@ -158,14 +178,48 @@ public:
 
   int32_t push_back(vector<SymbolPair> &p) {
 
+
     // 1. find our which storage section to put it in.
     int id = p.size();
     if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2.set(10000000,-1); }
     // 2. put it there
     // 3. return the size()-1
     if(id == 2) {children_2 .push_back(ChildList<2 >().set_children(p)); return 0x02000000+(children_2 .size()-1);}
-    if(id == 3) {children_3 .push_back(ChildList<3 >().set_children(p)); return 0x03000000+(children_3 .size()-1);}
-    if(id == 4) {children_4 .push_back(ChildList<4 >().set_children(p)); return 0x04000000+(children_4 .size()-1);}
+    if(id == 3) {
+
+      ChildList<3> pi = ChildList<3 >().set_children(p);
+      children_3 .push_back(pi);
+
+      vector<SymbolPair> pp = pi.get_childlist(); 
+
+//      cout << "push_back children id: " << 0x03000000+(children_3 .size()-1) << endl;
+
+//      cout << "dump:" << endl;
+//      for(size_t n=0;n<pp.size();n++) {
+//        cout << static_cast<int>(pp[n].symbol) << "," << pp[n].index << endl;
+//      }
+// cout << "children loc: " << children_3.size()-1 << endl;
+      return 0x03000000+(children_3 .size()-1);
+
+    }
+    if(id == 4) {
+
+      ChildList<4> pi = ChildList<4 >().set_children(p);
+      children_4 .push_back(pi);
+
+      vector<SymbolPair> pp = pi.get_childlist(); 
+/*
+      cout << "push_back children id: " << 0x04000000+(children_4 .size()-1) << endl;
+
+      cout << "dump:" << endl;
+      for(size_t n=0;n<pp.size();n++) {
+        cout << static_cast<int>(pp[n].symbol) << "," << pp[n].index << endl;
+      }
+cout << "children loc: " << children_4.size()-1 << endl;
+*/
+      return 0x03000000+(children_4 .size()-1);
+
+    }
     if(id == 5) {children_5 .push_back(ChildList<5 >().set_children(p)); return 0x05000000+(children_5 .size()-1);}
     if(id == 6) {children_6 .push_back(ChildList<6 >().set_children(p)); return 0x06000000+(children_6 .size()-1);}
     if(id == 7) {children_7 .push_back(ChildList<7 >().set_children(p)); return 0x07000000+(children_7 .size()-1);}
@@ -426,7 +480,12 @@ class NormalSuffixNodeContainer {
       s.next_left_leaf = next_left_leaf;
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
-      if(childlist_idx != -1) s.m_children.m_symbols = c.get_children(childlist_idx);
+      if(childlist_idx != -1) {
+//        cout << "fetching childlist id: " << childlist_idx << endl;
+        s.m_children.m_symbols = c.get_children(childlist_idx);
+      } else {
+//        cout << "-1 child list in normal container" << endl;
+      }
       return s;
     }
 
@@ -500,6 +559,7 @@ class SuffixNodeStore {
 
 public:
   SuffixNodeStore() : m_rootnode(0,0,0) {
+//    cout << "creating a SuffixNodeStore" << endl;
     NormalSuffixNodeContainer s(m_rootnode,m_childstore,-1);
     m_store1.push_back(s); // dummy node, root is stored elsewhere.
   }
@@ -555,7 +615,6 @@ public:
       return;
     }
 
-    // insane in the membrane
     if(id == 0) m_store1.set(idx             ,NormalSuffixNodeContainer(s,m_childstore,m_store1.get(idx).childlist_idx));
     if(id >  0) m_store2.set(idx & 0x00FFFFFF,EndSuffixNodeContainer(s));
   }

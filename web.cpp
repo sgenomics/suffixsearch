@@ -28,12 +28,15 @@ int main(int argc,char ** argv) {
   st.finalise();
   cout << "built suffix tree" << endl;
 
+  //st.dump();
   cout << "processing positions" << endl;
   st.process_positions();
   cout << "processed positions" << endl;
   st.dump_stats();
   st.dump_stats();
-  WebSrvSearch web(st,1100);
+
+ // st.dump();
+  WebSrvSearch web(st,81);
 
   web.start();
 }

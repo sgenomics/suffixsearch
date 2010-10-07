@@ -67,11 +67,10 @@ cout << "processed left positions" << endl;
     for(;;) {
 
       if(childstack.size() == 0) break;
-      int current_node;
-      current_node  = nodestack.back();
+      if(nodestack.size()  == 0) break;
+      int current_node  = nodestack.back();
       nodestack.pop_back();
-      int current_child;
-      current_child = childstack.back();
+      int current_child = childstack.back();
       childstack.pop_back(); 
 
       if(current_node == -1) break;
@@ -99,7 +98,9 @@ cout << "processed left positions" << endl;
         for(;stop == false;) {
 
 	  int nextchild = -1;
+          //cout << "current_child: " << current_child << endl;
           if(current_child >= 0) nextchild = current_node_tmp.get_child(current_child);
+          //cout << "nextchild    : " << nextchild << endl;
 
           if(current_child < 0) {
             stop = true;
@@ -235,9 +236,9 @@ cout << "processed left positions" << endl;
       label = ss[search_string_position];
 
       current_node = current_node_tmp.get_child(label);
+      if(current_node == -1) return -1;
       current_node_tmp = store.get(current_node);
   //    cout << "current_node: " << current_node << endl;
-      if(current_node == -1) return -1;
     }
   }
 
@@ -454,6 +455,9 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         old_parent_tmp.set_child(old_parent_child_symbol,b_idx);
         store.set(old_parent,old_parent_tmp);
 
+        cout << "old_label_start: " << old_label_start << endl;
+        cout << "n              : " << n << endl;
+        cout << "old_label_start+n: " << old_label_start+n << endl;
         b.set_child(s[old_label_start+n],insertion_point);
         b.set_child(s[symbol_index_start+n],c_idx);
 
@@ -578,7 +582,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
   }
 
   void finalise() {
-    insert(final_symbol,true);
+    insert(39,true);
   }
 
   void insert(char current_symbol,bool finalise=false) {
@@ -743,24 +747,49 @@ c++;
 
   void dump() {
     cout << "****************************** Tree dump" << endl;
-    for(int64_t n=0;n!=store.last_idx();n=store.next_idx(n)) {
-      cout << "node: " << n << endl;
-      SuffixNode n_tmp = store.get(n);
-      cout << "label: " << n_tmp.label_start << " ";
-      if(n_tmp.label_end == SuffixNode::end_marker) cout << n_tmp.label_end << "(" << SuffixNode::end_marker_value << ")" << endl;
-                                                  else cout << n_tmp.label_end << endl;
-      cout << "suffix_link    : " << n_tmp.suffix_link    << endl;
-      cout << "parent         : " << n_tmp.parent         << endl;
-      cout << "depth          : " << n_tmp.depth          << endl;
-      cout << "next_left_leaf : " << n_tmp.next_left_leaf << endl;
-      cout << "next_right_leaf: " << n_tmp.next_right_leaf << endl;
-      for(int i=0;i<symbol_size;i++) {
-        if(n_tmp.get_child(i) != -1) { cout << "children[" << i << "]:" << n_tmp.get_child(i) << endl; }
-      }
-    }
+    dump_child(0);
+    dump(0);
     cout << "****************************** Tree dump complete" << endl;
   }
 
+  void dump(int n) {
+
+    SuffixNode n_tmp = store.get(n);
+
+    //for(;all children;) {
+    for(int i=0;i<symbol_size;i++) {
+      if(n_tmp.get_child(i) != -1) { 
+        dump_child(n_tmp.get_child(i));
+        dump      (n_tmp.get_child(i));
+      }
+    }
+  }
+
+
+  void dump_child(int n) {
+    SuffixNode n_tmp = store.get(n);
+    cout << "node: " << n << endl;
+    cout << "label: " << n_tmp.label_start << " ";
+    if(n_tmp.label_end == SuffixNode::end_marker) cout << n_tmp.label_end << "(" << SuffixNode::end_marker_value << ")" << endl;
+                                                  else cout << n_tmp.label_end << endl;
+    cout << "suffix_link    : " << n_tmp.suffix_link    << endl;
+    cout << "parent         : " << n_tmp.parent         << endl;
+    cout << "depth          : " << n_tmp.depth          << endl;
+    cout << "next_left_leaf : " << n_tmp.next_left_leaf << endl;
+    cout << "next_right_leaf: " << n_tmp.next_right_leaf << endl;
+
+    bool has_child=false;
+    for(int i=0;i<symbol_size;i++) {
+      if(n_tmp.get_child(i) != -1) {
+        cout << "children[" << i << "]:" << n_tmp.get_child(i) << endl; 
+        has_child=true;
+      }
+    }
+
+    if(has_child==false) {
+      cout << "************** no children" << endl;
+    }
+  }
 
   string get_path_label(int n) {
 
