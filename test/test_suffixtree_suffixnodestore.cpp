@@ -23,11 +23,10 @@ int test_suffixtree_suffixnodestore(UnitTest &utf) {
   for(size_t n=0;n<10000;n++) {
 
     SuffixNode sn(0,0,10);
-    sn.set_child(rand()%36,(rand()%10000) + 0x02000000);
-    sn.set_child(rand()%36,(rand()%10000) + 0x02000000);
-    sn.set_child(rand()%36,(rand()%10000) + 0x02000000);
-    sn.set_child(rand()%36,(rand()%10000) + 0x02000000);
-
+    int count = ((rand()%35)+2);
+    for(int n=0;sn.child_count()<count;n++) {
+      sn.set_child(rand()%39,(rand()%10000) + 0x02000000);
+    }
 
     sn.parent      = pid;
     sn.label_start = 0;
