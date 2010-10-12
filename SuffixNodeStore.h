@@ -40,8 +40,9 @@ class ChildList {
       return p;
     }
 
-    ChildList &set_children(vector<SymbolPair> &s) {
-      for(size_t n=0;n<s.size();n++) {
+    ChildList<childcount> &set_children(vector<SymbolPair> &s) {
+      if(s.size() > childcount) {cout << "EEEEERRRRORRRRRR" << endl; exit(0);}
+      for(size_t n=0;n<childcount;n++) {
         symbol[n] = s[n].symbol;
         index [n] = s[n].index;
       }
@@ -51,6 +52,18 @@ class ChildList {
     bool isvalid() {
       for(size_t n=0;n<childcount;n++) {if (index[n] != -1) return true;}
       return false;
+    }
+
+    bool operator==(ChildList<childcount> &other) {
+      return equal(other);
+    }
+
+    bool equal(ChildList<childcount> &other) {
+      for(size_t n=0;n<childcount;n++) {
+        if(symbol[n] != other.symbol[n]) { return false; }
+        if(index [n] != other.index [n]) { return false; }
+      }
+      return true;
     }
 
     int8_t  symbol[childcount];
@@ -75,17 +88,6 @@ public:
     if(id == 1) {cout << "GETerror nodes with one child should not be possible" << endl; int *i=0;*i=1; }
     if(id == 2 ) return children_2 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 3 ) return children_3 .get(0x00FFFFFF & idx).get_childlist();
-/* {
-      vector<SymbolPair> ii =children_3 .get(0x00FFFFFF & idx).get_childlist();
-
-
-      cout << "ChildListStore::get_children dump at id 3" << endl;
-      for(size_t n=0;n<ii.size();n++) {
-        cout << static_cast<int>(ii[n].symbol) << "," << ii[n].index << endl;
-      }
-
-      return ii;
-    }*/
     if(id == 4 ) return children_4 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 5 ) return children_5 .get(0x00FFFFFF & idx).get_childlist();
     if(id == 6 ) return children_6 .get(0x00FFFFFF & idx).get_childlist();
@@ -124,6 +126,7 @@ public:
     if(id == 39) return children_39.get(0x00FFFFFF & idx).get_childlist();
     if(id == 40) return children_40.get(0x00FFFFFF & idx).get_childlist();
     cout << "1error invalid id" << endl; children_2.set(10000000,-1);
+    return vector<SymbolPair>();
   }
 
   void set_children(int32_t idx,vector<SymbolPair> &p) {
@@ -131,7 +134,7 @@ public:
 //    cout << "setting children id: " << idx << endl;
 
     int32_t id = get_store_id(idx);
-    if(id != p.size()) { cout << "ERROR: new size does not equal old size cannot use same idx" << endl; return; }
+    if(id != static_cast<int32_t>(p.size())) { cout << "ERROR: new size does not equal old size cannot use same idx" << endl; return; }
 
     if(id == 1) {cout << "error nodes with one child should not be possible" << endl; children_2.set(10000000,-1); } else
     if(id == 2) { for(size_t i=0;i<p.size();i++) { ChildList<2> original = children_2 .get(idx-0x02000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_2 .set(idx-0x02000000,original); } } else
@@ -185,41 +188,8 @@ public:
     // 2. put it there
     // 3. return the size()-1
     if(id == 2) {children_2 .push_back(ChildList<2 >().set_children(p)); return 0x02000000+(children_2 .size()-1);}
-    if(id == 3) {
-
-      ChildList<3> pi = ChildList<3 >().set_children(p);
-      children_3 .push_back(pi);
-
-      vector<SymbolPair> pp = pi.get_childlist(); 
-
-//      cout << "push_back children id: " << 0x03000000+(children_3 .size()-1) << endl;
-
-//      cout << "dump:" << endl;
-//      for(size_t n=0;n<pp.size();n++) {
-//        cout << static_cast<int>(pp[n].symbol) << "," << pp[n].index << endl;
-//      }
-// cout << "children loc: " << children_3.size()-1 << endl;
-      return 0x03000000+(children_3 .size()-1);
-
-    }
-    if(id == 4) {
-
-      ChildList<4> pi = ChildList<4 >().set_children(p);
-      children_4 .push_back(pi);
-
-      vector<SymbolPair> pp = pi.get_childlist(); 
-/*
-      cout << "push_back children id: " << 0x04000000+(children_4 .size()-1) << endl;
-
-      cout << "dump:" << endl;
-      for(size_t n=0;n<pp.size();n++) {
-        cout << static_cast<int>(pp[n].symbol) << "," << pp[n].index << endl;
-      }
-cout << "children loc: " << children_4.size()-1 << endl;
-*/
-      return 0x03000000+(children_4 .size()-1);
-
-    }
+    if(id == 3) {children_3 .push_back(ChildList<3 >().set_children(p)); return 0x03000000+(children_3 .size()-1);}
+    if(id == 4) {children_4 .push_back(ChildList<4 >().set_children(p)); return 0x04000000+(children_4 .size()-1);}
     if(id == 5) {children_5 .push_back(ChildList<5 >().set_children(p)); return 0x05000000+(children_5 .size()-1);}
     if(id == 6) {children_6 .push_back(ChildList<6 >().set_children(p)); return 0x06000000+(children_6 .size()-1);}
     if(id == 7) {children_7 .push_back(ChildList<7 >().set_children(p)); return 0x07000000+(children_7 .size()-1);}
@@ -529,7 +499,7 @@ class EndSuffixNodeContainer {
       SuffixNode parent = store.get(s.parent).get_suffixnode(c,store);
 //      SuffixNode parentsl = store.get(store.get(s.parent).suffix_link).get_suffixnode(c,store);
 
-      bool ucomp=true;
+//      bool ucomp=true;
       bool found = false;
       if(store.get(s.parent).suffix_link == suffix_link) found=true;
 /*
@@ -603,6 +573,10 @@ public:
     int id = get_store_id(idx);
     if(id == 0) return m_store1.get(idx             ).get_suffixnode(m_childstore,m_store1);
     if(id >  0) return m_store2.get(idx & 0x00FFFFFF).get_suffixnode(m_childstore,m_store1);
+
+    cout << "ERRRRRRRRRRRRRRRRRRRRRRRRRRRROOOOOOORRRRRRRRRRRRRRRRR" << endl;
+    exit(0);
+    return m_rootnode;
   }
 
   void set(int idx, SuffixNode &s) {
@@ -631,7 +605,7 @@ public:
     int id = get_store_id(i);
 
     if(id == 0) {
-      if(i+1 < m_store1.size()) return i+1;
+      if((i+1) < static_cast<int32_t>(m_store1.size())) return i+1;
       return 0x01000000;
     } else return i++;
   }

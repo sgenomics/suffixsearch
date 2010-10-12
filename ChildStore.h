@@ -67,6 +67,18 @@ public:
     m_symbols.clear();
   }
 
+  bool operator==(ChildStore &other) {
+    return equal(other);
+  }
+
+  bool equal(ChildStore &other,bool dump=false) {
+    for(size_t n=0;n<m_symbols.size();n++) {
+      if(other.get(m_symbols[n].symbol) != m_symbols[n].index) { cout << "child of symbol " << static_cast<int>(m_symbols[n].symbol) << " does not match, my idx is: " << m_symbols[n].index << " other is: " << other.get(m_symbols[n].symbol) << endl; return false; }
+    }
+
+    return true;
+  }
+
   vector<SymbolPair> m_symbols;
 };
 

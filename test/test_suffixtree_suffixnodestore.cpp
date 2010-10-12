@@ -25,7 +25,10 @@ int test_suffixtree_suffixnodestore(UnitTest &utf) {
     SuffixNode sn(0,0,10);
     int count = ((rand()%35)+2);
     for(int n=0;sn.child_count()<count;n++) {
-      sn.set_child(rand()%39,(rand()%10000) + 0x02000000);
+      int symbol = rand()%39;
+      int index  = (rand()%10000) + 0x02000000;
+      sn.set_child(symbol,index);
+      cout << "adding child: " << symbol << "," << index << endl;
     }
 
     sn.parent      = pid;
