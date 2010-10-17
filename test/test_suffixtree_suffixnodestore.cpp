@@ -20,32 +20,87 @@ int test_suffixtree_suffixnodestore(UnitTest &utf) {
 
   int pid = s.push_back(psn);
 
-  for(size_t n=0;n<10000;n++) {
+  for(size_t n=0;n<100;n++) {
 
+    //cout << "LOOP START" << endl;
     SuffixNode sn(0,0,10);
     int count = ((rand()%35)+2);
     for(int n=0;sn.child_count()<count;n++) {
       int symbol = rand()%39;
       int index  = (rand()%10000) + 0x02000000;
       sn.set_child(symbol,index);
-      cout << "adding child: " << symbol << "," << index << endl;
+//      cout << "adding child: " << symbol << "," << index << endl;
     }
 
     sn.parent      = pid;
     sn.label_start = 0;
     sn.label_end   = 0;
     sn.depth       = 0;
-
+//cout << "prepushback" << endl;
     int id = s.push_back(sn);
-
+//cout << "postpushback" << endl;
+//    cout << "returned id from push_back was: " << id << endl;
     s.set(id,sn);
+//    cout << "postset" << endl;
 
     SuffixNode sn2 = s.get(id);
-
+//cout << "postget" << endl;
     utf.test_truth(sn.equal(sn2,true));
+//    cout << "LOOP END" << endl;
   }
 
   utf.end_test_set();
+}
+
+class IntWrapper {
+
+public:
+
+  IntWrapper() {}
+
+  IntWrapper(int val_in,int  childlist_idx_in) : val(val_in), childlist_idx(childlist_idx_in) {
+  }
+
+  bool isvalid() {
+    if(val == -1) return false;
+
+    return true;
+  }
+
+  int val;
+  int childlist_idx;
+};
+
+int test_suffixtree_compact_vec(UnitTest &utf) {
+
+  ObjectStore<IntWrapper> v;
+  map<int32_t,int32_t> m;
+
+  v.push_back(IntWrapper(0 ,6 + 0x20000)); // 0
+  v.push_back(IntWrapper(1 ,9 + 0x20000)); // 1
+  v.push_back(IntWrapper(2 ,1 + 0x20000)); // 2
+  v.push_back(IntWrapper(3 ,1 + 0x20000)); // 3
+  v.push_back(IntWrapper(4 ,1 + 0x20000)); // 4
+  v.push_back(IntWrapper(-1,1 + 0x20000)); // 5
+  v.push_back(IntWrapper(5 ,1 + 0x20000)); // 6
+  v.push_back(IntWrapper(-1,1 + 0x20000)); // 7
+  v.push_back(IntWrapper(-1,1 + 0x20000)); // 8
+  v.push_back(IntWrapper(9 ,1 + 0x20000)); // 9
+  v.push_back(IntWrapper(10,1 + 0x20000)); // 10
+  v.push_back(IntWrapper(11,1 + 0x20000)); // 11
+
+  compact_vec(v,m,0x020000);
+  apply_mapping(v,m);
+
+for(int n=0;n<v.size();n++) {
+cout << v.get(n).val << endl;
+}
+
+  utf.test_equality(static_cast<int>(v.size()),static_cast<int>(9));
+
+  utf.test_equality(v.get(5).val,5);
+  utf.test_equality(v.get(0).childlist_idx,5 + 0x20000);
+  utf.test_equality(v.get(1).childlist_idx,6 + 0x20000);
 }
 
 int test_suffixtree_childliststore(UnitTest &utf) {
@@ -56,7 +111,7 @@ int test_suffixtree_childliststore(UnitTest &utf) {
 
   vector<SymbolPair> p;
 
-  for(int n=0;n<10000;n++) {
+  for(int n=0;n<100;n++) {
     int c = (rand()%36)+2;
 
     for(int i=0;p.size()<c;i++) {

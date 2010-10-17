@@ -18,6 +18,46 @@ bool isinvalid(v_type &v) {
   return !v.isvalid();
 }
 
+template<class vec_type>
+void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
+
+  if(v.size() > 2) {
+    size_t old_size = v.size();
+    cout << "pre compact child store size: " << v.size();
+
+    int32_t lastvalid = 0;
+    for(int32_t n=0;n< static_cast<int32_t>(v.size());n++) {
+
+      if(v.get(n).isvalid() == false) {
+	v.set(lastvalid,v.get(n));
+	mapping[n+id] = lastvalid+id;
+      } else {
+	if(lastvalid != n) {
+	  v.set(lastvalid,v.get(n));
+	  mapping[n+id] = lastvalid+id;
+	}
+	lastvalid++;
+      }
+    }
+
+    v.current_max = lastvalid;
+    cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
+  }
+}
+
+template<class vec_type>
+void apply_mapping(vec_type &v, map<int32_t,int32_t> &mapping) {
+
+  for(size_t n=0;n<v.size();n++) {
+    if(v.get(n).childlist_idx != -1) {
+      typename vec_type::value_type snode = v.get(n);
+      snode.childlist_idx = mapping[v.get(n).childlist_idx];
+      v.set(n,snode);
+    }
+  }
+}
+
+
 template<int childcount>
 class ChildList {
   public:
@@ -45,6 +85,7 @@ class ChildList {
       for(size_t n=0;n<childcount;n++) {
         symbol[n] = s[n].symbol;
         index [n] = s[n].index;
+        //cout << "childlist set: " << static_cast<int>(symbol[n]) << "," << index[n] << endl;
       }
       return *this;
     }
@@ -68,7 +109,7 @@ class ChildList {
 
     int8_t  symbol[childcount];
     int32_t index [childcount];
-};
+} __attribute__((__packed__));
 
 class ChildListStore {
 
@@ -177,56 +218,92 @@ public:
     if(id ==39) { for(size_t i=0;i<p.size();i++) { ChildList<39>original = children_39.get(idx-0x27000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_39.set(idx-0x27000000,original); } } else
     if(id ==40) { for(size_t i=0;i<p.size();i++) { ChildList<40>original = children_40.get(idx-0x28000000); original.symbol[i] = p[i].symbol; original.index [i] = p[i].index; children_40.set(idx-0x28000000,original); } } else
     { cout << "2error invalid id" << endl; children_2.set(10000000,-1); }
+
   }
 
   int32_t push_back(vector<SymbolPair> &p) {
 
+    //cout << "child store pushing this" << endl;
+    //for(int n=0;n<p.size();n++) {
+    //  cout << static_cast<int>(p[n].symbol) << "," << p[n].index << endl;
+    //}
+    //cout << "lend" << endl;
 
     // 1. find our which storage section to put it in.
     int id = p.size();
-    if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2.set(10000000,-1); }
+    if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2.set(10000000,-1); return -1;}
     // 2. put it there
     // 3. return the size()-1
-    if(id == 2) {children_2 .push_back(ChildList<2 >().set_children(p)); return 0x02000000+(children_2 .size()-1);}
-    if(id == 3) {children_3 .push_back(ChildList<3 >().set_children(p)); return 0x03000000+(children_3 .size()-1);}
-    if(id == 4) {children_4 .push_back(ChildList<4 >().set_children(p)); return 0x04000000+(children_4 .size()-1);}
-    if(id == 5) {children_5 .push_back(ChildList<5 >().set_children(p)); return 0x05000000+(children_5 .size()-1);}
-    if(id == 6) {children_6 .push_back(ChildList<6 >().set_children(p)); return 0x06000000+(children_6 .size()-1);}
-    if(id == 7) {children_7 .push_back(ChildList<7 >().set_children(p)); return 0x07000000+(children_7 .size()-1);}
-    if(id == 8) {children_8 .push_back(ChildList<8 >().set_children(p)); return 0x08000000+(children_8 .size()-1);}
-    if(id == 9) {children_9 .push_back(ChildList<9 >().set_children(p)); return 0x09000000+(children_9 .size()-1);}
-    if(id ==10) {children_10.push_back(ChildList<10>().set_children(p)); return 0x0A000000+(children_10.size()-1);}
-    if(id ==11) {children_11.push_back(ChildList<11>().set_children(p)); return 0x0B000000+(children_11.size()-1);}
-    if(id ==12) {children_12.push_back(ChildList<12>().set_children(p)); return 0x0C000000+(children_12.size()-1);}
-    if(id ==13) {children_13.push_back(ChildList<13>().set_children(p)); return 0x0D000000+(children_13.size()-1);}
-    if(id ==14) {children_14.push_back(ChildList<14>().set_children(p)); return 0x0E000000+(children_14.size()-1);}
-    if(id ==15) {children_15.push_back(ChildList<15>().set_children(p)); return 0x0F000000+(children_15.size()-1);}
-    if(id ==16) {children_16.push_back(ChildList<16>().set_children(p)); return 0x10000000+(children_16.size()-1);}
-    if(id ==17) {children_17.push_back(ChildList<17>().set_children(p)); return 0x11000000+(children_17.size()-1);}
-    if(id ==18) {children_18.push_back(ChildList<18>().set_children(p)); return 0x12000000+(children_18.size()-1);}
-    if(id ==19) {children_19.push_back(ChildList<19>().set_children(p)); return 0x13000000+(children_19.size()-1);}
-    if(id ==20) {children_20.push_back(ChildList<20>().set_children(p)); return 0x14000000+(children_20.size()-1);}
-    if(id ==21) {children_21.push_back(ChildList<21>().set_children(p)); return 0x15000000+(children_21.size()-1);}
-    if(id ==22) {children_22.push_back(ChildList<22>().set_children(p)); return 0x16000000+(children_22.size()-1);}
-    if(id ==23) {children_23.push_back(ChildList<23>().set_children(p)); return 0x17000000+(children_23.size()-1);}
-    if(id ==24) {children_24.push_back(ChildList<24>().set_children(p)); return 0x18000000+(children_24.size()-1);}
-    if(id ==25) {children_25.push_back(ChildList<25>().set_children(p)); return 0x19000000+(children_25.size()-1);}
-    if(id ==26) {children_26.push_back(ChildList<26>().set_children(p)); return 0x1A000000+(children_26.size()-1);}
-    if(id ==27) {children_27.push_back(ChildList<27>().set_children(p)); return 0x1B000000+(children_27.size()-1);}
-    if(id ==28) {children_28.push_back(ChildList<28>().set_children(p)); return 0x1C000000+(children_28.size()-1);}
-    if(id ==29) {children_29.push_back(ChildList<29>().set_children(p)); return 0x1D000000+(children_29.size()-1);}
-    if(id ==30) {children_30.push_back(ChildList<30>().set_children(p)); return 0x1E000000+(children_30.size()-1);}
-    if(id ==31) {children_31.push_back(ChildList<31>().set_children(p)); return 0x1F000000+(children_31.size()-1);}
-    if(id ==32) {children_32.push_back(ChildList<32>().set_children(p)); return 0x20000000+(children_32.size()-1);}
-    if(id ==33) {children_33.push_back(ChildList<33>().set_children(p)); return 0x21000000+(children_33.size()-1);}
-    if(id ==34) {children_34.push_back(ChildList<34>().set_children(p)); return 0x22000000+(children_34.size()-1);}
-    if(id ==35) {children_35.push_back(ChildList<35>().set_children(p)); return 0x23000000+(children_35.size()-1);}
-    if(id ==36) {children_36.push_back(ChildList<36>().set_children(p)); return 0x24000000+(children_36.size()-1);}
-    if(id ==37) {children_37.push_back(ChildList<37>().set_children(p)); return 0x25000000+(children_37.size()-1);}
-    if(id ==38) {children_38.push_back(ChildList<38>().set_children(p)); return 0x26000000+(children_38.size()-1);}
-    if(id ==39) {children_39.push_back(ChildList<39>().set_children(p)); return 0x27000000+(children_39.size()-1);}
-    if(id ==40) {children_40.push_back(ChildList<40>().set_children(p)); return 0x28000000+(children_40.size()-1);}
-    cout << "0error invalid id" << endl; exit(0);
+    if(id == 2) {//cout << "push2" << endl;
+      ChildList<2 >c;
+      c.set_children(p);
+      int id0 = children_2 .push_back(c);
+
+      //cout << "THE ID IS: " << id0 << endl;
+      ChildList<2> c2 = children_2.get(id);
+      vector<SymbolPair> p2 = c2.get_childlist();
+      //for(size_t n=0;n<p2.size();n++) {
+      //  cout << static_cast<int>(p2[n].symbol) << " ; " << p2[n].index << endl;
+      // }
+      // cout << "lend2" << endl;
+
+      return 0x02000000+id0;
+    } else
+    if(id == 3) {//cout << "push3" << endl;
+      ChildList<3 >c;
+      c.set_children(p);
+      int id0 = children_3 .push_back(c);
+
+     // cout << "THE ID IS: " << id0 << endl;
+      ChildList<3> c2 = children_3.get(id0);
+      vector<SymbolPair> p2 = c2.get_childlist();
+     // for(size_t n=0;n<p2.size();n++) {
+      //  cout << static_cast<int>(p2[n].symbol) << " ; " << p2[n].index << endl;
+     // }
+     // cout << "lend3" << endl;
+//cout << "return now" << endl;
+      return 0x03000000+id0;
+    } else 
+    if(id == 4) {int32_t nid = children_4 .push_back(ChildList<4 >().set_children(p)); return 0x04000000+nid;} else
+    if(id == 5) {int32_t nid = children_5 .push_back(ChildList<5 >().set_children(p)); return 0x05000000+nid;} else
+    if(id == 6) {int32_t nid = children_6 .push_back(ChildList<6 >().set_children(p)); return 0x06000000+nid;} else
+    if(id == 7) {int32_t nid = children_7 .push_back(ChildList<7 >().set_children(p)); return 0x07000000+nid;} else
+    if(id == 8) {int32_t nid = children_8 .push_back(ChildList<8 >().set_children(p)); return 0x08000000+nid;} else
+    if(id == 9) {int32_t nid = children_9 .push_back(ChildList<9 >().set_children(p)); return 0x09000000+nid;} else
+    if(id ==10) {int32_t nid = children_10.push_back(ChildList<10>().set_children(p)); return 0x0A000000+nid;} else
+    if(id ==11) {int32_t nid = children_11.push_back(ChildList<11>().set_children(p)); return 0x0B000000+nid;} else
+    if(id ==12) {int32_t nid = children_12.push_back(ChildList<12>().set_children(p)); return 0x0C000000+nid;} else
+    if(id ==13) {int32_t nid = children_13.push_back(ChildList<13>().set_children(p)); return 0x0D000000+nid;} else
+    if(id ==14) {int32_t nid = children_14.push_back(ChildList<14>().set_children(p)); return 0x0E000000+nid;} else
+    if(id ==15) {int32_t nid = children_15.push_back(ChildList<15>().set_children(p)); return 0x0F000000+nid;} else
+    if(id ==16) {int32_t nid = children_16.push_back(ChildList<16>().set_children(p)); return 0x10000000+nid;} else
+    if(id ==17) {int32_t nid = children_17.push_back(ChildList<17>().set_children(p)); return 0x11000000+nid;} else
+    if(id ==18) {int32_t nid = children_18.push_back(ChildList<18>().set_children(p)); return 0x12000000+nid;} else
+    if(id ==19) {int32_t nid = children_19.push_back(ChildList<19>().set_children(p)); return 0x13000000+nid;} else
+    if(id ==20) {int32_t nid = children_20.push_back(ChildList<20>().set_children(p)); return 0x14000000+nid;} else
+    if(id ==21) {int32_t nid = children_21.push_back(ChildList<21>().set_children(p)); return 0x15000000+nid;} else
+    if(id ==22) {int32_t nid = children_22.push_back(ChildList<22>().set_children(p)); return 0x16000000+nid;} else
+    if(id ==23) {int32_t nid = children_23.push_back(ChildList<23>().set_children(p)); return 0x17000000+nid;} else
+    if(id ==24) {int32_t nid = children_24.push_back(ChildList<24>().set_children(p)); return 0x18000000+nid;} else
+    if(id ==25) {int32_t nid = children_25.push_back(ChildList<25>().set_children(p)); return 0x19000000+nid;} else
+    if(id ==26) {int32_t nid = children_26.push_back(ChildList<26>().set_children(p)); return 0x1A000000+nid;} else
+    if(id ==27) {int32_t nid = children_27.push_back(ChildList<27>().set_children(p)); return 0x1B000000+nid;} else
+    if(id ==28) {int32_t nid = children_28.push_back(ChildList<28>().set_children(p)); return 0x1C000000+nid;} else
+    if(id ==29) {int32_t nid = children_29.push_back(ChildList<29>().set_children(p)); return 0x1D000000+nid;} else
+    if(id ==30) {int32_t nid = children_30.push_back(ChildList<30>().set_children(p)); return 0x1E000000+nid;} else
+    if(id ==31) {int32_t nid = children_31.push_back(ChildList<31>().set_children(p)); return 0x1F000000+nid;} else
+    if(id ==32) {int32_t nid = children_32.push_back(ChildList<32>().set_children(p)); return 0x20000000+nid;} else
+    if(id ==33) {int32_t nid = children_33.push_back(ChildList<33>().set_children(p)); return 0x21000000+nid;} else
+    if(id ==34) {int32_t nid = children_34.push_back(ChildList<34>().set_children(p)); return 0x22000000+nid;} else
+    if(id ==35) {int32_t nid = children_35.push_back(ChildList<35>().set_children(p)); return 0x23000000+nid;} else
+    if(id ==36) {int32_t nid = children_36.push_back(ChildList<36>().set_children(p)); return 0x24000000+nid;} else
+    if(id ==37) {int32_t nid = children_37.push_back(ChildList<37>().set_children(p)); return 0x25000000+nid;} else
+    if(id ==38) {int32_t nid = children_38.push_back(ChildList<38>().set_children(p)); return 0x26000000+nid;} else
+    if(id ==39) {int32_t nid = children_39.push_back(ChildList<39>().set_children(p)); return 0x27000000+nid;} else
+    if(id ==40) {int32_t nid = children_40.push_back(ChildList<40>().set_children(p)); return 0x28000000+nid;} else {
+      cout << "0error invalid id" << endl; exit(0);
+    }
+    return -1;
   }
 
   void invalidate(int32_t i) {
@@ -286,28 +363,6 @@ public:
     compact_vec(children_40,mapping,0x28000000);
 
     return mapping;
-  }
-
-
-  template<class vec_type>
-  void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
-/*
-    // Generate mapping information
-    size_t new_idx = 0;
-    for(size_t n=0;n<v.size();n++) {
-      if(v.get(n).isvalid()) {
-        //cout << "mapping: " << n+id << " to " << new_idx+id << endl;
-        mapping[n+id] = new_idx + id;
-        new_idx++;
-      }
-    }
-
-    // Clean up the vector
-    size_t old_size = v.size();
-    cout << "pre compact child store size: " << v.size();
-    v.erase(remove_if(v.begin(), v.end(), isinvalid<typename vec_type::value_type> ), v.end());
-    cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
-    */
   }
 
   ObjectStore<ChildList<2> >  children_2;
@@ -395,8 +450,12 @@ class NormalSuffixNodeContainer {
       if(s.child_count() == 0) {
         childlist_idx = -1;
       } else {
-        if(cidx == -1) cidx = c.push_back(s.m_children.m_symbols);
-        c.set_children(cidx,s.m_children.m_symbols);
+        if(cidx == -1) {
+          //cout << "pushing back new children" << endl;
+          cidx = c.push_back(s.m_children.m_symbols);
+        } else {
+          c.set_children(cidx,s.m_children.m_symbols);
+        }
         childlist_idx = cidx;
       }
     }
@@ -459,7 +518,7 @@ class NormalSuffixNodeContainer {
       return s;
     }
 
-};
+} __attribute__((__packed__));
 
 class EndSuffixNodeContainer {
 
@@ -523,7 +582,7 @@ class EndSuffixNodeContainer {
 
       return s;
     }
-};
+} __attribute__((__packed__));
 
 class SuffixNodeStore {
 
@@ -641,20 +700,15 @@ public:
 
   }
 
-  void apply_mapping(map<int32_t,int32_t> &mapping) {
-
-    for(size_t n=0;n<m_store1.size();n++) {
-      if(m_store1.get(n).childlist_idx != -1) m_store1.get(n).childlist_idx = mapping[m_store1.get(n).childlist_idx];
-    }
-  }
 
   void compact() {
     // remove invalidated items from childstore.
     // note: this should not invalidate any SuffixNode objects that have been returned.
 
-    if(NormalSuffixNodeContainer::invalidation_count == 100000) {
+    //if(NormalSuffixNodeContainer::invalidation_count == 100000) {
+    if(NormalSuffixNodeContainer::invalidation_count == 10) {
       map<int32_t,int32_t> id_mapping = m_childstore.compact();
-      apply_mapping(id_mapping);
+      apply_mapping(m_store1,id_mapping);
 
       NormalSuffixNodeContainer::invalidation_count = 0;
     }

@@ -455,9 +455,9 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         old_parent_tmp.set_child(old_parent_child_symbol,b_idx);
         store.set(old_parent,old_parent_tmp);
 
-        cout << "old_label_start: " << old_label_start << endl;
-        cout << "n              : " << n << endl;
-        cout << "old_label_start+n: " << old_label_start+n << endl;
+        //cout << "old_label_start: " << old_label_start << endl;
+        //cout << "n              : " << n << endl;
+        //cout << "old_label_start+n: " << old_label_start+n << endl;
         b.set_child(s[old_label_start+n],insertion_point);
         b.set_child(s[symbol_index_start+n],c_idx);
 
