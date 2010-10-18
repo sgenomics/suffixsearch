@@ -92,15 +92,43 @@ int test_suffixtree_compact_vec(UnitTest &utf) {
   compact_vec(v,m,0x020000);
   apply_mapping(v,m);
 
-for(int n=0;n<v.size();n++) {
-cout << v.get(n).val << endl;
-}
-
   utf.test_equality(static_cast<int>(v.size()),static_cast<int>(9));
 
   utf.test_equality(v.get(5).val,5);
   utf.test_equality(v.get(0).childlist_idx,5 + 0x20000);
   utf.test_equality(v.get(1).childlist_idx,6 + 0x20000);
+
+
+  for(int j=0;j<100;j++) {
+    v.clear();
+    m.clear();
+    int i=0;
+    for(int n=0;n<100;n++) {
+      if(rand()%2 == 0) {i++; v.push_back(IntWrapper(-1 ,-1));} // push -1
+      v.push_back(IntWrapper(n ,i + 0x02000000)); // push n
+      i++;
+    }
+
+/*
+  cout << "precompact" << endl;
+    for(int n=0;n<v.size();n++) {
+      cout << "val: " << v.get(n).val << " , " << v.get(n).childlist_idx - 0x02000000 << endl;
+    }
+*/
+  
+    compact_vec(v,m,0x02000000);
+    apply_mapping(v,m);
+
+  //cout << "postcompact" << endl;
+    for(int n=0;n<v.size();n++) {
+      utf.test_equality(v.get(n).val,n);
+      utf.test_equality(v.get(n).childlist_idx,n + 0x02000000);
+  //   cout << "val: " << v.get(n).val << " , " << v.get(n).childlist_idx - 0x02000000 << endl;
+    }
+    utf.test_equality(static_cast<size_t>(v.get(v.size()-1).val          ),v.size()-1             );
+    utf.test_equality(static_cast<size_t>(v.get(v.size()-1).childlist_idx),v.size()-1 + 0x02000000);
+  }
+
 }
 
 int test_suffixtree_childliststore(UnitTest &utf) {

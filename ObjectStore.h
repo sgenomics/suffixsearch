@@ -54,6 +54,12 @@ public:
     }
   }
 
+  void clear() {
+    current_max = 0;
+    storage_area.clear();
+    initialise(0);
+  }
+
   object_type get(size_t index) {
     //cout << "object store get: " << index << endl;
     object_type o;

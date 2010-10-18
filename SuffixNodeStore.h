@@ -25,17 +25,21 @@ void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
     size_t old_size = v.size();
     cout << "pre compact child store size: " << v.size();
 
-    int32_t lastvalid = 0;
+    int32_t lastvalid = -1;
     for(int32_t n=0;n< static_cast<int32_t>(v.size());n++) {
 
       if(v.get(n).isvalid() == false) {
-	v.set(lastvalid,v.get(n));
-	mapping[n+id] = lastvalid+id;
+        if(lastvalid != -1) {
+          v.set(lastvalid,v.get(n));
+          mapping[n+id] = lastvalid+id;
+        } else lastvalid = 0;
+
       } else {
 	if(lastvalid != n) {
-	  v.set(lastvalid,v.get(n));
-	  mapping[n+id] = lastvalid+id;
+	  if(lastvalid != -1) { v.set(lastvalid,v.get(n)); } else lastvalid = 0;
+//	  mapping[n+id] = lastvalid+id;
 	}
+	mapping[n+id] = lastvalid+id;
 	lastvalid++;
       }
     }
