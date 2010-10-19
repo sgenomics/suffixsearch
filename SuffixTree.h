@@ -214,7 +214,13 @@ cout << "processed left positions" << endl;
     // follow labels from root down, edge labels.
 
     int current_node = store.get(SuffixNode::root).get_child(ss[0]);
-    char label = ss[1];
+
+    char label;
+    if(ss.size() == 1) {
+      label = 0;
+    } else {
+      label = ss[1];
+    }
  
     int search_string_position = 0;
 //    cout << "current_node: " << current_node << endl;
@@ -238,7 +244,7 @@ cout << "processed left positions" << endl;
       current_node = current_node_tmp.get_child(label);
       if(current_node == -1) return -1;
       current_node_tmp = store.get(current_node);
-  //    cout << "current_node: " << current_node << endl;
+      cout << "current_node: " << current_node << endl;
     }
   }
 
