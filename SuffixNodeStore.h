@@ -55,8 +55,15 @@ void apply_mapping(vec_type &v, map<int32_t,int32_t> &mapping) {
   for(size_t n=0;n<v.size();n++) {
     if(v.get(n).childlist_idx != -1) {
       typename vec_type::value_type snode = v.get(n);
-      snode.childlist_idx = mapping[v.get(n).childlist_idx];
-      v.set(n,snode);
+      
+      map<int32_t,int32_t>::iterator i = mapping.find(v.get(n).childlist_idx);
+
+      if(i == mapping.end()) {
+        cout << "error no mapping for: " << v.get(n).childlist_idx << endl;
+      } else {
+        snode.childlist_idx = mapping[v.get(n).childlist_idx];
+        v.set(n,snode);
+      }
     }
   }
 }
@@ -709,13 +716,14 @@ public:
     // remove invalidated items from childstore.
     // note: this should not invalidate any SuffixNode objects that have been returned.
 
-    //if(NormalSuffixNodeContainer::invalidation_count == 100000) {
-    if(NormalSuffixNodeContainer::invalidation_count == 10) {
+    if(NormalSuffixNodeContainer::invalidation_count == 100000) {
+    //if(NormalSuffixNodeContainer::invalidation_count == 10) {
       map<int32_t,int32_t> id_mapping = m_childstore.compact();
       apply_mapping(m_store1,id_mapping);
 
       NormalSuffixNodeContainer::invalidation_count = 0;
     }
+
   }
 
   ObjectStore<NormalSuffixNodeContainer> m_store1;
