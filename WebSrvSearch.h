@@ -10,6 +10,7 @@
 using namespace std;
 
 #include <netinet/in.h>
+#include <signal.h>
 
 class WebSrvSearch {
 
@@ -19,6 +20,8 @@ public:
   } 
 
   void start() {
+
+    signal(SIGPIPE,SIG_IGN);
 
     struct sockaddr_in stSockAddr;
     int SocketFD = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
@@ -51,7 +54,7 @@ public:
  
     for(;;) {
       int ConnectFD = accept(SocketFD, NULL, NULL);
- 
+
  
       if(0 > ConnectFD) {
         perror("error accept failed");
@@ -123,7 +126,6 @@ public:
       close(ConnectFD);
     }
     close(SocketFD);
-
   }
 
   SuffixTree &m_store;
