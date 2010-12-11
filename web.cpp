@@ -33,7 +33,6 @@ int main(int argc,char ** argv) {
   st.process_positions();
   cout << "processed positions" << endl;
   st.dump_stats();
-  st.dump_stats();
 
  // st.dump();
   WebSrvSearch web(st,81);

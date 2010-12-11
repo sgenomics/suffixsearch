@@ -131,6 +131,7 @@ int test_suffixtree_compact_vec(UnitTest &utf) {
 
 }
 
+
 int test_suffixtree_childliststore(UnitTest &utf) {
 
   utf.begin_test_set("ChildListStore tests");

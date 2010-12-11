@@ -10,7 +10,7 @@ class SymbolPair {
 
   public:
 
-  SymbolPair(char s,int i) : symbol(s),index(i) {
+  SymbolPair(uint8_t s,int32_t i) : symbol(s),index(i) {
   }
 
   uint8_t symbol;

@@ -21,6 +21,20 @@ bool isinvalid(v_type &v) {
 template<class vec_type>
 void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
 
+  vec_type new_v;
+
+  cout << "pre: " << v.size() << endl;
+  for(size_t n=0;n<v.size();n++) {
+    if(v.get(n).isvalid()) {
+      size_t nid = new_v.push_back(v.get(n));
+      mapping[n+id] = nid + id;
+    }
+  }
+
+  cout << "post: " << new_v.size() << " removed: " << v.size()-new_v.size() << endl;
+  v = new_v;
+
+/*
   if(v.size() > 2) {
     size_t old_size = v.size();
     cout << "pre compact child store size: " << v.size();
@@ -32,7 +46,10 @@ void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
         if(lastvalid != -1) {
           v.set(lastvalid,v.get(n));
           mapping[n+id] = lastvalid+id;
-        } else lastvalid = 0;
+        } else {
+          mapping[n+id] = 0+id; // WAS just line below
+          lastvalid = 0;
+        }
 
       } else {
 	if(lastvalid != n) {
@@ -47,6 +64,7 @@ void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
     v.current_max = lastvalid;
     cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
   }
+*/
 }
 
 template<class vec_type>
@@ -92,7 +110,7 @@ class ChildList {
     }
 
     ChildList<childcount> &set_children(vector<SymbolPair> &s) {
-      if(s.size() > childcount) {cout << "EEEEERRRRORRRRRR" << endl; exit(0);}
+      if(s.size() != childcount) {cout << "EEEEERRRRORRRRRR" << endl; exit(0);}
       for(size_t n=0;n<childcount;n++) {
         symbol[n] = s[n].symbol;
         index [n] = s[n].index;
@@ -120,7 +138,7 @@ class ChildList {
 
     int8_t  symbol[childcount];
     int32_t index [childcount];
-} __attribute__((__packed__));
+}; // __attribute__((__packed__));
 
 class ChildListStore {
 

@@ -519,6 +519,12 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
     char child_sym = s[pos];
 
+//cout << "s: ";
+//for(int k=0;k<s.size();k++) cout << static_cast<int>(s[k]) << ",";
+//cout << endl;
+//cout << "pos: " << pos << endl;
+//cout << "s.size: " << s.size() << endl;
+//cout << "child_sym: " << child_sym << endl;
     // if a child does not exist add
     if(insertion_point_tmp.get_child(child_sym) == -1) {
 

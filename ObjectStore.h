@@ -29,6 +29,12 @@ public:
     storage_area = vector<char>(total_size);
   }
 
+  void operator=(ObjectStore<object_type> &other) {
+    object_size  = other.object_size;
+    storage_area = other.storage_area;
+    current_max  = other.current_max;
+  }
+
   void set(size_t index,const object_type &o) {
 
     //cout << "object store set: " << index << endl;
