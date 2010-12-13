@@ -222,7 +222,7 @@ cout << "processed left positions" << endl;
       label = ss[1];
     }
  
-    int search_string_position = 0;
+    size_t search_string_position = 0;
 //    cout << "current_node: " << current_node << endl;
     if(current_node == -1) return -1;
     SuffixNode current_node_tmp = store.get(current_node);
@@ -246,9 +246,11 @@ cout << "processed left positions" << endl;
       current_node_tmp = store.get(current_node);
       cout << "current_node: " << current_node << endl;
     }
+
+    return -1;
   }
 
-  string get_substr(int start,int end) {
+  string get_substr(uint32_t start,uint32_t end) {
     string res;
 cout << "start:" << start << endl;
 cout << "end  :" << end << endl;
@@ -256,7 +258,7 @@ cout << "end  :" << end << endl;
     if(start > end) return res;
     cout << "s.size():" << s.size() << endl;
     if(end > s.size()) end = s.size();
-    for(int pos=start;pos<=end;pos++) {
+    for(size_t pos=start;pos<=end;pos++) {
       if((pos < s.size()) && (pos >= 0)) res += s.get_uncoded(pos);
      // if((pos < s.size()) && (pos >= 0)) res += s[pos];
     }
@@ -268,7 +270,7 @@ cout << "end  :" << end << endl;
 
     vector<int> res;
 
-    for(int n=0;n<ss.size();n++) ss[n] =  transcoder.convert(ss[n]);
+    for(size_t n=0;n<ss.size();n++) ss[n] =  transcoder.convert(ss[n]);
     int p = find_tree_position(ss);
 
     if(p == -1) {
@@ -326,7 +328,7 @@ cout << "end  :" << end << endl;
  
     if(current_node == -1) return -1;
 
-    int64_t search_string_position = 0;
+    uint64_t search_string_position = 0;
 
     for(;search_string_position < t.size();) {
       // follow edge label
@@ -442,8 +444,8 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         SuffixNode old_parent_tmp = store.get(insertion_point_tmp.parent);
 
         int64_t old_label_start = insertion_point_tmp.label_start;
-        int64_t old_label_end   = insertion_point_tmp.label_end;
-        int64_t old_suffix_link = insertion_point_tmp.suffix_link;
+       // int64_t old_label_end   = insertion_point_tmp.label_end;
+       // int64_t old_suffix_link = insertion_point_tmp.suffix_link;
 
         SuffixNode b(insertion_point,0,0);
         SuffixNode c(insertion_point,0,0);
@@ -608,7 +610,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     int last_node=0;
     int last_node_sl=0;
     vector<vector<int64_t> > doall;
-    bool nosplitins = true;
 
     last_node = first_non_leaf_node;
     bool first=true;
@@ -622,9 +623,9 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     bool at_end=false;
     bool last_at_end=false;
     int c=0;
-    for(int n=first_non_leaf_n;n<s.size();n++) {
-      int  posremin;
-      bool insertion;
+    for(size_t n=first_non_leaf_n;n<s.size();n++) {
+//      int  posremin;
+//      bool insertion;
 
       SuffixNode last_node_tmp = store.get(last_node);
       last_node_sl = last_node_tmp.suffix_link;
@@ -640,16 +641,16 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       SuffixNode predict_node_tmp = store.get(predict_node);
       last_node_tmp    = store.get(last_node); // required?
 
-      int l_predict_pos = predict_pos;
+      //int l_predict_pos = predict_pos;
       if(predict_node_tmp.parent == 0) {/*cout << "pred2" << endl;*/ predict_pos = n;} 
 
       // Now need to perform 'canonisation' analog.
 
-      int n_label_length = last_node_tmp.get_label_length();
-      int s_label_length = predict_node_tmp.get_label_length();
+//      int n_label_length = last_node_tmp.get_label_length();
+//      int s_label_length = predict_node_tmp.get_label_length();
 
-      int precan_predict_node = predict_node;
-      int precan_predict_pos  = predict_pos;
+ //     int precan_predict_node = predict_node;
+ //     int precan_predict_pos  = predict_pos;
 
      // lazy canonisation
      //cout << "pre-can predict_node: " << predict_node << endl;
@@ -851,19 +852,21 @@ c++;
     string suffix_path_label = get_path_label(n_tmp.suffix_link);
   
     if(dump) cout << "validating link from/to: " << n << "," << n_tmp.suffix_link << " labels: " << my_path_label << "," << suffix_path_label << endl;
-    if((static_cast<int>(my_path_label.size())-1) > 0)
-    if((suffix_path_label.size()) < ((my_path_label.size()-1))) {
-      if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR1" << endl;
-      return false;
-    } else
-    if((suffix_path_label.size()) != ((my_path_label.size()-1))) {
-      if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR2" << endl;
-      return false;
-    } else
-    for(int n=0;n<my_path_label.size()-1;n++) {
-      if(suffix_path_label[n] != my_path_label[n+1]) {
-        if(dump) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
-        return false;
+    if((static_cast<int>(my_path_label.size())-1) > 0) {
+      if((suffix_path_label.size()) < ((my_path_label.size()-1))) {
+	if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR1" << endl;
+	return false;
+      } else
+      if((suffix_path_label.size()) != ((my_path_label.size()-1))) {
+	if(dump) cout << "********************************************* SUFFIXLINK DOES NOT VALIDATE, SIZE ERROR2" << endl;
+	return false;
+      } else {
+	for(size_t n=0;n<my_path_label.size()-1;n++) {
+	  if(suffix_path_label[n] != my_path_label[n+1]) {
+	    if(dump) cout << "****************************************************** SUFFIXLINK DOES NOT VALIDATE" << endl;
+	    return false;
+	  }
+	}
       }
     }
     return true;
@@ -888,7 +891,7 @@ c++;
 
   bool validate_depth(int n,bool dump=false) {
 
-    bool valid = true;
+    //bool valid = true;
     SuffixNode n_tmp = store.get(n);
     int s_depth = n_tmp.get_depth();
 
@@ -914,7 +917,7 @@ c++;
   void dump_stats() {
     cout << "string size: " << s.size() << endl; 
     cout << "node count : " << store.size() << endl;
-    size_t end_node = 0;
+    // size_t end_node = 0;
 
     store.stats();
 

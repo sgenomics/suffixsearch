@@ -73,7 +73,7 @@ public:
       endstr.push_back((char) 13);
       endstr.push_back((char) 10);
       for(int n=0;;n++) {
-        int cnt = read(ConnectFD, buf, 200);
+        read(ConnectFD, buf, 200);
 
         // parse out search string
         buf[200] = 0;
@@ -89,9 +89,9 @@ public:
       string output_data;
       if(notfound==false) {
         vector<char> ss;
-        for(int n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
+        for(size_t n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
         cout << "search_string: " << search_string << endl;
-        for(int n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
+        for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
         bool found=false;
         vector<int> foundpos = m_store.all_occurs(ss,100);
@@ -99,7 +99,7 @@ public:
         if(foundpos.size() > 0) found=true;
 
         if(found) {
-          for(int i=0;(i<foundpos.size()) && (i<100);i++) {
+          for(size_t i=0;(i<foundpos.size()) && (i<100);i++) {
             cout << "found location: " << foundpos[i] << endl;
             string fnd = m_store.get_substr(foundpos[i],foundpos[i]+50);
             output_data += fnd;

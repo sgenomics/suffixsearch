@@ -27,7 +27,7 @@ public:
     return m_store[i];
   }
 
-  int size() {
+  size_t size() {
     return m_store.size();
   }
 
