@@ -3,6 +3,8 @@
 
 #include <vector>
 #include <iostream>
+#include <iomanip>
+#include <stdint.h>
 
 using namespace std;
 
@@ -37,26 +39,23 @@ public:
 
   void set(size_t index,const object_type &o) {
 
-    //cout << "object store set: " << index << endl;
     size_t write_end_position = (index+2)*(object_size);
 
     bool expanding = false;
     if(write_end_position > storage_area.size()) {
       expanding = true;
     }
- //   if(expanding) cout << "Storage area osize: " << storage_area.size() << endl;
     for(;write_end_position > storage_area.size();) {
       storage_area.push_back(0);
     }
- //   cout << "write_end_position: " << write_end_position << endl;
 //    if(expanding) cout << "Storage area nsize: " << storage_area.size() << endl;
 
     //cout << "object size is: " << object_size << endl;
+    const char *base_pointer = reinterpret_cast<const char *> (&o);
     for(size_t n=0;n<object_size;n++) {
-      //cout << "write at: " << (index*object_size)+n << " , ";
-      //char c = ((const char *)(&o))[n];
-      //cout << "value   : " << static_cast<int>(c) << endl;
-      storage_area[(index*object_size)+n] = ((const char *)(&o))[n];
+
+      uint8_t c = ((const char *) (base_pointer+n))[0]; //((const char *)(&o))[n];
+      storage_area[(index*object_size)+n] = c;
     }
   }
 
@@ -67,18 +66,27 @@ public:
   }
 
   object_type get(size_t index) {
-    //cout << "object store get: " << index << endl;
-    object_type o;
+    // it would be nice to remove this new and allocate on the stack
+    char *o = new char[sizeof(object_type)];
 
-//    cout << "object size is: " << object_size << endl;
-    for(size_t n=0;n<object_size;n++) {
-      //cout << "read at: " << (index*object_size)+n << " , ";
-      //char c = storage_area[(index*object_size)+n];
-      //cout << "value  : " << static_cast<int>(c) << endl;
-      ((char *)(&o))[n] = storage_area[(index*object_size)+n];
+    if(index > size()) {
+      cout << "error trying to get an object that's out of bounds, index is: " << index << endl;
+      int *i=0;*i=1;
     }
 
-    return o;
+    char *base_pointer = o;
+    size_t base_read = index*object_size;
+    for(size_t n=0;n<object_size;n++) {
+      *(base_pointer+n) = storage_area[base_read+n];
+  //    cout << "str: " << storage_area[base_read+n] << " ";
+   //MAGIC     cout << "val: " << (size_t) (base_pointer+n) << endl;
+    }
+
+    object_type oo = *(reinterpret_cast<object_type *>(o));
+
+    delete [] o;
+
+    return oo;
   }
 
   size_t push_back(const object_type &o) {

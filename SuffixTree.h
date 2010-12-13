@@ -372,6 +372,7 @@ cout << "end  :" << end << endl;
       if(child != -1) {
      //   cout << "n0" << endl;
 //        cout << "child was: " << child << endl;
+// last invalid is somewhere in this method call
         return extend2(child,symbol_index_start,symbol_index_end,split,fnode,fpos);
       } else {
         // if it doesn't exist add it.
@@ -451,7 +452,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         SuffixNode c(insertion_point,0,0);
         b.label_start = old_label_start;
         b.label_end   = old_label_start+n-1;
-
         c.label_start = symbol_index_start+n;
         c.label_end   = SuffixNode::end_marker;
 
@@ -475,7 +475,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         c.parent = b_idx;
         b.parent = old_parent;
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
-
+        c.suffix_link = 0; // CORRECT?
 
      //   cout << "INSERTION POINT: " << insertion_point << endl;
 //        cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
@@ -552,6 +552,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         cout << "2s[labelstart]: " << (int) s[symbol_index_start] << endl;
         exit(0);
       }
+
 /*
       int l = insertion_point_tmp.get_label_length_r();
       cout << "orig name: " << l << endl;
@@ -735,6 +736,16 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         store.set(last_node,last_node_tmp);
         SuffixNode last_node_tmp_parent = store.get(last_node_tmp.parent);
         last_node_tmp_parent.suffix_link = newnode_tmp.parent;
+
+        //cout << "last_node_tmp.parent is: " << last_node_tmp.parent << endl;
+        // this is not valid.
+ /*       for(size_t n=0;n<last_node_tmp_parent.m_children.m_symbols.size();n++) {
+          //cout << (int) last_node_tmp_parent.m_children.m_symbols[n].symbol;
+          cout << ",";
+          cout << last_node_tmp_parent.m_children.m_symbols[n].index;
+          cout << endl;
+        }
+*/
         store.set(last_node_tmp.parent,last_node_tmp_parent);
         //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       }

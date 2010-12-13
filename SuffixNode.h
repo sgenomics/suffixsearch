@@ -22,8 +22,6 @@ public:
 
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
-    clear_children();
-
     suffix_link = 0;
 
     label_end       = -1;
