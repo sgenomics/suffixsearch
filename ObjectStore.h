@@ -39,6 +39,7 @@ public:
 
   void set(size_t index,const object_type &o) {
 
+//cout << "MAGIC";
     size_t write_end_position = (index+2)*(object_size);
 
     bool expanding = false;
@@ -55,6 +56,7 @@ public:
     for(size_t n=0;n<object_size;n++) {
 
       uint8_t c = ((const char *) (base_pointer+n))[0]; //((const char *)(&o))[n];
+ //     cout << n << " val: " << (size_t) c;
       storage_area[(index*object_size)+n] = c;
     }
   }
@@ -79,7 +81,8 @@ public:
     for(size_t n=0;n<object_size;n++) {
       *(base_pointer+n) = storage_area[base_read+n];
   //    cout << "str: " << storage_area[base_read+n] << " ";
-   //MAGIC     cout << "val: " << (size_t) (base_pointer+n) << endl;
+   //MAGIC   
+ // cout << n << " val: " << (size_t) (base_pointer+n) << endl;
     }
 
     object_type oo = *(reinterpret_cast<object_type *>(o));

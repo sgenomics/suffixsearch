@@ -18,9 +18,33 @@ bool isinvalid(v_type &v) {
   return !v.isvalid();
 }
 
+
+template<class vec_type>
+size_t get_next_invalid(vec_type &v,size_t position) {
+
+  for(size_t n=position;n<v.size();n++) {
+    if(!v.get(n).isvalid()) return n;
+  }
+
+  return 0;
+
+}
+
+template<class vec_type>
+size_t get_last_valid(vec_type &v,size_t position) {
+
+  for(size_t n=position;n>=0;n++) {
+    if(v.get(n).isvalid()) return n;
+  }
+
+  return 0;
+}
+
+
 template<class vec_type>
 void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
-
+/*
+  // version that replaces object store
   vec_type new_v;
 
   cout << "pre: " << v.size() << endl;
@@ -33,8 +57,33 @@ void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
 
   cout << "post: " << new_v.size() << " removed: " << v.size()-new_v.size() << endl;
   v = new_v;
+*/
+
+cout << "compact code called" << endl;
+  size_t last_invalid = 0;
+  size_t last_valid   = v.size()-1;
+
+  size_t invalid_count = 0;
+  for(size_t n=0;n<v.size();n++) {
+    size_t i = get_next_invalid(v,last_invalid);
+    size_t j = get_last_valid  (v,last_valid);
+
+    last_invalid = i;
+    last_valid   = j-1;
+
+    if(i == 0) break;
+    if(j == 0) break;
+
+    v.set(i,v.get(j));
+    mapping[j+id] = i+id;
+    invalid_count++;
+  }
+
+  v.current_max = v.current_max-invalid_count;
 
 /*
+
+  // version that updates existing object store.
   if(v.size() > 2) {
     size_t old_size = v.size();
     cout << "pre compact child store size: " << v.size();
@@ -65,6 +114,7 @@ void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
     cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
   }
 */
+
 }
 
 template<class vec_type>
@@ -77,7 +127,8 @@ void apply_mapping(vec_type &v, map<int32_t,int32_t> &mapping) {
       map<int32_t,int32_t>::iterator i = mapping.find(v.get(n).childlist_idx);
 
       if(i == mapping.end()) {
-        cout << "error no mapping for: " << v.get(n).childlist_idx << endl;
+   //     this is fine.
+   //     cout << "error no mapping for: " << v.get(n).childlist_idx << endl;
       } else {
         snode.childlist_idx = mapping[v.get(n).childlist_idx];
         v.set(n,snode);
