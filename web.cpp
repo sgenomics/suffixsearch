@@ -10,32 +10,18 @@ using namespace std;
 
 int main(int argc,char ** argv) {
 
-  string s = argv[1];
-
-  ifstream infile(argv[1]);
-
-
   SuffixTree st;
 
-  for(size_t n=0;!infile.eof();n++) {
-    char c;
-    infile.get(c);
-    st.insert(c);
-
-   // if(n%10000 == 0) st.compact();
-  }
+  WebSrvSearch web(st,8080,8081);
+  web.document_listener();
 
   st.finalise();
   cout << "built suffix tree" << endl;
 
-  //st.dump();
   cout << "processing positions" << endl;
   st.process_positions();
   cout << "processed positions" << endl;
   st.dump_stats();
 
- // st.dump();
-  WebSrvSearch web(st,8081);
-
-  web.start();
+  web.search_listener();
 }

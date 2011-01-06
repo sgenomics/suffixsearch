@@ -600,6 +600,12 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     insert(39,true);
   }
 
+  void insert(string insertion_string) {
+    for(size_t n=0;n<insertion_string.size();n++) {
+      insert(s[n]);
+    }
+  }
+
   void insert(char current_symbol,bool finalise=false) {
 
     s.push_back(current_symbol);
@@ -923,6 +929,10 @@ c++;
     }
 
     return true;
+  }
+
+  size_t size() {
+    return s.size();
   }
 
   void dump_stats() {
