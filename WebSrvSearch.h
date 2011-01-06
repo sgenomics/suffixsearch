@@ -213,6 +213,8 @@ public:
             string fnd = m_store.get_substr(foundpos[i],foundpos[i]+50);
             output_data += fnd;
 
+            output_data += "<A HREF=\"" + m_uri_store.find_bounding(foundpos[i]) + "\">URI</A>";
+
             output_data += "<BR>";
           }
           cout << "fin write" << endl;
