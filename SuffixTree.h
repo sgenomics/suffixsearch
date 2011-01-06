@@ -602,7 +602,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
   void insert(string insertion_string) {
     for(size_t n=0;n<insertion_string.size();n++) {
-      insert(s[n]);
+      insert(insertion_string[n]);
     }
   }
 

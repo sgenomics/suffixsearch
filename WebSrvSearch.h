@@ -17,7 +17,6 @@ class WebSrvSearch {
 
 public:
   WebSrvSearch(SuffixTree &store,int search_port,int document_port) : m_store(store),m_search_port(search_port),m_document_port(document_port) {
-    
   }
 
   void start() {
@@ -80,24 +79,28 @@ public:
       //TODO: this needs fixing max uri size is 200.
       bool uri_unset=true;
       for(int n=0;;n++) {
-        read(ConnectFD, buf, 200);
+        int read_size = read(ConnectFD, buf, 200);
+
+        if(read_size < 1) break;
 
         if(uri_unset) {
 	  // parse out uri_unset string
-	  buf[200] = 0;
+	  //buf[200] = 0;
+          buf[read_size] = 0;
 	  string s = buf;
 	  size_t getline = s.find(endstr);
 	  size_t start = s.find("uri=");
 	  size_t end   = s.find("\n",start);
-	  if(start != string::npos) {notfound=false; uri_string = s.substr(start+7,end-start-7);}
+	  if(start != string::npos) {notfound=false; uri_string = s.substr(start+4,end-start-4);}
 	  if(getline != string::npos) { break; }
-	  if(n == 100) break;
           uri_unset=false;
 
           //TODO: must modify to deal with documents larger than memory
-          document += s.substr(end,s.size()-end);
+          document += s.substr(end+1,string::npos);
         } else {
+          if(read_size < 1) break;
 	  buf[200] = 0;
+          if(read_size < 200) buf[read_size+1] = 0;
           document += buf;
         }
       }
@@ -112,12 +115,16 @@ public:
       val = write(ConnectFD,(void *) data,strlen(data));
 
       size_t document_start = m_store.size();
+
+      cout << "document uri: " << uri_string << endl;
+      cout << "document    : " << document << endl;
+
       m_uri_store.insert(document_start,uri_string);
       m_store.insert(document);
 
       close(ConnectFD);
 
-      if(uri_string == "END") break;
+      if(uri_string.compare("END") == 0) break;
     }
     close(SocketFD);
   }
