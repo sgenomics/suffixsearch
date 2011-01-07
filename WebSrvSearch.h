@@ -119,14 +119,29 @@ public:
       cout << "document uri: " << uri_string << endl;
       cout << "document    : " << document << endl;
 
+      if(uri_string.compare("END") == 0) break;
       m_uri_store.insert(document_start,uri_string);
       m_store.insert(document);
 
       close(ConnectFD);
 
-      if(uri_string.compare("END") == 0) break;
     }
     close(SocketFD);
+  }
+
+  string remove_nonalpha(string str) {
+
+    string outstr;
+    for(size_t n=0;n<str.size();n++) {
+      bool ok = false;
+      if(str[n] >= 'a' && str[n] <= 'z') ok = true;
+      if(str[n] >= 'A' && str[n] <= 'Z') ok = true;
+
+      if(ok == true ) outstr += str[n];
+      if(ok == false) outstr += "&nbsp;";
+    }
+
+    return outstr;
   }
 
   void search_listener() {
@@ -196,6 +211,7 @@ public:
       }
 
       string output_data;
+      output_data += "<tt>";
       if(notfound==false) {
         vector<char> ss;
         for(size_t n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
@@ -203,14 +219,41 @@ public:
         for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
         bool found=false;
-        vector<int> foundpos = m_store.all_occurs(ss,100);
+        vector<int> foundpos = m_store.all_occurs(ss,1000);
         cout << "found count: " << foundpos.size() << endl;
         if(foundpos.size() > 0) found=true;
 
         if(found) {
-          for(size_t i=0;(i<foundpos.size()) && (i<100);i++) {
+          for(size_t i=0;(i<foundpos.size()) && (i<1000);i++) {
             cout << "found location: " << foundpos[i] << endl;
-            string fnd = m_store.get_substr(foundpos[i],foundpos[i]+50);
+            string fnd = m_store.get_substr(foundpos[i]-50,foundpos[i]-1);
+            if(fnd.size() < 50) {
+              int spacers = 50-fnd.size();
+              string spacer_string;
+              for(size_t n=0;n<spacers;n++) {
+                spacer_string += '_';
+              }
+              fnd = spacer_string + fnd;
+            }
+            fnd = remove_nonalpha(fnd);
+            cout << "fnd1 size: " << fnd.size() << endl;
+            output_data += fnd;
+            output_data += "<B>";
+            fnd = m_store.get_substr(foundpos[i],foundpos[i]+search_string.size()-1);
+            fnd = remove_nonalpha(fnd);
+            output_data += fnd;
+            output_data += "</B>";
+            fnd = m_store.get_substr(foundpos[i]+search_string.size(),foundpos[i]+50);
+            if(fnd.size() < 50) {
+              int spacers = 50-fnd.size();
+              string spacer_string;
+              for(size_t n=0;n<spacers;n++) {
+                spacer_string += '_';
+              }
+              fnd = fnd + spacer_string;
+            }
+            fnd = remove_nonalpha(fnd);
+            cout << "fnd2 size: " << fnd.size() << endl;
             output_data += fnd;
 
             output_data += "<A HREF=\"" + m_uri_store.find_bounding(foundpos[i]) + "\">URI</A>";
@@ -223,6 +266,7 @@ public:
       } else {
         output_data = "INCORRECT SEARCH FORMAT\n\n";
       }
+      output_data += "</tt>";
 
       char data[20000];
       strcpy(data,"HTTP/1.0 200\n");
