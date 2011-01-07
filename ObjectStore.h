@@ -77,6 +77,7 @@ public:
     }
 
     char *base_pointer = o;
+    size_t object_size = sizeof(object_type);
     size_t base_read = index*object_size;
     for(size_t n=0;n<object_size;n++) {
       *(base_pointer+n) = storage_area[base_read+n];
