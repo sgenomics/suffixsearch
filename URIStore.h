@@ -14,6 +14,8 @@ public:
   size_t node_0;
   size_t node_1;
   string uri;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
+  size_t start_index;
+  size_t length;
 
   void dump() {
     cout << "node_0: " << node_0 << endl;
@@ -42,6 +44,7 @@ public:
   }
 
   void insert(size_t        value,
+              size_t        length,
               const string &uri) {
 
     size_t current_node = 0;
@@ -67,10 +70,15 @@ public:
     }
 
     dtreestore[current_node].uri = uri;
+    dtreestore[current_node].start_index = value;
+    dtreestore[current_node].length      = length;
   }
 
   // find the nearest prior uri to this index value.
-  string find_bounding(size_t index) {
+  void find_bounding(size_t index,
+                     string &uri,
+                     size_t &start_index,
+                     size_t &length) {
     size_t current_node = 0;
 
     size_t last_0_node = 0;
@@ -106,7 +114,9 @@ public:
       }
     }
 
-    return dtreestore[current_node].uri;
+    uri         = dtreestore[current_node].uri;
+    start_index = dtreestore[current_node].start_index;
+    length      = dtreestore[current_node].length;
   }
 };
 
