@@ -1,5 +1,5 @@
-#ifndef SUFFIX4_OBJECTSTORE
-#define SUFFIX4_OBJECTSTORE
+#ifndef SUFFIX4_OBJECTSTOREDISK
+#define SUFFIX4_OBJECTSTOREDISK
 
 #include <vector>
 #include <iostream>
@@ -9,18 +9,20 @@
 using namespace std;
 
 template<class object_type>
-class ObjectStore {
+class ObjectStoreDisk {
 
 private:
 
   size_t object_size;
-  vector<char> storage_area;
+
+  string storage_filename;
+  fstream storage_file;
 
 public:
   size_t current_max;
   typedef object_type value_type;
 
-  ObjectStore(size_t storage_size = 50) : current_max(0) {
+  ObjectStoreDisk(size_t storage_size = 50) : current_max(0) {
     initialise(storage_size);
   }
 
@@ -31,7 +33,7 @@ public:
     storage_area = vector<char>(total_size);
   }
 
-  void operator=(ObjectStore<object_type> &other) {
+  void operator=(ObjectStoreDisk<object_type> &other) {
     object_size  = other.object_size;
     storage_area = other.storage_area;
     current_max  = other.current_max;
@@ -39,7 +41,6 @@ public:
 
   void set(size_t index,const object_type &o) {
 
-//cout << "MAGIC";
     size_t write_end_position = (index+2)*(object_size);
 
     bool expanding = false;
@@ -49,14 +50,12 @@ public:
     for(;write_end_position > storage_area.size();) {
       storage_area.push_back(0);
     }
-//    if(expanding) cout << "Storage area nsize: " << storage_area.size() << endl;
 
     //cout << "object size is: " << object_size << endl;
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     for(size_t n=0;n<object_size;n++) {
 
       uint8_t c = ((const char *) (base_pointer+n))[0]; //((const char *)(&o))[n];
- //     cout << n << " val: " << (size_t) c;
       storage_area[(index*object_size)+n] = c;
     }
   }
@@ -81,9 +80,6 @@ public:
     size_t base_read = index*object_size;
     for(size_t n=0;n<object_size;n++) {
       *(base_pointer+n) = storage_area[base_read+n];
-  //    cout << "str: " << storage_area[base_read+n] << " ";
-   //MAGIC   
- // cout << n << " val: " << (size_t) (base_pointer+n) << endl;
     }
 
     object_type oo = *(reinterpret_cast<object_type *>(o));
@@ -101,13 +97,7 @@ public:
     current_max++;
     return current_max-1;
   }
-/*
-  size_t add() {
-    current_max++;
-    set(current_max-1,object_type());
-    return current_max-1;
-  }
-*/
+
   size_t get_max() {
     return current_max;
   }
@@ -117,7 +107,5 @@ public:
   }
 
 };
-
-// template<class object_type> ObjectStore<object_type>* ObjectStore<object_type>::m_instance=0;
 
 #endif
