@@ -2,6 +2,8 @@
 #include <vector>
 #include "stringify.h"
 #include <string>
+#include "ObjectStore.h"
+#include "StringStore.h"
 
 using namespace std;
 
@@ -13,22 +15,33 @@ public:
 
   size_t node_0;
   size_t node_1;
-  string uri;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
+  size_t uri_index;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
+//  string uri;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
   size_t start_index;
   size_t length;
 
   void dump() {
-    cout << "node_0: " << node_0 << endl;
-    cout << "node_1: " << node_1 << endl;
-    cout << "   uri: " << uri    << endl;
-  } 
+    cout << "node_0   : " << node_0    << endl;
+    cout << "node_1   : " << node_1    << endl;
+    cout << "uri_index: " << uri_index << endl;
+  }
+
+  void set_uri(string uri) {
+    uri_index = s_uri_string_store.add_string(uri);
+  }
+
+  string get_uri() {
+    return s_uri_string_store.get_string(uri_index);
+  }
+
+  static StringStore s_uri_string_store;
 };
 
 class URIStore {
 
 public:
 
-  vector<BinaryNode> dtreestore;
+  ObjectStore<BinaryNode> dtreestore;
 
   URIStore() {
     BinaryNode root;
@@ -54,24 +67,33 @@ public:
       if(current_bit > 0) current_bit = 1;
 
       size_t o_current_node = current_node;
-      if(current_bit) current_node = dtreestore[current_node].node_1;
-                 else current_node = dtreestore[current_node].node_0;
+      if(current_bit) current_node = dtreestore.get(current_node).node_1;
+                 else current_node = dtreestore.get(current_node).node_0;
 
 
       if(current_node == 0) {
         // need to create a new node and add it here.
         dtreestore.push_back(BinaryNode());
 
-        if(current_bit) dtreestore[o_current_node].node_1 = dtreestore.size()-1;
-                   else dtreestore[o_current_node].node_0 = dtreestore.size()-1;
+        BinaryNode b_o_current_node = dtreestore.get(o_current_node);
+
+        if(current_bit) b_o_current_node.node_1 = dtreestore.size()-1;
+                   else b_o_current_node.node_0 = dtreestore.size()-1;
+
+        dtreestore.set(o_current_node,b_o_current_node);
 
         current_node = dtreestore.size()-1;
       }
     }
 
-    dtreestore[current_node].uri = uri;
-    dtreestore[current_node].start_index = value;
-    dtreestore[current_node].length      = length;
+    
+    BinaryNode b_current_node = dtreestore.get(current_node);
+
+    b_current_node.set_uri(uri);
+    b_current_node.start_index = value;
+    b_current_node.length      = length;
+
+    dtreestore.set(current_node,b_current_node);
   }
 
   // find the nearest prior uri to this index value.
@@ -88,10 +110,11 @@ public:
       int current_bit = index & (1 << n);
       if(current_bit > 0) current_bit = 1;
 
-      //size_t o_current_node = current_node;
-      if(dtreestore[current_node].node_0 != 0) last_0_node = dtreestore[current_node].node_0;
-      if(current_bit) current_node = dtreestore[current_node].node_1;
-                 else current_node = dtreestore[current_node].node_0;
+      BinaryNode b_current_node = dtreestore.get(current_node);
+
+      if(b_current_node.node_0 != 0) last_0_node = b_current_node.node_0;
+      if(current_bit) current_node = b_current_node.node_1;
+                 else current_node = b_current_node.node_0;
 
       if(current_node == 0) {
         break;
@@ -101,22 +124,25 @@ public:
 
     // move down from last_0_node, always following 1s if possible.
     current_node = last_0_node;
+    BinaryNode b_current_node = dtreestore.get(current_node);
     for(;;) {
+      b_current_node = dtreestore.get(current_node);
 
-      if((dtreestore[current_node].node_1 == 0) && (dtreestore[current_node].node_0 == 0)) {
+      if((b_current_node.node_1 == 0) && (b_current_node.node_0 == 0)) {
         break;
       }
       
-      if(dtreestore[current_node].node_1 != 0) {
-        current_node = dtreestore[current_node].node_1;
+      if(b_current_node.node_1 != 0) {
+        current_node = b_current_node.node_1;
       } else {
-        current_node = dtreestore[current_node].node_0;
+        current_node = b_current_node.node_0;
       }
     }
+    b_current_node = dtreestore.get(current_node);
 
-    uri         = dtreestore[current_node].uri;
-    start_index = dtreestore[current_node].start_index;
-    length      = dtreestore[current_node].length;
+    uri         = b_current_node.get_uri();
+    start_index = b_current_node.start_index;
+    length      = b_current_node.length;
   }
 };
 
