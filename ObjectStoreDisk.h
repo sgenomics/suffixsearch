@@ -22,11 +22,11 @@ public:
   size_t current_max;
   typedef object_type value_type;
 
-  ObjectStoreDisk(size_t storage_size = 50) : current_max(0) {
-    initialise(storage_size);
+  ObjectStoreDisk() : current_max(0) {
+    initialise();
   }
 
-  void initialise(size_t storage_size) {
+  void initialise() {
 
     // create a new file in which to store data
 
@@ -34,23 +34,12 @@ public:
 
     storage_file = new fstream(storage_filename);
 
-//    object_size = sizeof(object_type);
-//    size_t total_size = object_size*storage_size;
-//    cout << "Object store allocating: " << total_size << endl;
-//    storage_area = vector<char>(total_size);
   }
-
-  // can this be supported nicely?!? is it used? by compact?
-/*
-  void operator=(ObjectStoreDisk<object_type> &other) {
-    object_size  = other.object_size;
-    storage_area = other.storage_area;
-    current_max  = other.current_max;
-  }
-*/
 
   size_t get_file_size() {
-    return 0;
+    storage_file->seekg(0,ios_base::end);
+    size_t pos = storage_file->tellg();
+    return pos;
   }
 
   void set(size_t index,const object_type &o) {
@@ -67,7 +56,6 @@ public:
       storage_area.push_back(0);
     }
 
-    //cout << "object size is: " << object_size << endl;
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     storage_file->seekp(index*object_size);
     for(size_t n=0;n<object_size;n++) {
@@ -109,9 +97,6 @@ public:
   }
 
   size_t push_back(const object_type &o) {
-    //cout << "objectstore pushback" << endl;
-    //   size_t addr = add();
-
     set(current_max,o);
     current_max++;
     return current_max-1;
