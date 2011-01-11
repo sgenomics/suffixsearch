@@ -16,7 +16,7 @@ private:
   size_t object_size;
 
   string storage_filename;
-  fstream storage_file;
+  fstream *storage_file;
 
 public:
   size_t current_max;
@@ -27,36 +27,53 @@ public:
   }
 
   void initialise(size_t storage_size) {
-    object_size = sizeof(object_type);
-    size_t total_size = object_size*storage_size;
-    cout << "Object store allocating: " << total_size << endl;
-    storage_area = vector<char>(total_size);
+
+    // create a new file in which to store data
+
+    storage_filename = "temp_" + rand();
+
+    storage_file = new fstream(storage_filename);
+
+//    object_size = sizeof(object_type);
+//    size_t total_size = object_size*storage_size;
+//    cout << "Object store allocating: " << total_size << endl;
+//    storage_area = vector<char>(total_size);
   }
 
+  // can this be supported nicely?!? is it used? by compact?
+/*
   void operator=(ObjectStoreDisk<object_type> &other) {
     object_size  = other.object_size;
     storage_area = other.storage_area;
     current_max  = other.current_max;
+  }
+*/
+
+  size_t get_file_size() {
+    return 0;
   }
 
   void set(size_t index,const object_type &o) {
 
     size_t write_end_position = (index+2)*(object_size);
 
+    size_t current_file_size = get_file_size();
+
     bool expanding = false;
-    if(write_end_position > storage_area.size()) {
+    if(write_end_position > current_file_size) {
       expanding = true;
     }
-    for(;write_end_position > storage_area.size();) {
+    for(;write_end_position > current_file_size;) {
       storage_area.push_back(0);
     }
 
     //cout << "object size is: " << object_size << endl;
     const char *base_pointer = reinterpret_cast<const char *> (&o);
+    storage_file->seekp(index*object_size);
     for(size_t n=0;n<object_size;n++) {
 
       uint8_t c = ((const char *) (base_pointer+n))[0]; //((const char *)(&o))[n];
-      storage_area[(index*object_size)+n] = c;
+      storage_file->put(c);
     }
   }
 
@@ -78,8 +95,10 @@ public:
     char *base_pointer = o;
     size_t object_size = sizeof(object_type);
     size_t base_read = index*object_size;
+
+    storage_file->seekg(base_read);
     for(size_t n=0;n<object_size;n++) {
-      *(base_pointer+n) = storage_area[base_read+n];
+      *(base_pointer+n) = storage_file->get(); //storage_area[base_read+n];
     }
 
     object_type oo = *(reinterpret_cast<object_type *>(o));
