@@ -5,6 +5,7 @@
 #include <iostream>
 #include <iomanip>
 #include <stdint.h>
+#include <fstream>
 
 using namespace std;
 
@@ -32,7 +33,7 @@ public:
 
     storage_filename = "temp_" + rand();
 
-    storage_file = new fstream(storage_filename);
+    storage_file = new fstream(storage_filename.c_str());
 
   }
 
@@ -52,9 +53,11 @@ public:
     if(write_end_position > current_file_size) {
       expanding = true;
     }
-    for(;write_end_position > current_file_size;) {
-      storage_area.push_back(0);
-    }
+
+// ADD INCREASING FILESIZE CODE HERE
+//    for(;write_end_position > current_file_size;) {
+//      storage_area.push_back(0);
+//    }
 
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     storage_file->seekp(index*object_size);
@@ -67,7 +70,9 @@ public:
 
   void clear() {
     current_max = 0;
-    storage_area.clear();
+    //storage_area.clear();
+
+    // TODO: ADD DELETE FILE CODE
     initialise(0);
   }
 

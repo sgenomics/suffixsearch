@@ -1,10 +1,13 @@
 #ifndef SUFFIXNODESTORE
 #define SUFFIXNODESTORE
 
+#include "global_defs.h"
 #include <vector>
 #include <map>
 #include <algorithm>
-#include "ObjectStore.h"
+#include "ObjectStoreMem.h"
+#include "ObjectStoreDisk.h"
+#include "global_defs.h"
 
 using namespace std;
 
@@ -191,6 +194,7 @@ class ChildList {
     int32_t index [childcount];
 } __attribute__((__packed__));
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class ChildListStore {
 
 public:
@@ -442,47 +446,49 @@ public:
     return mapping;
   }
 
-  ObjectStore<ChildList<2> >  children_2;
-  ObjectStore<ChildList<3> >  children_3;
-  ObjectStore<ChildList<4> >  children_4;
-  ObjectStore<ChildList<5> >  children_5;
-  ObjectStore<ChildList<6> >  children_6;
-  ObjectStore<ChildList<7> >  children_7;
-  ObjectStore<ChildList<8> >  children_8;
-  ObjectStore<ChildList<9> >  children_9;
-  ObjectStore<ChildList<10> > children_10;
-  ObjectStore<ChildList<11> > children_11;
-  ObjectStore<ChildList<12> > children_12;
-  ObjectStore<ChildList<13> > children_13;
-  ObjectStore<ChildList<14> > children_14;
-  ObjectStore<ChildList<15> > children_15;
-  ObjectStore<ChildList<16> > children_16;
-  ObjectStore<ChildList<17> > children_17;
-  ObjectStore<ChildList<18> > children_18;
-  ObjectStore<ChildList<19> > children_19;
-  ObjectStore<ChildList<20> > children_20;
-  ObjectStore<ChildList<21> > children_21;
-  ObjectStore<ChildList<22> > children_22;
-  ObjectStore<ChildList<23> > children_23;
-  ObjectStore<ChildList<24> > children_24;
-  ObjectStore<ChildList<25> > children_25;
-  ObjectStore<ChildList<26> > children_26;
-  ObjectStore<ChildList<27> > children_27;
-  ObjectStore<ChildList<28> > children_28;
-  ObjectStore<ChildList<29> > children_29;
-  ObjectStore<ChildList<30> > children_30;
-  ObjectStore<ChildList<31> > children_31;
-  ObjectStore<ChildList<32> > children_32;
-  ObjectStore<ChildList<33> > children_33;
-  ObjectStore<ChildList<34> > children_34;
-  ObjectStore<ChildList<35> > children_35;
-  ObjectStore<ChildList<36> > children_36;
-  ObjectStore<ChildList<37> > children_37;
-  ObjectStore<ChildList<38> > children_38;
-  ObjectStore<ChildList<39> > children_39;
-  ObjectStore<ChildList<40> > children_40;
+  object_store_type<ChildList<2> >  children_2;
+  object_store_type<ChildList<3> >  children_3;
+  object_store_type<ChildList<4> >  children_4;
+  object_store_type<ChildList<5> >  children_5;
+  object_store_type<ChildList<6> >  children_6;
+  object_store_type<ChildList<7> >  children_7;
+  object_store_type<ChildList<8> >  children_8;
+  object_store_type<ChildList<9> >  children_9;
+  object_store_type<ChildList<10> > children_10;
+  object_store_type<ChildList<11> > children_11;
+  object_store_type<ChildList<12> > children_12;
+  object_store_type<ChildList<13> > children_13;
+  object_store_type<ChildList<14> > children_14;
+  object_store_type<ChildList<15> > children_15;
+  object_store_type<ChildList<16> > children_16;
+  object_store_type<ChildList<17> > children_17;
+  object_store_type<ChildList<18> > children_18;
+  object_store_type<ChildList<19> > children_19;
+  object_store_type<ChildList<20> > children_20;
+  object_store_type<ChildList<21> > children_21;
+  object_store_type<ChildList<22> > children_22;
+  object_store_type<ChildList<23> > children_23;
+  object_store_type<ChildList<24> > children_24;
+  object_store_type<ChildList<25> > children_25;
+  object_store_type<ChildList<26> > children_26;
+  object_store_type<ChildList<27> > children_27;
+  object_store_type<ChildList<28> > children_28;
+  object_store_type<ChildList<29> > children_29;
+  object_store_type<ChildList<30> > children_30;
+  object_store_type<ChildList<31> > children_31;
+  object_store_type<ChildList<32> > children_32;
+  object_store_type<ChildList<33> > children_33;
+  object_store_type<ChildList<34> > children_34;
+  object_store_type<ChildList<35> > children_35;
+  object_store_type<ChildList<36> > children_36;
+  object_store_type<ChildList<37> > children_37;
+  object_store_type<ChildList<38> > children_38;
+  object_store_type<ChildList<39> > children_39;
+  object_store_type<ChildList<40> > children_40;
 };
 
+
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class NormalSuffixNodeContainer {
 
   public:
@@ -594,7 +600,7 @@ class NormalSuffixNodeContainer {
       return end_children;
     }
 
-    SuffixNode get_suffixnode(ChildListStore &c,ObjectStore<NormalSuffixNodeContainer> &store) {
+    SuffixNode get_suffixnode(ChildListStore &c,object_store_type<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent = parent;
       s.label_start = label_start;
@@ -625,6 +631,7 @@ class NormalSuffixNodeContainer {
 
 } __attribute__((__packed__));
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class EndSuffixNodeContainer {
 
   public:
@@ -651,7 +658,7 @@ class EndSuffixNodeContainer {
     }
 
 
-    SuffixNode get_suffixnode(ChildListStore &c,ObjectStore<NormalSuffixNodeContainer> &store) {
+    SuffixNode get_suffixnode(ChildListStore &c,object_store_type<NormalSuffixNodeContainer> &store) {
       SuffixNode s(0,0,0);
       s.parent          = parent;
       s.label_start     = label_start;
@@ -692,6 +699,7 @@ class EndSuffixNodeContainer {
     }
 } __attribute__((__packed__));
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class SuffixNodeStore {
 
 public:
@@ -846,7 +854,6 @@ return s;
     // note: this should not invalidate any SuffixNode objects that have been returned.
 
     if(NormalSuffixNodeContainer::invalidation_count == 100000) {
-    //if(NormalSuffixNodeContainer::invalidation_count == 10) {
       map<int32_t,int32_t> id_mapping = m_childstore.compact();
       apply_mapping(m_store1,id_mapping);
 
@@ -855,8 +862,8 @@ return s;
 
   }
 
-  ObjectStore<NormalSuffixNodeContainer> m_store1;
-  ObjectStore<EndSuffixNodeContainer>    m_store2;
+  object_store_type<NormalSuffixNodeContainer> m_store1;
+  object_store_type<EndSuffixNodeContainer>    m_store2;
 
   SuffixNode m_rootnode;
 

@@ -8,6 +8,8 @@
 #include <stdio.h>
 #include "stringify.h"
 #include "URIStore.h"
+#include "ObjectStoreMem.h"
+#include "ObjectStoreDisk.h"
 using namespace std;
 
 #include <netinet/in.h>

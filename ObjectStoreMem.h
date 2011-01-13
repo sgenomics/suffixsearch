@@ -1,5 +1,5 @@
-#ifndef SUFFIX4_OBJECTSTORE
-#define SUFFIX4_OBJECTSTORE
+#ifndef SUFFIX4_OBJECTSTOREMEM
+#define SUFFIX4_OBJECTSTOREMEM
 
 #include <vector>
 #include <iostream>
@@ -9,7 +9,7 @@
 using namespace std;
 
 template<class object_type>
-class ObjectStore {
+class ObjectStoreMem {
 
 private:
 
@@ -20,7 +20,7 @@ public:
   size_t current_max;
   typedef object_type value_type;
 
-  ObjectStore(size_t storage_size = 50) : current_max(0) {
+  ObjectStoreMem(size_t storage_size = 50) : current_max(0) {
     initialise(storage_size);
   }
 
@@ -31,7 +31,7 @@ public:
     storage_area = vector<char>(total_size);
   }
 
-  void operator=(ObjectStore<object_type> &other) {
+  void operator=(ObjectStoreMem<object_type> &other) {
     object_size  = other.object_size;
     storage_area = other.storage_area;
     current_max  = other.current_max;
@@ -118,6 +118,6 @@ public:
 
 };
 
-// template<class object_type> ObjectStore<object_type>* ObjectStore<object_type>::m_instance=0;
+// template<class object_type> ObjectStoreMem<object_type>* ObjectStoreMem<object_type>::m_instance=0;
 
 #endif

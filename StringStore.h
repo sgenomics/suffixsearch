@@ -6,10 +6,13 @@
 #include <vector>
 #include "stringify.h"
 #include <string>
-#include "ObjectStore.h"
+#include "ObjectStoreMem.h"
+#include "ObjectStoreDisk.h"
+#include "global_defs.h"
 
 using namespace std;
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class StringStore {
 
 public:
@@ -40,7 +43,7 @@ public:
     return idx;
   }
 
-  ObjectStore<char> m_string_store;
+  object_store_type<char> m_string_store;
 };
 
 #endif

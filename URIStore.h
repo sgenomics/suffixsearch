@@ -2,11 +2,14 @@
 #include <vector>
 #include "stringify.h"
 #include <string>
-#include "ObjectStore.h"
+#include "ObjectStoreMem.h"
+#include "ObjectStoreDisk.h"
 #include "StringStore.h"
+#include "global_defs.h"
 
 using namespace std;
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class BinaryNode {
 
 public:
@@ -16,7 +19,6 @@ public:
   size_t node_0;
   size_t node_1;
   size_t uri_index;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
-//  string uri;  // URI is only required for leaf nodes, therefore there maybe a more efficient representation...
   size_t start_index;
   size_t length;
 
@@ -37,11 +39,12 @@ public:
   static StringStore s_uri_string_store;
 };
 
+//template<template<class T> class object_store_type=ObjectStoreMem>
 class URIStore {
 
 public:
 
-  ObjectStore<BinaryNode> dtreestore;
+  object_store_type<BinaryNode> dtreestore;
 
   URIStore() {
     BinaryNode root;
