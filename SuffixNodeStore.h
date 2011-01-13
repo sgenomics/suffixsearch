@@ -6,6 +6,7 @@
 #include <map>
 #include <algorithm>
 #include "ObjectStoreMem.h"
+#include "ObjectStoreMemVec.h"
 #include "ObjectStoreDisk.h"
 #include "global_defs.h"
 

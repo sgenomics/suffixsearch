@@ -25,7 +25,7 @@ public:
 
   void set(size_t index,const object_type &o) {
 
-    while(index < storage_area.size()) {
+    while(index > storage_area.size()) {
       storage_area.push_back(object_type());
     }
 
