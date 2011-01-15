@@ -17,7 +17,6 @@ private:
   vector<object_type> storage_area;
 
 public:
-  size_t current_max;
   typedef object_type value_type;
 
   ObjectStoreMemVec(size_t storage_size = 50) {
@@ -43,6 +42,10 @@ public:
   size_t push_back(const object_type &o) {
     storage_area.push_back(o);
     return storage_area.size()-1;
+  }
+
+  void set_size(size_t new_size) {
+    storage_area.erase(storage_area.begin()+new_size,storage_area.end());
   }
 
   size_t get_max() {

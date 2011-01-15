@@ -2,7 +2,7 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-#include "ObjectStore.h"
+#include "ObjectStoreMem.h"
 #include "SuffixNodeStore.h"
 #include "UnitTest.h"
 
@@ -10,9 +10,9 @@ using namespace std;
 
 int test_objectstore(UnitTest &utf) {
 
-  utf.begin_test_set("ObjectStore tests");
+  utf.begin_test_set("ObjectStoreMem tests");
 
-  ObjectStore<int> store(5);
+  ObjectStoreMem<int> store(5);
 
   for(size_t n=0;n<100;n++) {
     store.push_back(n);
@@ -35,7 +35,7 @@ int test_objectstore(UnitTest &utf) {
     utf.test_equality(store.get(m),12);
   }
 
-  ObjectStore<NormalSuffixNodeContainer> store2(5);
+  ObjectStoreMem<NormalSuffixNodeContainer> store2(5);
 
   for(int32_t n=0;n<100;n++) {
 
@@ -59,7 +59,7 @@ int test_objectstore(UnitTest &utf) {
   }
 
   
-  ObjectStore<ChildList<7> > store3(5);
+  ObjectStoreMem<ChildList<7> > store3(5);
   for(int32_t n=0;n<100;n++) {
     ChildList<7> c;
 

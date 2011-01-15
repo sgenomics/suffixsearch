@@ -67,7 +67,7 @@ public:
 
 int test_suffixtree_compact_vec(UnitTest &utf) {
 
-  ObjectStore<IntWrapper> v;
+  object_store_type<IntWrapper> v;
   map<int32_t,int32_t> m;
 
   v.push_back(IntWrapper(0 ,6 + 0x20000)); // 0

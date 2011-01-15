@@ -15,9 +15,9 @@ private:
 
   size_t object_size;
   vector<char> storage_area;
+  size_t current_max;
 
 public:
-  size_t current_max;
   typedef object_type value_type;
 
   ObjectStoreMem(size_t storage_size = 50) : current_max(0) {
@@ -101,19 +101,17 @@ public:
     current_max++;
     return current_max-1;
   }
-/*
-  size_t add() {
-    current_max++;
-    set(current_max-1,object_type());
-    return current_max-1;
-  }
-*/
+
   size_t get_max() {
     return current_max;
   }
 
   size_t size() {
     return get_max();
+  }
+
+  void set_size(size_t new_size) {
+    current_max = new_size;
   }
 
 };

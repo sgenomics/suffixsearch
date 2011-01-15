@@ -6,6 +6,7 @@
 #include <iomanip>
 #include <stdint.h>
 #include <fstream>
+#include "stringify.h"
 
 using namespace std;
 
@@ -31,7 +32,8 @@ public:
 
     // create a new file in which to store data
 
-    storage_filename = "temp_" + rand();
+    storage_filename = string("temp_") + stringify(rand());
+    cout << "creating storage_area file: " << storage_filename << endl;
 
     storage_file = new fstream(storage_filename.c_str());
 
@@ -54,10 +56,13 @@ public:
       expanding = true;
     }
 
-// ADD INCREASING FILESIZE CODE HERE
-//    for(;write_end_position > current_file_size;) {
-//      storage_area.push_back(0);
-//    }
+   // increase filesize, until we are able to store data at this location.
+   for(;write_end_position > current_file_size;) {
+     storage_file->seekg(0,ios_base::end);
+     storage_file->put(0);
+     current_file_size = get_file_size();
+     current_max = current_file_size;
+   }
 
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     storage_file->seekp(index*object_size);

@@ -47,21 +47,6 @@ size_t get_last_valid(vec_type &v,size_t position) {
 
 template<class vec_type>
 void compact_vec(vec_type &v,map<int32_t,int32_t> &mapping,int32_t id) {
-/*
-  // version that replaces object store
-  vec_type new_v;
-
-  cout << "pre: " << v.size() << endl;
-  for(size_t n=0;n<v.size();n++) {
-    if(v.get(n).isvalid()) {
-      size_t nid = new_v.push_back(v.get(n));
-      mapping[n+id] = nid + id;
-    }
-  }
-
-  cout << "post: " << new_v.size() << " removed: " << v.size()-new_v.size() << endl;
-  v = new_v;
-*/
 
 cout << "compact code called" << endl;
   size_t last_invalid = 0;
@@ -82,43 +67,9 @@ cout << "compact code called" << endl;
     mapping[j+id] = i+id;
     invalid_count++;
   }
-
-  v.current_max = v.current_max-invalid_count;
-
-/*
-
-  // version that updates existing object store.
-  if(v.size() > 2) {
-    size_t old_size = v.size();
-    cout << "pre compact child store size: " << v.size();
-
-    int32_t lastvalid = -1;
-    for(int32_t n=0;n< static_cast<int32_t>(v.size());n++) {
-
-      if(v.get(n).isvalid() == false) {
-        if(lastvalid != -1) {
-          v.set(lastvalid,v.get(n));
-          mapping[n+id] = lastvalid+id;
-        } else {
-          mapping[n+id] = 0+id; // WAS just line below
-          lastvalid = 0;
-        }
-
-      } else {
-	if(lastvalid != n) {
-	  if(lastvalid != -1) { v.set(lastvalid,v.get(n)); } else lastvalid = 0;
-//	  mapping[n+id] = lastvalid+id;
-	}
-	mapping[n+id] = lastvalid+id;
-	lastvalid++;
-      }
-    }
-
-    v.current_max = lastvalid;
-    cout << "post: " << v.size() << " removed: " << old_size-v.size() << endl;
-  }
-*/
-
+  
+  size_t new_size = v.size()-invalid_count;
+  v.set_size(new_size);
 }
 
 template<class vec_type>
