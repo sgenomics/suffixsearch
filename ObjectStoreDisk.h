@@ -24,7 +24,7 @@ public:
   size_t current_max;
   typedef object_type value_type;
 
-  ObjectStoreDisk() : current_max(0) {
+  ObjectStoreDisk(int suggested_initial_size=0) : current_max(0) {
     initialise();
   }
 
