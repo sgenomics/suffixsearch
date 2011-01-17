@@ -123,6 +123,10 @@ public:
     return current_max;
   }
 
+  void set_size(size_t new_size) {
+    current_max = new_size;
+  }
+
   size_t size() {
     return get_max();
   }
