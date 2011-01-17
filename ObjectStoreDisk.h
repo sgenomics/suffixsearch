@@ -15,7 +15,7 @@ class ObjectStoreDisk {
 
 private:
 
-  size_t object_size;
+  //size_t object_size;
 
   string storage_filename;
   fstream *storage_file;
@@ -32,11 +32,13 @@ public:
 
     // create a new file in which to store data
 
-    storage_filename = string("temp_") + stringify(rand());
+    storage_filename = string("./temp_") + stringify(rand());
     cout << "creating storage_area file: " << storage_filename << endl;
 
-    storage_file = new fstream(storage_filename.c_str());
-
+    storage_file = new fstream(storage_filename.c_str(), ios_base::in | ios_base::out | ios_base::binary | ios_base::trunc);
+    bool r = (*storage_file).fail();
+    if(r == true) cout << "YOU FAILURE" << endl;
+    (*storage_file) << "nothing";
   }
 
   size_t get_file_size() {
@@ -47,7 +49,11 @@ public:
 
   void set(size_t index,const object_type &o) {
 
+    size_t object_size = sizeof(object_type);
     size_t write_end_position = (index+2)*(object_size);
+//    cout << "index             : " << index << endl;
+//    cout << "object_size       : " << object_size << endl;
+//    cout << "write_end_position: " << write_end_position << endl;
 
     size_t current_file_size = get_file_size();
 
@@ -56,13 +62,14 @@ public:
       expanding = true;
     }
 
-   // increase filesize, until we are able to store data at this location.
-   for(;write_end_position > current_file_size;) {
-     storage_file->seekg(0,ios_base::end);
-     storage_file->put(0);
-     current_file_size = get_file_size();
-     current_max = current_file_size;
-   }
+    // increase filesize, until we are able to store data at this location.
+    for(;write_end_position > current_file_size;) {
+      storage_file->seekg(0,ios_base::end);
+      storage_file->put(0);
+      current_file_size = get_file_size();
+//      cout << "cwrite_end_position: " << write_end_position << endl;
+//      cout << "ccurrent_file_size " << current_file_size << endl;
+    }
 
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     storage_file->seekp(index*object_size);
