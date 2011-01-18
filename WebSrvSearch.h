@@ -212,6 +212,9 @@ public:
         if(getline != string::npos) { break; }
       }
 
+
+      if(s.find("quit") != string::npos) exit(0);
+
       if(s.find("arch?q=") != string::npos) process_search      (s,ConnectFD);
       if(s.find("arch?c=") != string::npos) process_cacherequest(s,ConnectFD);
     }
