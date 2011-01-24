@@ -7,6 +7,7 @@
 #include <stdint.h>
 #include <fstream>
 #include "stringify.h"
+#include <stdlib.h>
 
 using namespace std;
 
@@ -22,10 +23,12 @@ private:
 
 public:
   size_t current_max;
+  size_t object_size;
   typedef object_type value_type;
 
   ObjectStoreDisk(int suggested_initial_size=0) : current_max(0) {
     initialise();
+    object_size = sizeof(object_type);
   }
 
   void initialise() {
@@ -51,9 +54,6 @@ public:
 
     size_t object_size = sizeof(object_type);
     size_t write_end_position = (index+2)*(object_size);
-//    cout << "index             : " << index << endl;
-//    cout << "object_size       : " << object_size << endl;
-//    cout << "write_end_position: " << write_end_position << endl;
 
     size_t current_file_size = get_file_size();
 
@@ -67,8 +67,6 @@ public:
       storage_file->seekg(0,ios_base::end);
       storage_file->put(0);
       current_file_size = get_file_size();
-//      cout << "cwrite_end_position: " << write_end_position << endl;
-//      cout << "ccurrent_file_size " << current_file_size << endl;
     }
 
     const char *base_pointer = reinterpret_cast<const char *> (&o);
@@ -89,28 +87,26 @@ public:
   }
 
   object_type get(size_t index) {
-    // it would be nice to remove this new and allocate on the stack
-    char *o = new char[sizeof(object_type)];
 
+    object_type o;
+
+/* removing bounds checking... debug only?
     if(index > size()) {
       cout << "error trying to get an object that's out of bounds, index is: " << index << endl;
       int *i=0;*i=1;
     }
+*/
 
-    char *base_pointer = o;
-    size_t object_size = sizeof(object_type);
     size_t base_read = index*object_size;
-
     storage_file->seekg(base_read);
-    for(size_t n=0;n<object_size;n++) {
-      *(base_pointer+n) = storage_file->get(); //storage_area[base_read+n];
+
+    char *base_pointer = (char*) &o;
+    char *end_pointer  = base_pointer+object_size;
+    for(;base_pointer<end_pointer;base_pointer++) {
+      *(base_pointer) = storage_file->get(); 
     }
 
-    object_type oo = *(reinterpret_cast<object_type *>(o));
-
-    delete [] o;
-
-    return oo;
+    return o;
   }
 
   size_t push_back(const object_type &o) {

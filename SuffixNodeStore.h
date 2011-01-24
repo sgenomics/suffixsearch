@@ -474,26 +474,18 @@ class NormalSuffixNodeContainer {
       next_left_leaf  = s.next_left_leaf;
       next_right_leaf = s.next_right_leaf;
       depth           = s.depth;
-      childlist_idx = -1;
+      childlist_idx   = -1;
 
       int32_t cid = c.get_store_id(cidx);
       if(cidx != -1)
       if(s.child_count() != cid) {
         // delete children idx
 
-//        cout << "replacing my children with other children" << endl;
         // I might need to settle for periodically garbage collecting these guys.
         c.invalidate(cidx);
         invalidation_count++;
         // add new children idx
-/*
-        for(size_t n=0;n<s.m_children.m_symbols.size();n++) {
-          cout << s.m_children.m_symbols[n].symbol;
-          cout << ",";
-          cout << s.m_children.m_symbols[n].index;
-          cout << endl;
-        }
-*/
+
         childlist_idx = c.push_back(s.m_children.m_symbols);
         return;
       }
@@ -502,11 +494,8 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         if(cidx == -1) {
-//          cout << "pushing back new children" << endl;
-          
           cidx = c.push_back(s.m_children.m_symbols);
         } else {
-//          cout << "setting children" << endl;
           c.set_children(cidx,s.m_children.m_symbols);
         }
         childlist_idx = cidx;
@@ -546,7 +535,6 @@ class NormalSuffixNodeContainer {
       int32_t end_children = 0;
       for(size_t n=0;n<s.size();n++) {
         if((s[n].index & 0xFF000000) > 0) end_children++;
-//        else {end_children = 51; break;}
       }
 
       return end_children;
@@ -563,21 +551,10 @@ class NormalSuffixNodeContainer {
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
       if(childlist_idx != -1) {
-//        cout << "fetching childlist id: " << childlist_idx << endl;
         s.m_children.m_symbols = c.get_children(childlist_idx);
       } else {
-//        cout << "-1 child list in normal container" << endl;
       }
 
-// this is the last non-valid
-//cout << "get suffix node" << endl;
- /*       for(size_t n=0;n<s.m_children.m_symbols.size();n++) {
-          cout << (int) s.m_children.m_symbols[n].symbol;
-          cout << ",";
-          cout << s.m_children.m_symbols[n].index;
-          cout << endl;
-        }
-*/
       return s;
     }
 
@@ -594,10 +571,6 @@ class EndSuffixNodeContainer {
     int32_t next_right_leaf;
 
     EndSuffixNodeContainer() {
-  //    cout << "ENDNODE default constructor" << endl;
- //     parent = -2;
- //     label_start = -1;
- //     suffix_link = -1;
       next_right_leaf = -1;
     }
 
@@ -619,33 +592,11 @@ class EndSuffixNodeContainer {
       s.next_right_leaf = next_right_leaf;
       s.depth = store.get(s.parent).get_depth();
 
-
-//      cout << "fetching parent, id of which is: " << s.parent << endl;
       if(s.parent == -2) {int *i=0; *i=1;}
       SuffixNode parent = store.get(s.parent).get_suffixnode(c,store);
-//      SuffixNode parentsl = store.get(store.get(s.parent).suffix_link).get_suffixnode(c,store);
 
-//      bool ucomp=true;
       bool found = false;
       if(store.get(s.parent).suffix_link == suffix_link) found=true;
-/*
-      for(int n=0;n<=40;n++) {
-        int32_t id = parentsl.get_child(n);
-        if(id == suffix_link) found = true;
-      }
-      if(!found) {cout << "slincomp" << endl; ucomp=false;}
-      if(found) cout << "slcomp" << endl;
-*/
-//      if(label_start != parent.label_start) { cout << "label_start: " << label_start << " par: " << parent.label_end << endl; ucomp=false;}
-
-/*
-      found = false;
-      for(int n=0;n<=40;n++) {
-        if(next_right_leaf == parent.get_child(n)) found = true;
-      }
-      if(!found) {ucomp = false; cout << "nrincomp" << endl;}
-      if(found) cout << "nrcomp" << endl;*/
-  //    if(ucomp == true) cout << "ULTRACOMPRESS!" << endl;
 
       return s;
     }
@@ -656,7 +607,6 @@ class SuffixNodeStore {
 
 public:
   SuffixNodeStore() : m_rootnode(0,0,0) {
-//    cout << "creating a SuffixNodeStore" << endl;
     NormalSuffixNodeContainer s(m_rootnode,m_childstore,-1);
     m_store1.push_back(s); // dummy node, root is stored elsewhere.
   }
@@ -665,9 +615,6 @@ public:
 
     NormalSuffixNodeContainer blank_node;
 
-//    cout << "NormalSuffixNodeContainer size: " << sizeof(NormalSuffixNodeContainer) << endl;
-
-//    cout << "NormalSuffixNodeContainer baseaddr: " << hex << &blank_node << endl;
     size_t idx = m_store1.push_back(blank_node);
     return idx;
   }
@@ -688,41 +635,29 @@ public:
       EndSuffixNodeContainer s2(s);
 
       size_t val = m_store2.push_back(s2);
-      //cout << "created id: " << val + 0x01000000 << "(store 2)" << endl;
       return val + 0x01000000;
 
     } else {
       
       size_t val = m_store1.push_back(NormalSuffixNodeContainer(s,m_childstore,-1));
-      //cout << "created id: " << val << "(store 1)" << endl;
       return val;
     }
   }
 
   SuffixNode get(int idx) {
 
- //   cout << "SuffixNodeStore fetching id: " << idx << endl;
-
     if(idx == 0) {
       return m_rootnode;
     }
 
- //   cout << "get suffixnode: " << idx << endl;
     int id = get_store_id(idx);
-    if(id == 0) { SuffixNode s = m_store1.get(idx             ).get_suffixnode(m_childstore,m_store1);
-/*
-cout << "get suffix node" << endl;
-        for(size_t n=0;n<s.m_children.m_symbols.size();n++) {
-          cout << (int) s.m_children.m_symbols[n].symbol;
-          cout << ",";
-          cout << s.m_children.m_symbols[n].index;
-          cout << endl;
-        }
-*/
-return s;
-
- }
-    if(id >  0)  return m_store2.get(idx & 0x00FFFFFF).get_suffixnode(m_childstore,m_store1);
+    if(id == 0) { 
+      SuffixNode s = m_store1.get(idx).get_suffixnode(m_childstore,m_store1);
+      return s;
+    }
+    if(id > 0) {
+      return m_store2.get(idx & 0x00FFFFFF).get_suffixnode(m_childstore,m_store1);
+    }
 
     cout << "ERRRRRRRRRRRRRRRRRRRRRRRRRRRROOOOOOORRRRRRRRRRRRRRRRR" << endl;
     exit(0);
@@ -732,22 +667,12 @@ return s;
   void set(int idx, SuffixNode &s) {
     int id = get_store_id(idx);
 
-    //cout << "set suffixnode: " << idx << endl;
     compact();
     if(idx == 0) {
       m_rootnode = s;
       return;
     }
 
-//cout << "seting suffix node" << endl;
-/*
-        for(size_t n=0;n<s.m_children.m_symbols.size();n++) {
-          cout << (int) s.m_children.m_symbols[n].symbol;
-          cout << ",";
-          cout << s.m_children.m_symbols[n].index;
-          cout << endl;
-        }
-*/
     if(id == 0) m_store1.set(idx             ,NormalSuffixNodeContainer(s,m_childstore,m_store1.get(idx).childlist_idx));
     if(id >  0) m_store2.set(idx & 0x00FFFFFF,EndSuffixNodeContainer(s));
   }

@@ -44,9 +44,9 @@ public:
 
   void process_positions() {
     process_right_positions();
-cout << "processed right positions" << endl;
+    cout << "processed right positions" << endl;
     process_left_positions();
-cout << "processed left positions" << endl;
+    cout << "processed left positions" << endl;
   }
 
   void process_right_positions() {
