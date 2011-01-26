@@ -16,7 +16,7 @@ class ObjectStoreDisk {
 
 private:
 
-  //size_t object_size;
+  size_t object_size;
 
   string storage_filename;
   fstream *storage_file;
@@ -28,7 +28,12 @@ public:
 
   ObjectStoreDisk(int suggested_initial_size=0) : current_max(0) {
     initialise();
+
     object_size = sizeof(object_type);
+  }
+
+  ~ObjectStoreDisk() {
+    delete storage_file;
   }
 
   void initialise() {
@@ -42,6 +47,7 @@ public:
     bool r = (*storage_file).fail();
     if(r == true) cout << "YOU FAILURE" << endl;
     (*storage_file) << "nothing";
+    object_size = sizeof(object_type);
   }
 
   size_t get_file_size() {
@@ -52,7 +58,6 @@ public:
 
   void set(size_t index,const object_type &o) {
 
-    size_t object_size = sizeof(object_type);
     size_t write_end_position = (index+2)*(object_size);
 
     size_t current_file_size = get_file_size();
@@ -72,8 +77,7 @@ public:
     const char *base_pointer = reinterpret_cast<const char *> (&o);
     storage_file->seekp(index*object_size);
     for(size_t n=0;n<object_size;n++) {
-
-      uint8_t c = ((const char *) (base_pointer+n))[0]; //((const char *)(&o))[n];
+      uint8_t c = ((const char *) (base_pointer+n))[0];
       storage_file->put(c);
     }
   }
@@ -89,14 +93,13 @@ public:
   object_type get(size_t index) {
 
     object_type o;
-
-/* removing bounds checking... debug only?
+/*
     if(index > size()) {
       cout << "error trying to get an object that's out of bounds, index is: " << index << endl;
       int *i=0;*i=1;
     }
 */
-
+    char *base_pointer = reinterpret_cast<char *>(&o);
     size_t base_read = index*object_size;
     storage_file->seekg(base_read);
 

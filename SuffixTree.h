@@ -223,13 +223,11 @@ public:
     }
  
     size_t search_string_position = 0;
-//    cout << "current_node: " << current_node << endl;
     if(current_node == -1) return -1;
     SuffixNode current_node_tmp = store.get(current_node);
     for(;search_string_position < ss.size();) {
       // follow edge label
       for(int position=current_node_tmp.label_start;position <= current_node_tmp.get_label_end();position++) {
-   //     cout << "check pos: " << position << "," << s[position] << "," << ss[search_string_position] << endl;
         if(s[position] != ss[search_string_position]) {return -1;}
         else {
           search_string_position++;
@@ -370,9 +368,6 @@ cout << "end  :" << end << endl;
       // if a child exists, go to it, without consuming
       int child = insertion_point_tmp.get_child(s[symbol_index_start]);
       if(child != -1) {
-     //   cout << "n0" << endl;
-//        cout << "child was: " << child << endl;
-// last invalid is somewhere in this method call
         return extend2(child,symbol_index_start,symbol_index_end,split,fnode,fpos);
       } else {
         // if it doesn't exist add it.
@@ -385,47 +380,42 @@ cout << "end  :" << end << endl;
         int sn_idx = store.push_back(sn);
         insertion_point_tmp.set_child(s[symbol_index_start],sn_idx);// next insert
         store.set(insertion_point,insertion_point_tmp);
-//        cout << "1 ADD NODE: " << sn_idx << endl;
-        //cout << "extend2 endpoint 1" << endl;
         return sn_idx;
       }
     }
 
     bool dontdoit=false;
     if(edge_length == 0) {
-    // match at label start position?
-    if((edge_length == 0) && (s[insertion_point_tmp.label_start] == s[symbol_index_start])) {
-      symbol_index_start++;
-      dontdoit=true;
-    } else
-    if((edge_length == 0) && (s[insertion_point_tmp.label_start] != s[symbol_index_start])) {
-      // mismatch at label start position - add new child to parent!
-
-      int parent = insertion_point_tmp.get_parent();
-      SuffixNode parent_tmp = store.get(parent);
-      int child  = parent_tmp.get_child(s[symbol_index_start]);
-      if(child == -1) {
-        // no child here, add one.
-        SuffixNode sn(parent,symbol_index_start,0);
-        sn.label_start = symbol_index_start;
-        split=true;
-        sn.set_depth(parent_tmp.get_depth());
-        int sn_idx = store.push_back(sn);
-        parent_tmp.set_child(s[symbol_index_start],sn_idx);
-        store.set(parent,parent_tmp);
-       // cout << "2ADD NODE: " << endl;
-       // cout << "extend2 endpoint 2" << endl;
-        return sn_idx;
+      // match at label start position?
+      if((s[insertion_point_tmp.label_start] == s[symbol_index_start])) {
+	symbol_index_start++;
+	dontdoit=true;
       } else {
-        return extend2(child,symbol_index_start+1,symbol_index_end,split,fnode,fpos);
+	if((s[insertion_point_tmp.label_start] != s[symbol_index_start])) {
+	  // mismatch at label start position - add new child to parent!
 
-        // Should really never reach this point.
-cout << "NEVER EVER GET HERE EVER EVER" << endl;
-dump();
-cout << "NEVER EVER GET HERE EVER EVER" << endl;
-        exit(0);
+	  int parent = insertion_point_tmp.get_parent();
+	  SuffixNode parent_tmp = store.get(parent);
+	  int child  = parent_tmp.get_child(s[symbol_index_start]);
+	  if(child == -1) {
+	    // no child here, add one.
+	    SuffixNode sn(parent,symbol_index_start,0);
+	    sn.label_start = symbol_index_start;
+	    split=true;
+	    sn.set_depth(parent_tmp.get_depth());
+	    int sn_idx = store.push_back(sn);
+	    parent_tmp.set_child(s[symbol_index_start],sn_idx);
+	    store.set(parent,parent_tmp);
+	    return sn_idx;
+	  } else {
+	    return extend2(child,symbol_index_start+1,symbol_index_end,split,fnode,fpos);
+
+	    // Should really never reach this point.
+	    cout << "NEVER EVER GET HERE EVER EVER" << endl;
+	    exit(0);
+	  }
+	}
       }
-    }
     }
 
     int start_val =0;
@@ -435,8 +425,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     for(int n=start_val;(n<=edge_length) && (n<=(insert_len));) {
       if(s[symbol_index_start+n] != s[label_start+n]) {
         // mismatch on edge label
-        //cout << "Extend2 condition 1: Mismatch in edge label" << endl;
-        //cout << "Mismatch points " << symbol_index_start+n << "," << label_start+n << ",   n=" << n << endl;
+        //Extend2 condition 1: Mismatch in edge label
 
         int b_idx = store.push_back_norm();
         int c_idx = store.push_back_end();
@@ -445,8 +434,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         SuffixNode old_parent_tmp = store.get(insertion_point_tmp.parent);
 
         int64_t old_label_start = insertion_point_tmp.label_start;
-       // int64_t old_label_end   = insertion_point_tmp.label_end;
-       // int64_t old_suffix_link = insertion_point_tmp.suffix_link;
 
         SuffixNode b(insertion_point,0,0);
         SuffixNode c(insertion_point,0,0);
@@ -475,11 +462,10 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         c.parent = b_idx;
         b.parent = old_parent;
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
-        c.suffix_link = 0; // CORRECT?
+        c.suffix_link = 0;
 
-     //   cout << "INSERTION POINT: " << insertion_point << endl;
-//        cout << "***************************************************** 3ADD NODE: " << b_idx << endl;
-//        cout << "***************************************************** 3ADD NODE: " << c_idx << endl;
+        // ADD NODE: b_idx
+        // ADD NODE: c_idx 
         split=true;
         b.set_depth(old_parent_tmp.get_depth()+b.get_label_length_r()+1);
         c.set_depth(b.get_depth());
@@ -489,10 +475,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         if(insertion_point_tmp.label_end == SuffixNode::end_marker) { insertion_point_tmp.set_depth(b.get_depth());}
         else                                                        { insertion_point_tmp.set_depth(b.get_depth()+insertion_point_tmp.get_label_length_r()+1);}
         store.set(insertion_point,insertion_point_tmp);
-	//cout << "n3" << endl;
-        //cout << "b_idx: " << b_idx << endl;
-        //cout << "c_idx: " << c_idx << endl;
-        //cout << "extend2 endpoint 3" << endl;
+        //extend2 endpoint 3
         return c_idx;
       }
 
@@ -503,34 +486,23 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     if((edge_length+1) > insert_len) { 
       split=false;
 
-//      if(edge_length == insert_len) split=true; // we matched completely at the last symbol so can be used.
-    //  cout << "extend2 endpoint 4" << endl;
       return insertion_point;
     }
 
-    //cout << "Extend2 condition 2: checking children" << endl;
-
+    //Extend2 condition 2: checking children
     int pos = symbol_index_start + edge_length + 1;
 
     if(dontdoit) pos--;
     if(pos > symbol_index_end) {
-      //cout << "extend2 endpoint 5" << endl;
-      //cout << "************************************************************************* WHAT MAENS WHAT MEANS?!?" << endl;
+      //extend2 endpoint 5: broken?
       return insertion_point;
     }
 
     char child_sym = s[pos];
 
-//cout << "s: ";
-//for(int k=0;k<s.size();k++) cout << static_cast<int>(s[k]) << ",";
-//cout << endl;
-//cout << "pos: " << pos << endl;
-//cout << "s.size: " << s.size() << endl;
-//cout << "child_sym: " << child_sym << endl;
-    // if a child does not exist add
     if(insertion_point_tmp.get_child(child_sym) == -1) {
 
-// we seem to get here even though insertion point has a label length of 0... how?
+      // we seem to get here even though insertion point has a label length of 0... how?
       // we should replace the edge label with our own...
 
       if(insertion_point_tmp.label_end == -1) {
@@ -542,37 +514,10 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
  
       if(insertion_point_tmp.isleaf()) {
         cout << "WTF it's a leaf?!?" << endl;
-        cout << "orig name: " << l << endl;
-        cout << "1insstart: " << insertion_point_tmp.label_start << endl;
-        cout << "1insend  : " << insertion_point_tmp.label_end << endl;
-        cout << "1s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
-
-        cout << "2insstart: " << symbol_index_start << endl;
-        cout << "2insend  : " << symbol_index_end << endl;
-        cout << "2s[labelstart]: " << (int) s[symbol_index_start] << endl;
         exit(0);
       }
 
-/*
-      int l = insertion_point_tmp.get_label_length_r();
-      cout << "orig name: " << l << endl;
-      cout << "1insstart: " << insertion_point_tmp.label_start << endl;
-      cout << "1insend  : " << insertion_point_tmp.label_end << endl;
-      cout << "1s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
-      insertion_point_tmp.label_start = symbol_index_start;
-      insertion_point_tmp.label_end   = symbol_index_end;
-      cout << "2insstart: " << insertion_point_tmp.label_start << endl;
-      cout << "2insend  : " << insertion_point_tmp.label_end << endl;
-      cout << "2s[labelstart]: " << (int) s[insertion_point_tmp.label_start] << endl;
-      l = insertion_point_tmp.get_label_length_r();
-      cout << "new  name: " << l << endl;
-      store.set(insertion_point,insertion_point_tmp);
-
-      return insertion_point;
-*/
-      //cout << "Extend2 condition 2b: no children at point past edge label" << endl;
-      //cout << "                      child_sym: " << static_cast<int>(child_sym) << endl;
-      //
+      //Extend2 condition 2b: no children at point past edge label
 
       // if we get here we really MUST have other children.
       SuffixNode newnode(insertion_point,pos,0);
@@ -581,18 +526,17 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       split=true;
       newnode.set_depth(insertion_point_tmp.get_depth());
       int n_idx = store.push_back(newnode);
-//dump();
-//      cout << "***************************************************** 4ADD NODE: " << n_idx << endl;
+
+      //ADD NODE: n_idx
       insertion_point_tmp.set_child(child_sym,n_idx);
       store.set(insertion_point,insertion_point_tmp);
-	//cout << "n4" << endl;
-      //cout << "extend2 endpoint 6" << endl;
+
+      //extend2 endpoint 6
       return n_idx;
 
     }
 
     // if a child does exist, recurse
-    //cout << "recursing, position is now: " << pos << endl;
     return extend2(insertion_point_tmp.get_child(child_sym),pos,symbol_index_end,split,fnode,fpos);
   }
 
@@ -631,8 +575,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
     bool last_at_end=false;
     int c=0;
     for(size_t n=first_non_leaf_n;n<s.size();n++) {
-//      int  posremin;
-//      bool insertion;
 
       SuffixNode last_node_tmp = store.get(last_node);
       last_node_sl = last_node_tmp.suffix_link;
@@ -653,11 +595,6 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
 
       // Now need to perform 'canonisation' analog.
 
-//      int n_label_length = last_node_tmp.get_label_length();
-//      int s_label_length = predict_node_tmp.get_label_length();
-
- //     int precan_predict_node = predict_node;
- //     int precan_predict_pos  = predict_pos;
 
      // lazy canonisation
      //cout << "pre-can predict_node: " << predict_node << endl;
@@ -665,14 +602,9 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
      predict_pos = n + (predict_node_tmp.get_depth()-predict_node_tmp.get_label_length_r())-1;
      if((predict_node_tmp.parent != 0) && (predict_node_tmp.suffix_link != 0))
       for(;;) {
-//cout << "n is:" << n << endl;
-//cout << "cdepth:" << store[predict_node].get_depth() << endl;
         predict_pos = n + (predict_node_tmp.get_depth()-predict_node_tmp.get_label_length_r())-1;
-//        cout << "precanup: " << predict_pos << endl;
         int ins_size = s.size()-n;
         int c_depth  = predict_node_tmp.get_depth();
-//cout << "ins_size: " << ins_size << endl;
-//cout << " c_depth: " << c_depth << endl;
         if(ins_size >= c_depth) break;
         predict_node = predict_node_tmp.parent;
         predict_node_tmp = store.get(predict_node);
@@ -687,9 +619,7 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
       int fnode = 0;
       int fpos  = 0;
       newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
-     // cout << "newnode is: " << newnode << endl;
       SuffixNode newnode_tmp = store.get(newnode);
-     // cout << "newnode sl: " << newnode_tmp.suffix_link << endl;
       last_node_tmp = store.get(last_node); // required.
 
       last_at_end = at_end;
@@ -709,32 +639,21 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         // keep going, we don't need to visit these again.
       } else 
       if(first_non_leaf_flag) {
-//cout << "will need to revisit, logging" << endl;
-//cout << "last_node: " << last_node << endl;
         first_non_leaf_node = last_node;
         first_non_leaf_n    = n-1;
         first_non_leaf_flag = false;
       }
 }
-//      if(first) cout << "************ FFFFIRRRRSSSSSSSTTTTTTT" << endl;
-//cout << "fnode: " << fnode << endl;
-//cout << "fpos : " << fpos << endl;
-//cout << "newnode: " << newnode << endl;
-//    if(fnode != predict_node) cout << "********************************************************** NODE PREDICTION FAILURE " << predict_node << "!=" << fnode << endl;
-//    if(fpos  != predict_pos ) cout << "**********************************************************  POS PREDICTION FAILURE " << predict_pos  << "!=" << fpos  << endl;
 
       predict_pos = fpos;
 
       if(split == true) {
-      //  cout << "************************************ split located" << endl;
         new_split_count = 0;
       }
 
-      //if((!first) && split) {
       if((!first) && (split || (at_end && last_at_end && newnode_tmp.isleaf()))) {
         last_node_tmp.suffix_link = newnode;
         store.set(last_node,last_node_tmp);
-        //cout << "0SETLINK: " << last_node << " TO " << newnode << endl;
       }
 
       if((!first) && last_split) {
@@ -743,31 +662,19 @@ cout << "NEVER EVER GET HERE EVER EVER" << endl;
         SuffixNode last_node_tmp_parent = store.get(last_node_tmp.parent);
         last_node_tmp_parent.suffix_link = newnode_tmp.parent;
 
-        //cout << "last_node_tmp.parent is: " << last_node_tmp.parent << endl;
         // this is not valid.
- /*       for(size_t n=0;n<last_node_tmp_parent.m_children.m_symbols.size();n++) {
-          //cout << (int) last_node_tmp_parent.m_children.m_symbols[n].symbol;
-          cout << ",";
-          cout << last_node_tmp_parent.m_children.m_symbols[n].index;
-          cout << endl;
-        }
-*/
         store.set(last_node_tmp.parent,last_node_tmp_parent);
-        //cout << "1SETLINK: " << store[last_node].parent << " TO " << store[newnode].parent << endl;
       }
 
       last_node = newnode; // was newnode
       last_node_tmp = store.get(last_node);
-//if( split) cout << "SPLIT TRUE" << endl;
-//if(!split) cout << "SPLIT FALSE" << endl;
       if((!split) && (c > 0) && !at_end) {
-//      if((!first) && (!split)) {
-//cout << "BREAK" << endl;
-      first=false;
-      first_insert=false;
-      break;
+        first=false;
+        first_insert=false;
+        break;
       }
-c++;
+      c++;
+
       first=false;
       first_insert=false;
     }
@@ -786,7 +693,6 @@ c++;
 
     SuffixNode n_tmp = store.get(n);
 
-    //for(;all children;) {
     for(int i=0;i<symbol_size;i++) {
       if(n_tmp.get_child(i) != -1) { 
         dump_child(n_tmp.get_child(i));
