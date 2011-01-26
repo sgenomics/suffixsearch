@@ -16,8 +16,6 @@ class ObjectStoreDisk {
 
 private:
 
-  size_t object_size;
-
   string storage_filename;
   fstream *storage_file;
 
@@ -103,7 +101,6 @@ public:
     size_t base_read = index*object_size;
     storage_file->seekg(base_read);
 
-    char *base_pointer = (char*) &o;
     char *end_pointer  = base_pointer+object_size;
     for(;base_pointer<end_pointer;base_pointer++) {
       *(base_pointer) = storage_file->get(); 
