@@ -82,7 +82,6 @@ public:
 
   void clear() {
     current_max = 0;
-    //storage_area.clear();
 
     // TODO: ADD DELETE FILE CODE
     initialise(0);
@@ -91,12 +90,7 @@ public:
   object_type get(size_t index) {
 
     object_type o;
-/*
-    if(index > size()) {
-      cout << "error trying to get an object that's out of bounds, index is: " << index << endl;
-      int *i=0;*i=1;
-    }
-*/
+
     char *base_pointer = reinterpret_cast<char *>(&o);
     size_t base_read = index*object_size;
     storage_file->seekg(base_read);
