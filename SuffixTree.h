@@ -11,8 +11,10 @@
 #include "Transcode.h"
 #include "TranscodingStore.h"
 #include "SuffixNodeStore.h"
+#include "SuffixNodeStoreMemVec.h"
 #include "SuffixNode.h"
 #include "ChildStore.h"
+
 
 using namespace std;
 
@@ -891,7 +893,7 @@ cout << "end  :" << end << endl;
   }
 
   TranscodingStore   s;
-  SuffixNodeStore store;
+  suffixnodestore_type store;
 
   Transcode transcoder;
 

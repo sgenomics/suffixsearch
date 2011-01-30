@@ -20,6 +20,9 @@ class SuffixNode {
 
 public:
 
+  SuffixNode() {
+  }
+ 
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
     suffix_link = 0;

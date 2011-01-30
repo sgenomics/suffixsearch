@@ -82,8 +82,7 @@ void apply_mapping(vec_type &v, map<int32_t,int32_t> &mapping) {
       map<int32_t,int32_t>::iterator i = mapping.find(v.get(n).childlist_idx);
 
       if(i == mapping.end()) {
-   //     this is fine.
-   //     cout << "error no mapping for: " << v.get(n).childlist_idx << endl;
+        // this is fine.
       } else {
         snode.childlist_idx = mapping[v.get(n).childlist_idx];
         v.set(n,snode);
@@ -156,14 +155,10 @@ public:
   }
 
   vector<SymbolPair> get_children(int32_t idx) {
-//cout << "CHILD LIST STORE GET" << endl;
-//    cout << "getting children id: " << idx << endl;
 
     int id = get_store_id(idx);
 
-//cout << "fetching id: " << id << endl;
-//cout << "fetching idx: " << (0x00FFFFFF & idx) << endl;
-//    cout << " id is: "  << id << endl;
+    //fetching id: id
     if(id == 0) {cout << "GETerror nodes with 0   child should not be possible" << endl; int *i=0;*i=1; }
     if(id == 1) {cout << "GETerror nodes with one child should not be possible" << endl; int *i=0;*i=1; }
     if(id == 2 ) return children_2 .get(0x00FFFFFF & idx).get_childlist();
@@ -211,7 +206,7 @@ public:
 
   void set_children(int32_t idx,vector<SymbolPair> &p) {
 
-//    cout << "setting children id: " << idx << endl;
+    // setting children id: idx
 
     int32_t id = get_store_id(idx);
     if(id != static_cast<int32_t>(p.size())) { cout << "ERROR: new size does not equal old size cannot use same idx" << endl; return; }
@@ -262,41 +257,11 @@ public:
 
   int32_t push_back(vector<SymbolPair> &p) {
 
- /*   cout << "child store pushing this size: " << p.size() << endl;
-    for(size_t n=0;n<p.size();n++) {
-      cout << static_cast<int>(p[n].symbol);
-      cout << ",";
-      cout << p[n].index << endl;
-    }
-    cout << "lend" << endl;
-*/
     // 1. find our which storage section to put it in.
     int id = p.size();
     if(id == 1) {cout << "PUSHerror nodes with one child should not be possible" << endl; children_2.set(10000000,-1); return -1;}
-    // 2. put it there
-    // 3. return the size()-1
-    if(id == 2) {//cout << "push2" << endl;
-      ChildList<2 >c;
-      c.set_children(p);
-      int id0 = children_2 .push_back(c);
-
-      return 0x02000000+id0;
-    } else
-    if(id == 3) {//cout << "push3" << endl;
-      ChildList<3 >c;
-      c.set_children(p);
-      int id0 = children_3 .push_back(c);
-
-     // cout << "THE ID IS: " << id0 << endl;
-      ChildList<3> c2 = children_3.get(id0);
-      vector<SymbolPair> p2 = c2.get_childlist();
-     // for(size_t n=0;n<p2.size();n++) {
-      //  cout << static_cast<int>(p2[n].symbol) << " ; " << p2[n].index << endl;
-     // }
-     // cout << "lend3" << endl;
-//cout << "return now" << endl;
-      return 0x03000000+id0;
-    } else 
+    if(id == 2) {int32_t nid = children_2 .push_back(ChildList<2 >().set_children(p)); return 0x02000000+nid;} else
+    if(id == 3) {int32_t nid = children_3 .push_back(ChildList<3 >().set_children(p)); return 0x03000000+nid;} else
     if(id == 4) {int32_t nid = children_4 .push_back(ChildList<4 >().set_children(p)); return 0x04000000+nid;} else
     if(id == 5) {int32_t nid = children_5 .push_back(ChildList<5 >().set_children(p)); return 0x05000000+nid;} else
     if(id == 6) {int32_t nid = children_6 .push_back(ChildList<6 >().set_children(p)); return 0x06000000+nid;} else
