@@ -14,12 +14,9 @@
 #include "SuffixNodeStoreMemVec.h"
 #include "SuffixNode.h"
 #include "ChildStore.h"
-
+#include "global_defs.h"
 
 using namespace std;
-
-#define symbol_size  41
-#define final_symbol 39
 
 class SuffixTree {
 
@@ -61,7 +58,7 @@ public:
     nodestack .push_back(-1);
     childstack.push_back(-1);
 
-    int alphabet_size = symbol_size-1;
+    //int alphabet_size = symbol_size-1;
     nodestack .push_back(SuffixNode::root);
     childstack.push_back(alphabet_size);
 
@@ -148,7 +145,7 @@ public:
 
     int lastleaf = -1;
 
-    int alphabet_size = symbol_size-1;
+    //int alphabet_size = symbol_size-1;
     for(;;) {
 
       int current_node  = nodestack.back();
