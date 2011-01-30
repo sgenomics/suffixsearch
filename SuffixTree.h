@@ -883,7 +883,11 @@ cout << "end  :" << end << endl;
   }
 
   void compact() {
-    store.compact();
+    store.force_compact();
+  }
+
+  void set_compactmode(bool compactmode) {
+    store.set_compactmode(compactmode);
   }
 
   TranscodingStore   s;

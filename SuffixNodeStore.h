@@ -609,6 +609,11 @@ public:
   SuffixNodeStore() : m_rootnode(0,0,0) {
     NormalSuffixNodeContainer s(m_rootnode,m_childstore,-1);
     m_store1.push_back(s); // dummy node, root is stored elsewhere.
+    compact_enabled = true;
+  }
+
+  void set_compactmode(bool compact_mode) {
+    compact_enabled=compact_mode;
   }
 
   size_t push_back_norm() {
@@ -667,7 +672,7 @@ public:
   void set(int idx, SuffixNode &s) {
     int id = get_store_id(idx);
 
-    compact();
+    if(compact_enabled) compact();
     if(idx == 0) {
       m_rootnode = s;
       return;
@@ -725,16 +730,24 @@ public:
 
   }
 
+  void force_compact() {
+    map<int32_t,int32_t> id_mapping = m_childstore.compact();
+    apply_mapping(m_store1,id_mapping);
+
+    NormalSuffixNodeContainer::invalidation_count = 0;
+  }
 
   void compact() {
     // remove invalidated items from childstore.
     // note: this should not invalidate any SuffixNode objects that have been returned.
 
-    if(NormalSuffixNodeContainer::invalidation_count == 100000) {
-      map<int32_t,int32_t> id_mapping = m_childstore.compact();
-      apply_mapping(m_store1,id_mapping);
+    if(compact_enabled) {
+      if(NormalSuffixNodeContainer::invalidation_count == 100000) {
+	map<int32_t,int32_t> id_mapping = m_childstore.compact();
+	apply_mapping(m_store1,id_mapping);
 
-      NormalSuffixNodeContainer::invalidation_count = 0;
+	NormalSuffixNodeContainer::invalidation_count = 0;
+      }
     }
 
   }
@@ -744,6 +757,7 @@ public:
 
   SuffixNode m_rootnode;
 
+  bool compact_enabled;
   ChildListStore m_childstore;
 };
 
