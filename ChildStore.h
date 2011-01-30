@@ -22,6 +22,7 @@ class ChildStore {
 
 public:
   ChildStore() {
+    clear();
   }
 
   void set(char symbol,int index) {
