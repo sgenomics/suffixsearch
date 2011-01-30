@@ -66,11 +66,11 @@ public:
     return true;
   }
 
-  vector<SymbolPair> get_symbols() {
+  vector<SymbolPair> &get_symbols() {
     return m_symbols;
   }
 
-  void set_symbols(vector<SymbolPair> &s) {
+  void set_symbols(vector<SymbolPair> s) {
     m_symbols = s;
   }
 
