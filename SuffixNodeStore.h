@@ -451,7 +451,7 @@ class NormalSuffixNodeContainer {
         invalidation_count++;
         // add new children idx
 
-        childlist_idx = c.push_back(s.m_children.m_symbols);
+        childlist_idx = c.push_back(s.m_children.get_symbols());
         return;
       }
 
@@ -459,9 +459,9 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         if(cidx == -1) {
-          cidx = c.push_back(s.m_children.m_symbols);
+          cidx = c.push_back(s.m_children.get_symbols());
         } else {
-          c.set_children(cidx,s.m_children.m_symbols);
+          c.set_children(cidx,s.m_children.get_symbols());
         }
         childlist_idx = cidx;
       }
@@ -483,7 +483,7 @@ class NormalSuffixNodeContainer {
       if(s.child_count() == 0) {
         childlist_idx = -1;
       } else {
-        int32_t idx = c.push_back(s.m_children.m_symbols);
+        int32_t idx = c.push_back(s.m_children.get_symbols());
         childlist_idx = idx;
       }
     }
@@ -516,7 +516,7 @@ class NormalSuffixNodeContainer {
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
       if(childlist_idx != -1) {
-        s.m_children.m_symbols = c.get_children(childlist_idx);
+        s.m_children.set_symbols(c.get_children(childlist_idx));
       } else {
       }
 
