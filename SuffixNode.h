@@ -33,8 +33,9 @@ public:
   }
 
   bool isleaf() {
-    if(m_children.size() ==0 ) return true;
-    return false;
+    return m_children.is_leaf();
+    //if(m_children.size() ==0 ) return true;
+    //return false;
   }
 
   int get_label_length() {

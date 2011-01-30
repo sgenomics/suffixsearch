@@ -27,6 +27,7 @@ public:
 
   void set(char symbol,int index) {
     m_symbols[symbol] = index;
+      m_is_leaf = false;
 /*
     if(get(symbol) == -1) {
       m_symbols.push_back(SymbolPair(symbol,index));
@@ -54,7 +55,7 @@ public:
 
   int size() {
     int size=0;
-    for(size_t n=0;n<alphabet_size;n++) {
+    for(size_t n=0;n<symbol_size;n++) {
       if(m_symbols[n] != -1) size++;
     }
     return size;
@@ -62,10 +63,13 @@ public:
   }
 
   void clear() {
-    for(size_t n=0;n<alphabet_size;n++) { m_symbols[n] = -1; }
+    for(size_t n=0;n<=symbol_size;n++) { m_symbols[n] = -1; }
 
+    m_is_leaf = true;
     //m_symbols.clear();
   }
+
+  bool is_leaf() { return m_is_leaf; }
 
   bool operator==(ChildStore &other) {
     return equal(other);
@@ -76,7 +80,7 @@ public:
       if(other.get(m_symbols[n].symbol) != m_symbols[n].index) { cout << "child of symbol " << static_cast<int>(m_symbols[n].symbol) << " does not match, my idx is: " << m_symbols[n].index << " other is: " << other.get(m_symbols[n].symbol) << endl; return false; }
     }
 */
-    for(size_t n=0;n<alphabet_size;n++) {
+    for(size_t n=0;n<symbol_size;n++) {
       if(get(n) != other.get(n)) return false;
     }
 
@@ -87,7 +91,7 @@ public:
 
     symbols_tmp.clear();
 
-    for(size_t n=0;n<alphabet_size;n++) {
+    for(size_t n=0;n<symbol_size;n++) {
       if(m_symbols[n] != -1) symbols_tmp.push_back(SymbolPair(n,m_symbols[n]));
     }
 
@@ -98,14 +102,16 @@ public:
     clear();
     for(size_t n=0;n<s.size();n++) {
       m_symbols[s[n].symbol] = s[n].index;
+      m_is_leaf = false;
     }
     //m_symbols = s;
   }
 
 private:
 
+  bool m_is_leaf;
     vector<SymbolPair> symbols_tmp; // REALLY MESSY!!! REMOVE THIS REQUIREMENT
-  size_t m_symbols[alphabet_size];
+  int m_symbols[symbol_size];
 //  vector<SymbolPair> m_symbols;
 
 };
