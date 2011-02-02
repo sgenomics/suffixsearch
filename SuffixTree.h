@@ -43,7 +43,7 @@ public:
 
   void process_positions() {
     process_right_positions();
-    cout << "processed right positions" << endl;
+ //   cout << "processed right positions" << endl;
     process_left_positions();
     cout << "processed left positions" << endl;
   }
@@ -105,7 +105,7 @@ public:
             stop = true;
             nodestack.pop_back();
             childstack.pop_back();
-            if(first_pass) { 
+            if(first_pass) {
               current_node_tmp. next_left_leaf  = oldl;
               current_node_tmp. next_right_leaf = lastleaf;
               store.set(current_node,current_node_tmp);
@@ -377,7 +377,9 @@ cout << "end  :" << end << endl;
         split = true;
         sn.set_depth(insertion_point_tmp.get_depth());
         int sn_idx = store.push_back(sn);
+
         insertion_point_tmp.set_child(s[symbol_index_start],sn_idx);// next insert
+
         store.set(insertion_point,insertion_point_tmp);
         return sn_idx;
       }
@@ -408,10 +410,6 @@ cout << "end  :" << end << endl;
 	    return sn_idx;
 	  } else {
 	    return extend2(child,symbol_index_start+1,symbol_index_end,split,fnode,fpos);
-
-	    // Should really never reach this point.
-	    cout << "NEVER EVER GET HERE EVER EVER" << endl;
-	    exit(0);
 	  }
 	}
       }
@@ -457,7 +455,7 @@ cout << "end  :" << end << endl;
 
 
         insertion_point_tmp.parent = b_idx;
-        store.set(insertion_point,insertion_point_tmp);
+ //       store.set(insertion_point,insertion_point_tmp);
         c.parent = b_idx;
         b.parent = old_parent;
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
@@ -651,18 +649,24 @@ cout << "end  :" << end << endl;
       }
 
       if((!first) && (split || (at_end && last_at_end && newnode_tmp.isleaf()))) {
-        last_node_tmp.suffix_link = newnode;
-        store.set(last_node,last_node_tmp);
+        if(last_node_tmp.suffix_link != newnode) {  // only perform set if there is a change
+          last_node_tmp.suffix_link = newnode;
+          store.set(last_node,last_node_tmp);
+        }
       }
 
       if((!first) && last_split) {
-        last_node_tmp.suffix_link = newnode;
-        store.set(last_node,last_node_tmp);
+        if(last_node_tmp.suffix_link != newnode) {  // only perform set if there is a change
+          last_node_tmp.suffix_link = newnode;
+          store.set(last_node,last_node_tmp);
+        }
         SuffixNode last_node_tmp_parent = store.get(last_node_tmp.parent);
-        last_node_tmp_parent.suffix_link = newnode_tmp.parent;
+        if(last_node_tmp_parent.suffix_link != newnode_tmp.parent) {  // only perform set if there is a change
+          last_node_tmp_parent.suffix_link = newnode_tmp.parent;
 
-        // this is not valid.
-        store.set(last_node_tmp.parent,last_node_tmp_parent);
+          // this is not valid.
+          store.set(last_node_tmp.parent,last_node_tmp_parent);
+        }
       }
 
       last_node = newnode; // was newnode
@@ -889,7 +893,7 @@ cout << "end  :" << end << endl;
     store.set_compactmode(compactmode);
   }
 
-  TranscodingStore   s;
+  TranscodingStore     s;
   suffixnodestore_type store;
 
   Transcode transcoder;

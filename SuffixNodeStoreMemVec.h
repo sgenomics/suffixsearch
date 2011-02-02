@@ -51,6 +51,10 @@ public:
   }
 
   void set(int idx, SuffixNode &s) {
+
+//    bool are_equal = (storage_area[idx] == s);
+//    if(are_equal) {cout << "SETTING UNCHANGED VALUE" << endl;
+//    int *i =0;*i=3232;}
     storage_area[idx] = s;
   }
 

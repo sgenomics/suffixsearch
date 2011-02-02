@@ -128,20 +128,33 @@ public:
 
   bool operator==(SuffixNode &other) {
 
-    return equal(other);
+    return equal(other); 
   }
 
   bool equal(SuffixNode &other,bool dump=false) {
     if(parent          != other.parent     )    { if(dump)  cout << "parent match failure" << endl;          return false; }
     if(label_start     != other.label_start)    { if(dump)  cout << "label_start match failure" << endl;     return false; }
     if(label_end       != other.label_end  )    { if(dump)  cout << "label_end match failure mine: " << label_end << " other: " << other.label_end << endl; return false; }
-    if(!(m_children.equal(other.m_children,true)))    { if(dump)  cout << "children match failure" << endl;        return false; }
+    if((m_children.equal(other.m_children,dump) == false))    { if(dump)  cout << "children match failure" << endl; return false; }
     if(suffix_link     != other.suffix_link)    { if(dump)  cout << "suffix_link match failure" << endl;     return false; }
     if(next_left_leaf  != other.next_left_leaf) { if(dump)  cout << "next_left_leaf match failure" << endl;  return false; }
     if(next_right_leaf != other.next_right_leaf){ if(dump)  cout << "next_right_leaf match failure" << endl; return false; }
     if(depth           != other.depth)          { if(dump)  cout << "depth match failure" << endl;           return false; }
 
+    if(dump) cout << "suffixnodes identical" << endl;
     return true;
+  }
+
+  void dump() {
+    cout << "SuffixNode" << endl;
+    cout << "parent         : " << parent << endl;
+    cout << "label_start    : " << label_start << endl;
+    cout << "label_end      : " << label_end << endl;
+    cout << "suffix_link    : " << suffix_link << endl;
+    cout << "next_left_leaf : " << next_left_leaf << endl;
+    cout << "next_right_leaf: " << next_right_leaf << endl;
+    cout << "depth          : " << depth << endl;
+    m_children.dump();
   }
 
   int32_t parent;

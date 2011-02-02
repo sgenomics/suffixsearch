@@ -12,7 +12,7 @@ int main(int argc,char ** argv) {
   ifstream input_file(argv[1]);
 
   SuffixTree st;
-  st.set_compactmode(false);
+  //st.set_compactmode(false);
 
   char s;
   for(;!input_file.eof();) {

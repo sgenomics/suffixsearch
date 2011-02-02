@@ -80,7 +80,7 @@ public:
       if(other.get(m_symbols[n].symbol) != m_symbols[n].index) { cout << "child of symbol " << static_cast<int>(m_symbols[n].symbol) << " does not match, my idx is: " << m_symbols[n].index << " other is: " << other.get(m_symbols[n].symbol) << endl; return false; }
     }
 */
-    for(size_t n=0;n<symbol_size;n++) {
+    for(size_t n=0;n<symbol_size;n++) { 
       if(get(n) != other.get(n)) return false;
     }
 
@@ -105,6 +105,12 @@ public:
       m_is_leaf = false;
     }
     //m_symbols = s;
+  }
+
+  void dump() {
+    for(size_t n=0;n<symbol_size;n++) {
+      cout << n << " : " << m_symbols[n] << endl;
+    }
   }
 
 private:
