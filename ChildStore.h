@@ -107,6 +107,40 @@ public:
     //m_symbols = s;
   }
 
+  int32_t get_first() {
+    for(size_t n=0;n<symbol_size;n++) {
+      if(m_symbols[n] != -1) return m_symbols[n];
+    }
+    return -1;
+  }
+  
+  int32_t get_last() {
+    for(size_t n=symbol_size-1;n>=0;n--) {
+      if(m_symbols[n] != -1) return m_symbols[n];
+    }
+    return -1;
+  }
+
+  int32_t next_child(int32_t idx) {
+    bool next=false;
+    cout << "next_child idx is: " << idx << endl;
+    for(size_t n=0;n<symbol_size;n++) {
+      cout << n << " " << m_symbols[n] << endl;
+      if(next==true) {
+        if(m_symbols[n] != -1) {cout << "returning: " << m_symbols[n] << endl; return m_symbols[n];}
+      }
+      if(m_symbols[n] == idx) { next=true; }
+    }
+    return -1;
+  }
+
+  bool is_child(int32_t idx) {
+    for(size_t n=0;n<symbol_size;n++) {
+      if(m_symbols[n] == idx) return true;
+    }
+    return false;
+  }
+
   void dump() {
     for(size_t n=0;n<symbol_size;n++) {
       cout << n << " : " << m_symbols[n] << endl;

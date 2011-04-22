@@ -41,13 +41,121 @@ public:
     first_non_leaf_n = 0;
   }
 
-  void process_positions() {
-    process_right_positions();
- //   cout << "processed right positions" << endl;
-    process_left_positions();
-    cout << "processed left positions" << endl;
+  void label_all_left_most_down(vector<uint32_t> &label_these,int32_t label) {
+    for(size_t n=0;n<label_these.size();n++) {
+      SuffixNode node = store.get(label_these[n]);
+      node.next_left_leaf = label;
+      store.set(label_these[n],node);
+    }
   }
 
+  bool first_is_leaf(SuffixNode &n) {
+    int32_t i = n.get_first_child();
+    if(i == -1) return false;
+
+    SuffixNode na = store.get(i);
+    return na.is_leaf();
+  }
+
+  bool last_is_leaf(SuffixNode &n) {
+    int32_t i = n.get_last_child();
+    if(i == -1) return false;
+
+    SuffixNode na = store.get(i);
+    return na.is_leaf();
+  }
+ 
+  void process_positions() {
+ //   process_right_positions();
+ //   cout << "processed right positions" << endl;
+ //   process_left_positions();
+ //   cout << "processed left positions" << endl;
+
+    dump();
+
+    int c    = SuffixNode::root;  // start at root vertex.
+    int last = -1;
+
+    vector<uint32_t> unlabeled_left;
+
+    bool is_first_child = true;
+
+    uint32_t current_right_most = root_node;
+    uint32_t last_right         = root_node;
+    for(;;) {
+
+      SuffixNode c_node = store.get(c);
+
+      cout << "c is: " << c << endl;
+      cout << "l is: " << last << endl;
+
+      // labeling code
+
+      // left labeling.
+      if(c_node.next_left_leaf == -1) unlabeled_left.push_back(c);
+
+      //if(c_node.first_is_leaf()) {
+      if(first_is_leaf(c_node)) {
+	//cout << "first is leaf" << endl;
+	label_all_left_most_down(unlabeled_left,c_node.get_first_child());
+	unlabeled_left.clear();
+      }
+
+      // right labeling.
+      c_node.next_right_leaf = current_right_most;
+
+      //if(c_node.last_is_leaf()) {
+      if(last_is_leaf(c_node)) {
+	//cout << "last is leaf" << endl;
+	current_right_most = c_node.get_last_child();
+      }
+
+      // next_right labeling.
+      if(c_node.is_leaf()) {
+        SuffixNode lr_node = store.get(last_right);
+        lr_node.next_right_leaf = c;         /// < serving a different function here.
+        store.set(last_right,lr_node);
+	last_right = c;
+      }
+
+      store.set(c,c_node);
+
+      // walking code
+      if(last == -1) {
+
+	last = c;
+	int32_t tc = c_node.get_first_child();
+	if(tc != -1) {c = tc;} else {
+          if(c == root_node) return;
+	  if(tc=-1) c = c_node.get_parent();
+	  if(c==-1) {return;}
+	}
+      } else {
+	// last != -1
+	if(c_node.is_child(last)) {
+	  int32_t tc = c_node.next_child(last);
+           cout << "next child was identified as: " << tc << endl;
+	  last = -1;// MOVED THIS AROUND.
+	  if(tc!=-1) { c = tc; }
+	  else       { if(c==root_node) return; last = c; c = c_node.get_parent(); if(c == -1) {return;} }
+	} else {
+	  // is_child(last,c,vertexes) == false
+
+	  last=c;
+	  int tc = c_node.get_first_child();
+	  if(tc!=-1) {c =tc;}
+	  else {
+            if(c == root_node) return;
+	    c = c_node.get_parent();
+	    if(c==-1) {return;}
+	  }
+	}
+      }
+    }
+    dump();
+  }
+
+/*
   void process_right_positions() {
 
     // 1. in-order traversal
@@ -208,7 +316,7 @@ public:
       }
     }
   }
-
+*/
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
 
@@ -280,7 +388,7 @@ cout << "end  :" << end << endl;
     int nl = p_tmp.next_left_leaf;
     int nr = p_tmp.next_right_leaf;
 
-    if(p_tmp.isleaf()) {
+    if(p_tmp.is_leaf()) {
       res.push_back(s.size()-p_tmp.get_depth());
       return res;
     }
@@ -509,7 +617,7 @@ cout << "end  :" << end << endl;
 
       int l = insertion_point_tmp.get_label_length_r();
  
-      if(insertion_point_tmp.isleaf()) {
+      if(insertion_point_tmp.is_leaf()) {
         cout << "WTF it's a leaf?!?" << endl;
         exit(0);
       }
@@ -626,7 +734,7 @@ cout << "end  :" << end << endl;
       if(ins_len == lab_len) at_end = true;
 
 
-      bool ends_at_magic_leaf = (newnode_tmp.isleaf() && at_end);
+      bool ends_at_magic_leaf = (newnode_tmp.is_leaf() && at_end);
       bool is_the_last_symbol = (n == s.size()-1);
       bool implicit_match     = first_non_leaf_flag && !at_end;
 
@@ -648,7 +756,7 @@ cout << "end  :" << end << endl;
         new_split_count = 0;
       }
 
-      if((!first) && (split || (at_end && last_at_end && newnode_tmp.isleaf()))) {
+      if((!first) && (split || (at_end && last_at_end && newnode_tmp.is_leaf()))) {
         if(last_node_tmp.suffix_link != newnode) {  // only perform set if there is a change
           last_node_tmp.suffix_link = newnode;
           store.set(last_node,last_node_tmp);
@@ -865,7 +973,7 @@ cout << "end  :" << end << endl;
 
       SuffixNode left_tmp = store.get(left);
       SuffixNode right_tmp = store.get(right);
-      if((left != -1) && (right != -1) && n_tmp.isleaf() && left_tmp.isleaf() && right_tmp.isleaf()) {
+      if((left != -1) && (right != -1) && n_tmp.is_leaf() && left_tmp.is_leaf() && right_tmp.is_leaf()) {
         if(left_tmp.next_right_leaf != n) { cout << "store[" << left  << "].next_right_leaf=" << left_tmp.next_right_leaf << "!=" << n << endl; return false;}
         if(right_tmp.next_left_leaf != n) { cout << "store[" << right << "].next_left_leaf="  << left_tmp.next_left_leaf  << "!=" << n << endl; return false;}
       }

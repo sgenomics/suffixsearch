@@ -32,7 +32,7 @@ public:
     next_right_leaf = -1;
   }
 
-  bool isleaf() {
+  bool is_leaf() {
     return m_children.is_leaf();
     //if(m_children.size() ==0 ) return true;
     //return false;
@@ -117,7 +117,7 @@ public:
 
   int get_child(int n) {
 //    cout << "SuffixNode getting child: " << n << endl;
-    if(isleaf()) return -1;
+    if(is_leaf()) return -1;
 
     return m_children.get(n);
   }
@@ -129,6 +129,22 @@ public:
   bool operator==(SuffixNode &other) {
 
     return equal(other); 
+  }
+
+  bool is_child(int32_t idx) {
+    return m_children.is_child(idx);
+  }
+
+  int32_t next_child(int32_t idx) {
+    return m_children.next_child(idx);
+  }
+
+  int32_t get_first_child() {
+    return m_children.get_first();
+  }
+
+  int32_t get_last_child() {
+    return m_children.get_last();
   }
 
   bool equal(SuffixNode &other,bool dump=false) {
