@@ -123,11 +123,11 @@ public:
 
   int32_t next_child(int32_t idx) {
     bool next=false;
-    cout << "next_child idx is: " << idx << endl;
+    //cout << "next_child idx is: " << idx << endl;
     for(size_t n=0;n<symbol_size;n++) {
-      cout << n << " " << m_symbols[n] << endl;
+      //cout << n << " " << m_symbols[n] << endl;
       if(next==true) {
-        if(m_symbols[n] != -1) {cout << "returning: " << m_symbols[n] << endl; return m_symbols[n];}
+        if(m_symbols[n] != -1) { return m_symbols[n];}
       }
       if(m_symbols[n] == idx) { next=true; }
     }

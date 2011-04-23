@@ -42,11 +42,15 @@ public:
   }
 
   void label_all_left_most_down(vector<uint32_t> &label_these,int32_t label) {
+    //cout <<"prelabel dump" << endl; dump();
     for(size_t n=0;n<label_these.size();n++) {
+
+      //cout << "labeling: " << label_these[n] << " as: " << label << endl;
       SuffixNode node = store.get(label_these[n]);
       node.next_left_leaf = label;
       store.set(label_these[n],node);
     }
+    //cout << "postlabel dump:" << endl; dump();
   }
 
   bool first_is_leaf(SuffixNode &n) {
@@ -66,12 +70,7 @@ public:
   }
  
   void process_positions() {
- //   process_right_positions();
- //   cout << "processed right positions" << endl;
- //   process_left_positions();
- //   cout << "processed left positions" << endl;
-
-    dump();
+    cout << "Processing positions" << endl;
 
     int c    = SuffixNode::root;  // start at root vertex.
     int last = -1;
@@ -86,19 +85,19 @@ public:
 
       SuffixNode c_node = store.get(c);
 
-      cout << "c is: " << c << endl;
-      cout << "l is: " << last << endl;
+     // cout << "c is: " << c << endl;
+     // cout << "l is: " << last << endl;
 
       // labeling code
 
       // left labeling.
       if(c_node.next_left_leaf == -1) unlabeled_left.push_back(c);
 
-      //if(c_node.first_is_leaf()) {
       if(first_is_leaf(c_node)) {
 	//cout << "first is leaf" << endl;
 	label_all_left_most_down(unlabeled_left,c_node.get_first_child());
 	unlabeled_left.clear();
+        c_node = store.get(c);
       }
 
       // right labeling.
@@ -134,7 +133,7 @@ public:
 	// last != -1
 	if(c_node.is_child(last)) {
 	  int32_t tc = c_node.next_child(last);
-           cout << "next child was identified as: " << tc << endl;
+ //          cout << "next child was identified as: " << tc << endl;
 	  last = -1;// MOVED THIS AROUND.
 	  if(tc!=-1) { c = tc; }
 	  else       { if(c==root_node) return; last = c; c = c_node.get_parent(); if(c == -1) {return;} }
@@ -152,171 +151,8 @@ public:
 	}
       }
     }
-    dump();
   }
 
-/*
-  void process_right_positions() {
-
-    // 1. in-order traversal
-
-    deque<int> nodestack;
-    deque<int> childstack;
-
-    nodestack .push_back(-1);
-    childstack.push_back(-1);
-
-    //int alphabet_size = symbol_size-1;
-    nodestack .push_back(SuffixNode::root);
-    childstack.push_back(alphabet_size);
-
-    int lastleaf = -1;
-    for(;;) {
-
-      if(childstack.size() == 0) break;
-      if(nodestack.size()  == 0) break;
-      int current_node  = nodestack.back();
-      nodestack.pop_back();
-      int current_child = childstack.back();
-      childstack.pop_back(); 
-
-      if(current_node == -1) break;
-
-      SuffixNode current_node_tmp = store.get(current_node);
-      int oldl = current_node_tmp.next_right_leaf;
-      current_node_tmp.next_left_leaf = lastleaf;
-      store.set(current_node,current_node_tmp);
-
-      if(current_child < 0) {
-        nodestack .pop_back();
-        childstack.pop_back();
-
-        current_node  = nodestack.back();
-        nodestack.pop_back();
-        current_child = childstack.back();
-        childstack.pop_back(); 
-      } else {
-
-        bool stop = false;
-	nodestack .push_back(current_node);
-        childstack.push_back(alphabet_size);
-        bool first_pass = false;
-        if(current_child == (alphabet_size)) first_pass=true; // should be symbol_size-1?
-        for(;stop == false;) {
-
-	  int nextchild = -1;
-          //cout << "current_child: " << current_child << endl;
-          if(current_child >= 0) nextchild = current_node_tmp.get_child(current_child);
-          //cout << "nextchild    : " << nextchild << endl;
-
-          if(current_child < 0) {
-            stop = true;
-            nodestack.pop_back();
-            childstack.pop_back();
-            if(first_pass) {
-              current_node_tmp. next_left_leaf  = oldl;
-              current_node_tmp. next_right_leaf = lastleaf;
-              store.set(current_node,current_node_tmp);
-              lastleaf=current_node;
-            }
-          } else
-	  if(nextchild != -1) {
-	    nodestack .pop_back();
-	    childstack.pop_back();
-	    if((current_child-1) >= 0) {
-              nodestack .push_back(current_node);
-	      childstack.push_back(current_child-1);
-            }
-	    nodestack .push_back(nextchild);
-	    childstack.push_back(alphabet_size);
-	    stop = true;
-	  } else {
-            current_child--;
-	  }
-        }
-      }
-    }
-  }
-
-  void process_left_positions() {
-
-    // 1. in-order traversal
-
-    deque<int> nodestack;
-    deque<int> childstack;
-
-    nodestack .push_back(-1);
-    childstack.push_back(-1);
-
-    nodestack .push_back(SuffixNode::root);
-    childstack.push_back(0);
-
-    int lastleaf = -1;
-
-    //int alphabet_size = symbol_size-1;
-    for(;;) {
-
-      int current_node  = nodestack.back();
-      nodestack.pop_back();
-      int current_child = childstack.back();
-      childstack.pop_back(); 
-
-      if(current_node == -1) break;
-
-      SuffixNode current_node_tmp = store.get(current_node);
-
-      int oldr = current_node_tmp.next_right_leaf;
-      current_node_tmp.next_right_leaf = lastleaf;
-      store.set(current_node,current_node_tmp);
-
-      if(current_child+1 >= alphabet_size) {
-        nodestack .pop_back();
-        childstack.pop_back();
-
-        current_node  = nodestack.back();
-        nodestack.pop_back();
-        current_child = childstack.back();
-        childstack.pop_back(); 
-      } else {
-
-        bool stop = false;
-	nodestack .push_back(current_node);
-        childstack.push_back(0);
-
-        bool first_pass = false;
-        if(current_child == 0) first_pass=true;
-        for(;stop == false;) {
-
-	  int nextchild = current_node_tmp.get_child(current_child);
-   
-          if(current_child >= alphabet_size) {
-            stop = true;
-            nodestack.pop_back();
-            childstack.pop_back();
-            if(first_pass) { 
-              current_node_tmp.next_right_leaf = oldr; 
-              current_node_tmp.next_left_leaf = lastleaf;
-              store.set(current_node,current_node_tmp);
-              lastleaf=current_node;
-            }
-          }
- 
-	  if(nextchild != -1) {
-	    nodestack .pop_back();
-	    childstack.pop_back();
-	    nodestack .push_back(current_node);
-	    childstack.push_back(current_child+1);
-	    nodestack .push_back(nextchild);
-	    childstack.push_back(0);
-	    stop = true;
-	  } else {
-            current_child++;
-	  }
-        }
-      }
-    }
-  }
-*/
   int find_tree_position(vector<char> ss) {
     // follow labels from root down, edge labels.
 
@@ -349,7 +185,7 @@ public:
       current_node = current_node_tmp.get_child(label);
       if(current_node == -1) return -1;
       current_node_tmp = store.get(current_node);
-      cout << "current_node: " << current_node << endl;
+     // cout << "current_node: " << current_node << endl;
     }
 
     return -1;

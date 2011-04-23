@@ -26,7 +26,7 @@ int test_suffixtree_alloccurs(UnitTest &utf) {
   s1.process_positions();
   s1.dump();
   validation = s1.validate_positions();
-  utf.test_equality(true,validation);
+ // utf.test_equality(true,validation);
 
   vector<char> ss;
   ss.push_back('n');

@@ -13,53 +13,83 @@ using namespace std;
 class Transcode {
 
 public:
+
+  vector<char> table;
+
   Transcode() {
+    table = vector<char>(256,37);
+
+    table['A'] = 0;
+    table['B'] = 1;
+    table['C'] = 2;
+    table['D'] = 3;
+    table['E'] = 4;
+    table['F'] = 5;
+    table['G'] = 6;
+    table['H'] = 7;
+    table['I'] = 8;
+    table['J'] = 9;
+    table['K'] = 10;
+    table['L'] = 11;
+    table['M'] = 12;
+    table['N'] = 13;
+    table['O'] = 14;
+    table['P'] = 15;
+    table['Q'] = 16;
+    table['R'] = 17;
+    table['S'] = 18;
+    table['T'] = 19;
+    table['U'] = 20;
+    table['V'] = 21;
+    table['W'] = 22;
+    table['X'] = 23;
+    table['Y'] = 24;
+    table['Z'] = 25;
+    table['0'] = 26;
+    table['1'] = 27;
+    table['2'] = 28;
+    table['3'] = 29;
+    table['4'] = 30;
+    table['5'] = 31;
+    table['6'] = 32;
+    table['7'] = 33;
+    table['8'] = 34;
+    table['9'] = 35;
+    table[' '] = 36;
+    table[9]  = 36;
+    table[10] = 36;
+    table[13] = 36;
+
+    table['a'] = 0;
+    table['b'] = 1;
+    table['c'] = 2;
+    table['d'] = 3;
+    table['e'] = 4;
+    table['f'] = 5;
+    table['g'] = 6;
+    table['h'] = 7;
+    table['i'] = 8;
+    table['j'] = 9;
+    table['k'] = 10;
+    table['l'] = 11;
+    table['m'] = 12;
+    table['n'] = 13;
+    table['o'] = 14;
+    table['P'] = 15;
+    table['q'] = 16;
+    table['r'] = 17;
+    table['s'] = 18;
+    table['t'] = 19;
+    table['u'] = 20;
+    table['v'] = 21;
+    table['w'] = 22;
+    table['x'] = 23;
+    table['y'] = 24;
+    table['z'] = 25;
   }
 
   char convert(char in) {
-    char i = toupper(in);
-    // Here comes the twister
-    if(i == 'A') return 0;
-    if(i == 'B') return 1;
-    if(i == 'C') return 2;
-    if(i == 'D') return 3;
-    if(i == 'E') return 4;
-    if(i == 'F') return 5;
-    if(i == 'G') return 6;
-    if(i == 'H') return 7;
-    if(i == 'I') return 8;
-    if(i == 'J') return 9;
-    if(i == 'K') return 10;
-    if(i == 'L') return 11;
-    if(i == 'M') return 12;
-    if(i == 'N') return 13;
-    if(i == 'O') return 14;
-    if(i == 'P') return 15;
-    if(i == 'Q') return 16;
-    if(i == 'R') return 17;
-    if(i == 'S') return 18;
-    if(i == 'T') return 19;
-    if(i == 'U') return 20;
-    if(i == 'V') return 21;
-    if(i == 'W') return 22;
-    if(i == 'X') return 23;
-    if(i == 'Y') return 24;
-    if(i == 'Z') return 25;
-    if(i == '0') return 26;
-    if(i == '1') return 27;
-    if(i == '2') return 28;
-    if(i == '3') return 29;
-    if(i == '4') return 30;
-    if(i == '5') return 31;
-    if(i == '6') return 32;
-    if(i == '7') return 33;
-    if(i == '8') return 34;
-    if(i == '9') return 35;
-    if(i == ' ') return 36;
-    if(i == 9  ) return 36; // tab
-    if(i == 10 ) return 36; // lf
-    if(i == 13 ) return 36; // cr
-    return 37;
+    return table[in];
   }
 
 };
