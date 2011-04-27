@@ -4,8 +4,8 @@
 #define suffixnodestore_type SuffixNodeStoreMemVec
 //#define suffixnodestore_type SuffixNodeStore
 
-#define object_store_type ObjectStoreMem
-//#define object_store_type ObjectStoreMemVec
+//#define object_store_type ObjectStoreMem
+#define object_store_type ObjectStoreMemVec
 //#define object_store_type ObjectStoreDisk
 
 #define alphabet_size  40

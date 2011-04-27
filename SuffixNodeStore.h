@@ -37,7 +37,8 @@ size_t get_next_invalid(vec_type &v,size_t position) {
 template<class vec_type>
 size_t get_last_valid(vec_type &v,size_t position) {
 
-  for(size_t n=position;n>=0;n++) {
+  //for(size_t n=position;n>=0;n++) {
+  for(int32_t n=position;n>=0;n--) {
     if(v.get(n).isvalid()) return n;
   }
 

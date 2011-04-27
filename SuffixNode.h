@@ -22,6 +22,9 @@ public:
 
   SuffixNode() {
     m_children = 0;
+    label_end       = -1;
+    next_left_leaf  = -1;
+    next_right_leaf = -1;
   }
 
   ~SuffixNode() {

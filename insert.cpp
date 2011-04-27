@@ -24,6 +24,7 @@ int main(int argc,char ** argv) {
 
   st.finalise();
   st.compact();
+  st.dump();
 
   vector<char> t;
   string ss = argv[2];

@@ -89,7 +89,7 @@ public:
   }
   
   int32_t get_last() {
-    for(size_t n=symbol_size-1;n>=0;n--) {
+    for(int32_t n=symbol_size-1;n>=0;n--) {
       if(m_symbols[n] >= 0) return m_symbols[n];
     }
     return -1;

@@ -45,17 +45,11 @@ public:
   }
 
   SuffixNode &get(int idx) {
-
     return storage_area[idx];
 
   }
 
   void set(int idx, SuffixNode &s) {
-
-//    bool are_equal = (storage_area[idx] == s);
-//    if(are_equal) {cout << "SETTING UNCHANGED VALUE" << endl;
-//    int *i =0;*i=3232;}
-    storage_area[idx] = s;
   }
 
   int size() {
@@ -75,25 +69,9 @@ public:
   }
 
   void force_compact() {
- //   map<int32_t,int32_t> id_mapping = m_childstore.compact();
- //   apply_mapping(m_store1,id_mapping);
-
- //   NormalSuffixNodeContainer::invalidation_count = 0;
   }
 
   void compact() {
-    // remove invalidated items from childstore.
-    // note: this should not invalidate any SuffixNode objects that have been returned.
-/*
-    if(compact_enabled) {
-      if(NormalSuffixNodeContainer::invalidation_count == 100000) {
-	map<int32_t,int32_t> id_mapping = m_childstore.compact();
-	apply_mapping(m_store1,id_mapping);
-
-	NormalSuffixNodeContainer::invalidation_count = 0;
-      }
-    }
-*/
   }
 
   vector<SuffixNode> storage_area;

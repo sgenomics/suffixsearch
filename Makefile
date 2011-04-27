@@ -1,6 +1,6 @@
 
 insert: insert.cpp SuffixTree.h SuffixNode.h SuffixNodeStore.h SuffixNodeStore.cpp
-	g++ -O3 insert.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o insert
+	g++ -g insert.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o insert
 insertfile: insertfile.cpp SuffixTree.h SuffixNode.h SuffixNodeStore.h SuffixNodeStore.cpp
 	g++ -O3 insertfile.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o insertfile
 web: web.cpp SuffixTree.h WebSrvSearch.h Transcode.h ChildStore.h SuffixNode.h ObjectStoreMem.h ObjectStoreDisk.h ObjectStoreMemVec.h SuffixNodeStore.h URIStore.h URIStore.cpp global_defs.h
