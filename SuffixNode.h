@@ -21,11 +21,46 @@ class SuffixNode {
 public:
 
   SuffixNode() {
+    m_children = 0;
+  }
+
+  ~SuffixNode() {
+    if(m_children != 0) delete m_children;
+    m_children = 0;
+  }
+
+  SuffixNode(const SuffixNode &s) {
+    parent = s.parent;
+    label_start = s.label_start;
+    label_end = s.label_end ;
+    suffix_link = s.suffix_link;
+    next_left_leaf = s.next_left_leaf;
+    next_right_leaf = s.next_right_leaf;
+    depth = s.depth;
+    if(s.m_children !=0) {
+      m_children = new ChildStore(); 
+      (*m_children) = *(s.m_children);
+    } else m_children = 0;
+  }
+
+  void operator=(const SuffixNode &s) {
+    parent = s.parent;
+    label_start = s.label_start;
+    label_end = s.label_end ;
+    suffix_link = s.suffix_link;
+    next_left_leaf = s.next_left_leaf;
+    next_right_leaf = s.next_right_leaf;
+    depth = s.depth;
+    if(s.m_children !=0) {
+      if(m_children == 0) m_children = new ChildStore(); 
+      (*m_children) = *(s.m_children);
+    } else m_children = 0;
   }
  
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
     suffix_link = 0;
+    m_children = 0;
 
     label_end       = -1;
     next_left_leaf  = -1;
@@ -33,9 +68,8 @@ public:
   }
 
   bool is_leaf() {
-    return m_children.is_leaf();
-    //if(m_children.size() ==0 ) return true;
-    //return false;
+    if(m_children == 0) return true;
+    return m_children->is_leaf();
   }
 
   int get_label_length() {
@@ -59,11 +93,17 @@ public:
   }
 
   void clear_children() {
-    m_children.clear();
+    if(m_children != 0) delete m_children;
+    m_children = 0;
+  //  m_children.clear();
   }
 
   void copy_children(SuffixNode &other) {
-    m_children = other.m_children;
+    if(m_children == 0) m_children = new ChildStore();
+
+    (*m_children) = (*(other.m_children));
+
+//    m_children = other.m_children;
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
@@ -101,7 +141,8 @@ public:
   }
 
   int child_count() {
-    return m_children.size();
+    if(m_children != 0) return m_children->size(); else return 0;
+//    return m_children.size();
   }
 
   int get_parent() {
@@ -119,11 +160,12 @@ public:
 //    cout << "SuffixNode getting child: " << n << endl;
     if(is_leaf()) return -1;
 
-    return m_children.get(n);
+    return m_children->get(n);
   }
 
   void set_child(int n,int m) {
-    m_children.set(n,m);
+    if(m_children == 0) m_children = new ChildStore();
+    m_children->set(n,m);
   }
 
   bool operator==(SuffixNode &other) {
@@ -132,26 +174,30 @@ public:
   }
 
   bool is_child(int32_t idx) {
-    return m_children.is_child(idx);
+    if(m_children == 0) return false;
+    return m_children->is_child(idx);
   }
 
   int32_t next_child(int32_t idx) {
-    return m_children.next_child(idx);
+    if(m_children == 0) return -1;
+    return m_children->next_child(idx);
   }
 
   int32_t get_first_child() {
-    return m_children.get_first();
+    if(m_children ==0) return -1;
+    return m_children->get_first();
   }
 
   int32_t get_last_child() {
-    return m_children.get_last();
+    if(m_children ==0) return -1;
+    return m_children->get_last();
   }
 
   bool equal(SuffixNode &other,bool dump=false) {
     if(parent          != other.parent     )    { if(dump)  cout << "parent match failure" << endl;          return false; }
     if(label_start     != other.label_start)    { if(dump)  cout << "label_start match failure" << endl;     return false; }
     if(label_end       != other.label_end  )    { if(dump)  cout << "label_end match failure mine: " << label_end << " other: " << other.label_end << endl; return false; }
-    if((m_children.equal(other.m_children,dump) == false))    { if(dump)  cout << "children match failure" << endl; return false; }
+ if(m_children != 0)   if((m_children->equal(*(other.m_children),dump) == false))    { if(dump)  cout << "children match failure" << endl; return false; }
     if(suffix_link     != other.suffix_link)    { if(dump)  cout << "suffix_link match failure" << endl;     return false; }
     if(next_left_leaf  != other.next_left_leaf) { if(dump)  cout << "next_left_leaf match failure" << endl;  return false; }
     if(next_right_leaf != other.next_right_leaf){ if(dump)  cout << "next_right_leaf match failure" << endl; return false; }
@@ -170,13 +216,13 @@ public:
     cout << "next_left_leaf : " << next_left_leaf << endl;
     cout << "next_right_leaf: " << next_right_leaf << endl;
     cout << "depth          : " << depth << endl;
-    m_children.dump();
+    if(m_children != 0) m_children->dump();
   }
 
   int32_t parent;
   int32_t label_start;
   int32_t label_end  ;
-  ChildStore m_children;
+  ChildStore *m_children;
   int32_t suffix_link;
   int32_t next_left_leaf;
   int32_t next_right_leaf;

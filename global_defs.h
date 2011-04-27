@@ -2,6 +2,7 @@
 #define GLOBALDEFS
 
 #define suffixnodestore_type SuffixNodeStoreMemVec
+//#define suffixnodestore_type SuffixNodeStore
 
 #define object_store_type ObjectStoreMem
 //#define object_store_type ObjectStoreMemVec

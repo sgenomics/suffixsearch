@@ -44,7 +44,7 @@ public:
     return storage_area.size()-1;
   }
 
-  SuffixNode get(int idx) {
+  SuffixNode &get(int idx) {
 
     return storage_area[idx];
 
