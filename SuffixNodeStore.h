@@ -115,7 +115,7 @@ class ChildList {
       return p;
     }
 
-    ChildList<childcount> &set_children(vector<SymbolPair> &s) {
+    ChildList<childcount> &set_children(const vector<SymbolPair> &s) {
       if(s.size() != childcount) {cout << "EEEEERRRRORRRRRR" << endl; exit(0);}
       for(size_t n=0;n<childcount;n++) {
         symbol[n] = s[n].symbol;
@@ -215,7 +215,7 @@ public:
     set_children1(idx,p);
   }
 
-  void set_children1(int32_t idx,vector<SymbolPair> &p) {
+  void set_children1(int32_t idx,const vector<SymbolPair> &p) {
 
     // setting children id: idx
 
@@ -275,7 +275,7 @@ public:
     return push_back1(p);
   }
 
-  int32_t push_back1(vector<SymbolPair> &p) {
+  int32_t push_back1(const vector<SymbolPair> &p) {
 
     // 1. find our which storage section to put it in.
     int id = p.size();
@@ -472,7 +472,7 @@ class NormalSuffixNodeContainer {
         invalidation_count++;
         // add new children idx
 
-        if(s.m_children != 0) childlist_idx = c.push_back(s.m_children->get_symbols());
+        if(s.m_children != 0) childlist_idx = c.push_back1(s.m_children->get_symbols());
                          else childlist_idx = -1;
         return;
       }
@@ -481,9 +481,9 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         if(cidx == -1) {
-          childlist_idx = c.push_back(s.m_children->get_symbols());
+          childlist_idx = c.push_back1(s.m_children->get_symbols());
         } else {
-          c.set_children(cidx,s.m_children->get_symbols());
+          c.set_children1(cidx,s.m_children->get_symbols());
           childlist_idx = cidx;
         }
       }
@@ -507,7 +507,7 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         int32_t idx = -1;
-        if(s.m_children != 0) idx = c.push_back(s.m_children->get_symbols());
+        if(s.m_children != 0) idx = c.push_back1(s.m_children->get_symbols());
                          else idx = c.push_back(vector<SymbolPair>());
                           
         childlist_idx = idx;

@@ -98,15 +98,15 @@ public:
   void clear_children() {
     if(m_children != 0) delete m_children;
     m_children = 0;
-  //  m_children.clear();
   }
 
   void copy_children(SuffixNode &other) {
+
+    if(other.m_children == 0) {m_children = 0; return;}
+
     if(m_children == 0) m_children = new ChildStore();
 
     (*m_children) = (*(other.m_children));
-
-//    m_children = other.m_children;
   }
 
   void replace_children(int64_t old_id,int64_t new_id) {
@@ -234,6 +234,6 @@ public:
   static int32_t end_marker;
   static int32_t end_marker_value;
   static int32_t root;
-};
+} __attribute__((__packed__));
 
 #endif

@@ -65,7 +65,16 @@ public:
   }
 
   void stats() {
+    int leaf_count=0;
+    int child_2=0;
+    int child_3=0;
     cout << "Storage area size: " << storage_area.size() << endl;
+    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].child_count() == 2) child_2++;
+    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].child_count() == 3) child_3++;
+    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].is_leaf()) leaf_count++;
+    cout << "Leaf count: " << leaf_count << endl;
+    cout << "child2    : " << child_2 << endl;
+    cout << "child3    : " << child_3 << endl;
   }
 
   void force_compact() {
