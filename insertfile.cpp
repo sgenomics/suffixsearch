@@ -5,9 +5,12 @@
 #include "SuffixTree.h"
 #include <stdint.h>
 
+#include <mcheck.h>
 using namespace std;
 
 int main(int argc,char ** argv) {
+
+  mtrace();
 
   ifstream input_file(argv[1]);
 
@@ -17,7 +20,7 @@ int main(int argc,char ** argv) {
   char s;
   for(;!input_file.eof();) {
     s = static_cast<char>(input_file.get());
-    st.insert(s);
+    if(!input_file.eof()) st.insert(s);
   }
 
   st.finalise();
@@ -40,5 +43,4 @@ int main(int argc,char ** argv) {
   st.dump_stats();
 
   for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
-
 }
