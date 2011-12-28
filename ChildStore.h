@@ -4,6 +4,7 @@
 #include <vector>
 #include <stdint.h>
 #include <stdlib.h>
+#include "tialloc.h"
 
 using namespace std;
 
@@ -54,10 +55,10 @@ public:
 
   void m_symbols_push_back(SymbolPair s) {
     if(m_symbols_size == 0) {
-      m_symbols = (SymbolPair *) malloc(sizeof(SymbolPair));
+      m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(SymbolPair));
       m_symbols_size = 1;
     } else {
-      m_symbols = (SymbolPair *) realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+      m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
       m_symbols_size += 1;
     }
 

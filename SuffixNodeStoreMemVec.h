@@ -9,6 +9,7 @@
 #include "ObjectStoreMemVec.h"
 #include "ObjectStoreDisk.h"
 #include "global_defs.h"
+#include "tialloc.h"
 
 using namespace std;
 
