@@ -2,10 +2,15 @@
 #define tialloc_h
 
 #include <stdint.h>
+#ifdef __APPLE__
 #include <malloc/malloc.h>
+#else
+#include <malloc.h>
+#endif
+
 #include <iostream>
 #include <vector>
-
+#include <string.h>
 
 
 using namespace std;
@@ -48,7 +53,13 @@ public:
   bool is_tiallocated(void *addr) {
     if(((int32_t)addr)%4 == 0) {  // all malloc'd blocks will be word aligned.
       void *aligned_addr = (void *)(((int32_t)addr) - (int32_t)addr%4);
+
+      #ifdef __APPLE__
       long int size = malloc_size(aligned_addr); // ask malloc for it's size.
+      #else
+      long int size = malloc_usable_size(aligned_addr);
+      #endif
+
       if(size != 0) {
         // This block was malloc'd
         return false;
@@ -63,7 +74,11 @@ public:
       small_block *a = get_tiblock_start(addr);
       return a->alloc_size;
     } else {
+      #ifdef __APPLE__
       return malloc_size(addr); // ask malloc for it's size.
+      #else
+      return malloc_usable_size(addr);
+      #endif
     }
   }
 

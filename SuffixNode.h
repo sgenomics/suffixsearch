@@ -28,38 +28,8 @@ public:
   }
 
   ~SuffixNode() {
-    if(m_children != 0) delete m_children;
-    m_children = 0;
   }
 
-  SuffixNode(const SuffixNode &s) {
-    parent = s.parent;
-    label_start = s.label_start;
-    label_end = s.label_end ;
-    suffix_link = s.suffix_link;
-    next_left_leaf = s.next_left_leaf;
-    next_right_leaf = s.next_right_leaf;
-    depth = s.depth;
-    if(s.m_children !=0) {
-      m_children = new ChildStore(); 
-      (*m_children) = *(s.m_children);
-    } else m_children = 0;
-  }
-
-  void operator=(const SuffixNode &s) {
-    parent = s.parent;
-    label_start = s.label_start;
-    label_end = s.label_end ;
-    suffix_link = s.suffix_link;
-    next_left_leaf = s.next_left_leaf;
-    next_right_leaf = s.next_right_leaf;
-    depth = s.depth;
-    if(s.m_children !=0) {
-      if(m_children == 0) m_children = new ChildStore(); 
-      (*m_children) = *(s.m_children);
-    } else m_children = 0;
-  }
- 
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
     suffix_link = 0;
