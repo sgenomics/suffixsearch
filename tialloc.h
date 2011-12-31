@@ -191,6 +191,8 @@ public:
 
   void *alloc(int32_t n_alloc_size=1) {
 
+    if(n_alloc_size == 0) return 0;
+
     if(n_alloc_size > max_tiallocation) {
       void *a = malloc(n_alloc_size);
       cout << "malloc: " << (int) a << endl;
