@@ -143,6 +143,10 @@ public:
   }
 
   void dump() {
+    for(size_t n=0;n<m_symbols_size;n++) {
+        cout << (int) n << "," << (int) m_symbols[n].index << " ";
+    }
+    cout << endl;
   }
 
 private:

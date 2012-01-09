@@ -54,27 +54,30 @@ public:
   bool is_tiallocated(void *addr) {
 
     small_block *this_block = get_tiblock_start(addr);
-    if(this_block->alloc_size > max_tiallocation) return false;
-    for(int n=0;n < all_memory[this_block->alloc_size].size();n++) {
+//    if(this_block->alloc_size > max_tiallocation) return false;
+    for(int allocs = 1;allocs <= max_tiallocation;allocs++) 
+    for(int n=0;n < all_memory[allocs].size();n++) {
+    //for(int n=0;n < all_memory[this_block->alloc_size].size();n++) { // would rather use this...
+      // int allocs = this_block->alloc_size;
       cout << "originaladr: " << (int) addr << endl;
       cout << "test block : " << (int) this_block << endl;
-      cout << "block start: " << (int) all_memory[this_block->alloc_size][n] << endl;
-      cout << "alloc  size: " << (int) this_block->alloc_size << endl;
+      cout << "block start: " << (int) all_memory[allocs][n] << endl;
+      cout << "alloc  size: " << (int) allocs << endl;
       #ifdef __APPLE__
-      int size = malloc_size(all_memory[this_block->alloc_size][n]); // ask malloc for it's size.
+      int size = malloc_size(all_memory[allocs][n]); // ask malloc for it's size.
       #else
-      int size = malloc_usable_size(all_memory[this_block->alloc_size][n]);
+      int size = malloc_usable_size(all_memory[allocs][n]);
       #endif
-      cout << "block   end: " << (int) all_memory[this_block->alloc_size][n]+size << endl;
+      cout << "block   end: " << (int) all_memory[allocs][n]+size << endl;
 
-      int block_start = (int) all_memory[this_block->alloc_size][n];
-      int block_end   = (int) all_memory[this_block->alloc_size][n] + size;
-      int thisb       = (int) this_block;
+      int block_start = (int) all_memory[allocs][n];
+      int block_end   = (int) all_memory[allocs][n] + size;
+      int thisb       = (int) addr;
 
       if((thisb > block_start) && (thisb < block_end)) {cout << "was tialloc" << endl; return true;}
 
 
-      if(((int)this_block >= (int)all_memory[this_block->alloc_size][n]) && ((int)this_block <= ((int)all_memory[this_block->alloc_size][n] + size))) return true;
+//      if(((int)this_block >= (int)all_memory[allocs][n]) && ((int)this_block <= ((int)all_memory[allocs][n] + size))) return true;
     }
     cout << "not tiallocation" << endl;
     return false;
@@ -178,13 +181,15 @@ public:
      void *newaddr = alloc(new_size);
      int osize = alloc_size(addr);
 
+     cout << "old allocation size: " << osize << endl;
      for(size_t n=0;n<osize;n++) {
-       *((char *) newaddr+n) = *((char *) addr + n);
+       *(((char *) newaddr)+n) = *(((char *) addr) + n);
      }
      free(addr);
      return newaddr;
 
    } else {
+     cout << "new size: " << new_size << endl;
      return ::realloc(addr,new_size);
    }
   }
@@ -209,8 +214,10 @@ public:
       cout << "endadr: " << (int) &(free_block_ptr[n_alloc_size]->free_chain_end) << endl;
       if(free_block_ptr[n_alloc_size]->free_chain_start == free_block_ptr[n_alloc_size]->free_chain_end) {
         cout << "alloc: only one item left" << endl;
+        cout << "allocation size : " << n_alloc_size << endl;
+        cout << "block alloc size: " << (int) free_block_ptr[n_alloc_size]->alloc_size << endl;
         cout << "free_chain_start/end: " << (int) free_block_ptr[n_alloc_size]->free_chain_start << endl;
-        int8_t ret_idx = free_block_ptr[n_alloc_size]->free_chain_end; // free_block_ptr->data[free_block_ptr->free_chain_end];
+        uint8_t ret_idx = free_block_ptr[n_alloc_size]->free_chain_end; // free_block_ptr->data[free_block_ptr->free_chain_end];
         free_block_ptr[n_alloc_size]->free_chain_start = 0xFF;
         free_block_ptr[n_alloc_size]->free_chain_end   = 0xFF;
 
@@ -218,7 +225,7 @@ public:
         free_block_ptr[n_alloc_size]->prev_free_block  = 0;
         free_block_ptr[n_alloc_size]->next_free_block  = 0;
 
-        void *retval = free_block_ptr[n_alloc_size]->data + ret_idx;
+        void *retval = (void *) (((char *) free_block_ptr[n_alloc_size]->data) + ret_idx);
         free_block_ptr[n_alloc_size] = free_block_tmp;
 
         cout << "tialloc1: " << (int) retval << endl;

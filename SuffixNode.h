@@ -189,6 +189,7 @@ public:
     cout << "next_left_leaf : " << next_left_leaf << endl;
     cout << "next_right_leaf: " << next_right_leaf << endl;
     cout << "depth          : " << depth << endl;
+    cout << "children ptr   : " << m_children << endl;
     if(m_children != 0) m_children->dump();
   }
 

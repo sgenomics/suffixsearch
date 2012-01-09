@@ -47,7 +47,6 @@ public:
 
   SuffixNode &get(int idx) {
     return storage_area[idx];
-
   }
 
   void set(int idx, SuffixNode &s) {
