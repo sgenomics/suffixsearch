@@ -34,7 +34,7 @@ int main(int argc,char ** argv) {
   if(r == true) cout << "found" << endl;
   if(r == false) cout << "not found" << endl;
 
-  st.validate_tree(true);
+  //st.validate_tree(true);
   st.process_positions();
   vector<int> poss = st.all_occurs(t);
 

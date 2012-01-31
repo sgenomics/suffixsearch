@@ -66,13 +66,13 @@ public:
   }
 
   void clear_children() {
-    if(m_children != 0) delete m_children;
+    if(m_children != 0) {m_children->free(); delete m_children;}
     m_children = 0;
   }
 
   void copy_children(SuffixNode &other) {
 
-    if(other.m_children == 0) {m_children = 0; return;}
+    if(other.m_children == 0) {clear_children(); m_children = 0; return;}
 
     if(m_children == 0) m_children = new ChildStore();
 

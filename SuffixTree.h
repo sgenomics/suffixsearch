@@ -44,15 +44,12 @@ public:
   }
 
   void label_all_left_most_down(vector<uint32_t> &label_these,int32_t label) {
-    //cout <<"prelabel dump" << endl; dump();
     for(size_t n=0;n<label_these.size();n++) {
 
-//      cout << "labeling: " << label_these[n] << " as: " << label << endl;
       suffixnode_t node = store.get(label_these[n]);
       node.next_left_leaf = label;
       store.set(label_these[n],node);
     }
-    //cout << "postlabel dump:" << endl; dump();
   }
 
   bool first_is_leaf(SuffixNode &n) {
@@ -87,16 +84,12 @@ public:
       //SuffixNode c_node = store.get(c);
       suffixnode_t c_node = store.get(c);
 
- //     cout << "c is: " << c << endl;
- //     cout << "l is: " << last << endl;
-
       // labeling code
 
       // left labeling.
       if(c_node.next_left_leaf == -1) unlabeled_left.push_back(c);
 
       if(first_is_leaf(c_node)) {
-	//cout << "first is leaf" << endl;
 	label_all_left_most_down(unlabeled_left,c_node.get_first_child());
 	unlabeled_left.clear();
         c_node = store.get(c);
@@ -107,7 +100,6 @@ public:
 
       //if(c_node.last_is_leaf()) {
       if(last_is_leaf(c_node)) {
-	//cout << "last is leaf" << endl;
 	current_right_most = c_node.get_last_child();
       }
 
@@ -137,7 +129,6 @@ public:
 	// last != -1
 	if(c_node.is_child(last)) {
 	  int32_t tc = c_node.next_child(last);
- //          cout << "next child was identified as: " << tc << endl;
 	  last = -1;// MOVED THIS AROUND.
 	  if(tc!=-1) { c = tc; }
 	  else       { if(c==root_node) return; last = c; c = c_node.get_parent(); if(c == -1) {return;} }
@@ -189,7 +180,6 @@ public:
       current_node = current_node_tmp.get_child(label);
       if(current_node == -1) return -1;
       // current_node_tmp = store.get(current_node);
-     // cout << "current_node: " << current_node << endl;
     }
 
     return -1;
@@ -197,11 +187,8 @@ public:
 
   string get_substr(uint32_t start,uint32_t end) {
     string res;
-cout << "start:" << start << endl;
-cout << "end  :" << end << endl;
     if(start > s.size()) return res;
     if(start > end) return res;
-    cout << "s.size():" << s.size() << endl;
     if(end > s.size()) end = s.size();
     for(size_t pos=start;pos<=end;pos++) {
       if((pos < s.size()) && (pos >= 0)) res += s.get_uncoded(pos);
@@ -296,9 +283,6 @@ cout << "end  :" << end << endl;
   }
 
   int extend2(int insertion_point,int symbol_index_start,int symbol_index_end,bool &split,int &fnode,int &fpos) {
-    //cout << "extend2, insertion_point   : " << insertion_point << endl;
-    //cout << "extend2, symbol_index_start: " << symbol_index_start << endl;
-    //cout << "extend2, label_start       : " << store.get(insertion_point).label_start << endl;
     fnode = insertion_point;
     fpos  = symbol_index_start;
 
@@ -308,8 +292,6 @@ cout << "end  :" << end << endl;
 
     int insert_len = symbol_index_end - symbol_index_start;
     // Check edge label
-    cout << "extend2, s.size(): " << s.size() << endl;
-    if(s.size() == 534) {cout << "validation extend2a" << endl; validate_tree(true);}
     {
       suffixnode_t insertion_point_tmp = store.get(insertion_point);
       // this means we're at the root node, it's kind of special!
@@ -337,7 +319,6 @@ cout << "end  :" << end << endl;
         }
       }
     }
-    if((s.size() == 534)) {cout << "validation extend2b" << endl; validate_tree(true);}
 
     bool dontdoit=false;
     if(edge_length == 0) {
@@ -371,11 +352,6 @@ cout << "end  :" << end << endl;
 	}
       }
     }
-        cout << "395.parent-0      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
-        if((s.size() == 534)) for(int i=0;i<symbol_size;i++) { cout << store.get(store.get(395).parent).get_child(i) << ","; } cout << endl;
-
-    if((s.size() == 534)) {cout << "validation extend2c" << endl; validate_tree(true);}
 
     int start_val =0;
     start_val = symbol_index_end - symbol_index_start; 
@@ -388,8 +364,6 @@ cout << "end  :" << end << endl;
 
         int b_idx = store.push_back_norm();
         int c_idx = store.push_back_end();
-        cout << "new nodes: " << b_idx << " " << c_idx << endl;
-        cout << "insertion point: " << insertion_point << endl;
 
         suffixnode_t insertion_point_tmp = store.get(insertion_point);
         int64_t old_parent        = insertion_point_tmp.parent;
@@ -405,8 +379,6 @@ cout << "end  :" << end << endl;
         c.label_end   = SuffixNode::end_marker;
 
         insertion_point_tmp.label_start = old_label_start+n;
-        cout << "395.parent0      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
         store.set(insertion_point,insertion_point_tmp); // WHY IS THIS REQUIRED HERE?
 
         int old_parent_child_symbol = old_parent_tmp.find_child(insertion_point); // TODO: make constant time please?
@@ -414,65 +386,32 @@ cout << "end  :" << end << endl;
         old_parent_tmp.set_child(old_parent_child_symbol,b_idx);
         store.set(old_parent,old_parent_tmp);
 
-        cout << "395.parent1      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
-        //cout << "old_label_start: " << old_label_start << endl;
-        //cout << "n              : " << n << endl;
-        //cout << "old_label_start+n: " << old_label_start+n << endl;
-        cout << "SET B CHILD 1" << endl;
         b.set_child(s[old_label_start+n],insertion_point);
-        cout << "SET B CHILD 2" << endl;
         b.set_child(s[symbol_index_start+n],c_idx);
-        if(s.size() == 534) {cout << "b dump" << endl; b.dump();}
-        cout << "SET B CHILD COMPLETE" << endl;
 
-        cout << "395.parent2      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
         insertion_point_tmp.parent = b_idx;
-        cout << "insertion_point is: " << insertion_point << endl;
- //       store.set(insertion_point,insertion_point_tmp);
-        cout << "395.parent3      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
         c.parent = b_idx;
-    if((s.size() == 534)) {cout << "validation extend2c201" << endl; validate_tree(true);}
-        cout << "395.parent4      " << store.get(395).parent << endl;
-        if((s.size() == 534)) store.get(store.get(395).parent).dump();
-        if((s.size() == 534)) for(int i=0;i<symbol_size;i++) { cout << store.get(store.get(395).parent).get_child(i) << ","; } cout << endl;
-        cout << "201   b       : " << b_idx << endl;
-        cout << "201   b.parent: " << b.parent << endl;
-        cout << "201 old parent: " << old_parent << endl;
         b.parent = old_parent;
-    if((s.size() == 534)) {cout << "validation extend2c202" << endl; validate_tree(true);}
         b.suffix_link = 0;// (this is pointed after the next insertion in insert)
-    if((s.size() == 534)) {cout << "validation extend2c203" << endl; validate_tree(true);}
         c.suffix_link = 0;
-    if((s.size() == 534)) {cout << "validation extend2c2a" << endl; validate_tree(true);}
 
         // ADD NODE: b_idx
         // ADD NODE: c_idx 
         split=true;
         b.set_depth(old_parent_tmp.get_depth()+b.get_label_length_r()+1);
         c.set_depth(b.get_depth());
-    if((s.size() == 534)) {cout << "validation extend2c2b" << endl; validate_tree(true);}
         store.set(b_idx,b);
         store.set(c_idx,c);
-        cout << "b_idx: " << b_idx << endl;
-        cout << "old_parent: " << old_parent << endl;
-        cout << "c.parent: " << c.parent << endl;
-        cout << "b.parent: " << b.parent << endl;
-        cout << "insertionpoint.parent: " << insertion_point_tmp.parent << endl;
 
         if(insertion_point_tmp.label_end == SuffixNode::end_marker) { insertion_point_tmp.set_depth(b.get_depth());}
         else                                                        { insertion_point_tmp.set_depth(b.get_depth()+insertion_point_tmp.get_label_length_r()+1);}
         store.set(insertion_point,insertion_point_tmp);
-    if((s.size() == 534)) {cout << "validation extend2c4" << endl; validate_tree(true);}
         //extend2 endpoint 3
         return c_idx;
       }
 
       n++;
     }
-    if((s.size() == 534)) {cout << "validation extend2d" << endl; validate_tree(true);}
 
     // Edge label matched insertion string completely.
     if((edge_length+1) > insert_len) { 
@@ -492,7 +431,6 @@ cout << "end  :" << end << endl;
 
     char child_sym = s[pos];
 
-    if((s.size() == 534)) {cout << "validation extend2e" << endl; validate_tree(true);}
     {
       suffixnode_t insertion_point_tmp = store.get(insertion_point);
       if(insertion_point_tmp.get_child(child_sym) == -1) {
@@ -532,7 +470,6 @@ cout << "end  :" << end << endl;
 
       }
     }
-    if((s.size() == 534)) {cout << "validation extend2f" << endl; validate_tree(true);}
 
     // if a child does exist, recurse
 
@@ -551,12 +488,10 @@ cout << "end  :" << end << endl;
   }
 
   void insert(char current_symbol,bool finalise=false) {
-    cout << "insert: " << (int) current_symbol << " s size: " << s.size() << endl;
 
     s.push_back(current_symbol);
     if(!finalise) current_symbol = transcoder.convert(current_symbol);
 
-    if(s.size() == 534) { cout << "validation 1" << endl; validate_tree(); }
     
 
     SuffixNode::end_marker_value++;
@@ -579,7 +514,6 @@ cout << "end  :" << end << endl;
     int c=0;
     for(size_t n=first_non_leaf_n;n<s.size();n++) {
 
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2a,531" << endl; validate_tree(true);}
       suffixnode_t last_node_tmp1 = store.get(last_node);
       last_node_sl = last_node_tmp1.suffix_link;
 
@@ -595,15 +529,12 @@ cout << "end  :" << end << endl;
  //     last_node_tmp    = store.get(last_node); // required?
 
       //int l_predict_pos = predict_pos;
-      if(predict_node_t1.parent == 0) {/*cout << "pred2" << endl;*/ predict_pos = n;} 
+      if(predict_node_t1.parent == 0) { predict_pos = n;} 
 
       // Now need to perform 'canonisation' analog.
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2b,531" << endl; validate_tree(true);}
 
 
      // lazy canonisation
-     //cout << "pre-can predict_node: " << predict_node << endl;
-     //cout << "pre-can predict_pos : " << predict_pos << endl;
      predict_pos = n + (predict_node_t1.get_depth()-predict_node_t1.get_label_length_r())-1;
      if((predict_node_t1.parent != 0) && (predict_node_t1.suffix_link != 0))
       for(;;) {
@@ -616,7 +547,6 @@ cout << "end  :" << end << endl;
         predict_node = predict_node_c.parent;
  //       predict_node_tmp = store.get(predict_node);
       }
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2c,531" << endl; validate_tree(true);}
 
       if(n  == (s.size()-1)) {predict_node = 0;}
 
@@ -626,31 +556,21 @@ cout << "end  :" << end << endl;
 
       int fnode = 0;
       int fpos  = 0;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d-1,531" << endl; validate_tree(true);}
       newnode = extend2(predict_node,predict_pos,s.size()-1,split,fnode,fpos);
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d-2,531" << endl; validate_tree(true);}
       suffixnode_t newnode_tmp = store.get(newnode);
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d-3,531" << endl; validate_tree(true);}
       last_at_end = at_end;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d00,531" << endl; validate_tree(true);}
       at_end = false;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d01,531" << endl; validate_tree(true);}
       int ins_len = s.size()-1-n+1;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d02,531" << endl; validate_tree(true);}
       int lab_len = newnode_tmp.get_depth();
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d03,531" << endl; validate_tree(true);}
       if(ins_len == lab_len) at_end = true;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d1,531" << endl; validate_tree(true);}
 
 
       bool ends_at_magic_leaf = (newnode_tmp.is_leaf() && at_end);
       bool is_the_last_symbol = (n == s.size()-1);
       bool implicit_match     = first_non_leaf_flag && !at_end;
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d2,531" << endl; validate_tree(true);}
 
       if(!first) {
 
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2d3,531" << endl; validate_tree(true);}
         if(!is_the_last_symbol && (ends_at_magic_leaf) && !implicit_match) {  
           // keep going, we don't need to visit these again.
         } else 
@@ -660,7 +580,6 @@ cout << "end  :" << end << endl;
           first_non_leaf_flag = false;
         }
       }
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2e,531" << endl; validate_tree(true);}
 
       predict_pos = fpos;
 
@@ -675,7 +594,6 @@ cout << "end  :" << end << endl;
           store.set(last_node,last_node_tmp2);
         }
       }
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2f,531" << endl; validate_tree(true);}
 
       if((!first) && last_split) {
         if(last_node_tmp2.suffix_link != newnode) {  // only perform set if there is a change
@@ -689,7 +607,6 @@ cout << "end  :" << end << endl;
           store.set(last_node_tmp2.parent,last_node_tmp_parent);
         }
       }
-      if((n == 531) && (s.size() == 534)) {cout << "validation 2g,531" << endl; validate_tree(true);}
 
       last_node = newnode; // was newnode
  ////////NOTREQUIRED?!!!!     last_node_tmp = store.get(last_node);
@@ -702,11 +619,10 @@ cout << "end  :" << end << endl;
 
       first=false;
       first_insert=false;
-      if(s.size() == 534) { cout << "validation 2 " << "loop " << n << endl; validate_tree(true); }
     }
 
     split_count = new_split_count+1;
-    validate_tree();
+    //validate_tree();
   }
 
   void dump() {
@@ -801,7 +717,6 @@ cout << "end  :" << end << endl;
     string my_path_label     = get_path_label(n) ;
     string suffix_path_label = get_path_label(n_tmp.suffix_link);
   
-    // if(dump) cout << "validating link from/to: " << n << "," << (int) n_tmp.suffix_link << " labels: " << my_path_label << "," << suffix_path_label << endl;
     if(dump) cout << "validating link from/to: " << n << "," << (int) n_tmp.suffix_link << " label lens: " << my_path_label.size() << "," << suffix_path_label.size() << endl;
     if((static_cast<int>(my_path_label.size())-1) > 0) {
       if((suffix_path_label.size()) < ((my_path_label.size()-1))) {

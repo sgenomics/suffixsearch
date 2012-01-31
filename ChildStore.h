@@ -55,10 +55,20 @@ public:
 
   void m_symbols_push_back(SymbolPair s) {
     if(m_symbols_size == 0) {
+      #ifdef use_tialloc
       m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(SymbolPair));
+      #else
+      m_symbols = (SymbolPair *) malloc(sizeof(SymbolPair));
+      #endif
+
       m_symbols_size = 1;
     } else {
+      #ifdef use_tialloc
       m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+      #else
+      m_symbols = (SymbolPair *) realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+      #endif
+
       m_symbols_size += 1;
     }
 
@@ -147,6 +157,14 @@ public:
         cout << (int) n << "," << (int) m_symbols[n].index << " ";
     }
     cout << endl;
+  }
+
+  void free() {
+    #ifdef use_tialloc
+    if(m_symbols != 0) tialloc::instance()->free(m_symbols);
+    #else
+    if(m_symbols != 0) ::free(m_symbols);
+    #endif
   }
 
 private:
