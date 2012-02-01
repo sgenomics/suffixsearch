@@ -42,9 +42,8 @@ struct small_block {
 class tialloc {
 
   small_block *free_block_ptr[256]; // pointers to last_free_blocks
-  intarch_t m_alloc_size;
   vector<vector<uint8_t *> > all_memory;    // this isn't required, and should be removed from non-debug implementations.
-  int max_tiallocation;
+  int max_tiallocation; ///< must be less than 255, ideally around 120.
 
   
   static tialloc *only_instance;
@@ -67,12 +66,17 @@ public:
   // Return true if this block was allocated by tialloc, otherwise false (malloc'd)
   bool is_tiallocated(void *addr) {
 
+    if(((intarch_t)addr)%4 != 0) return true;
+    //int s = malloc_usable_size(addr);
+    //if((s < 0) || (s > max_tiallocation) || (s == 0)) return false;
+
     small_block *this_block = get_tiblock_start(addr);
-//    if(this_block->alloc_size > max_tiallocation) return false;
+    if(this_block->alloc_size > max_tiallocation) return false;
+                                             else return true;
+
+    // The code should never get here, but this checks all allocation regions. We can try and remove this.
     for(int allocs = 1;allocs <= max_tiallocation;allocs++) 
     for(int n=0;n < all_memory[allocs].size();n++) {
-    //for(int n=0;n < all_memory[this_block->alloc_size].size();n++) { // would rather use this...
-      // int allocs = this_block->alloc_size;
 
       #ifdef __APPLE__
       int size = malloc_size(all_memory[allocs][n]); // ask malloc for it's size.
@@ -80,34 +84,13 @@ public:
       int size = malloc_usable_size(all_memory[allocs][n]);
       #endif
 
-      int block_start = (int) all_memory[allocs][n];
-      int block_end   = (int) all_memory[allocs][n] + size;
-      int thisb       = (int) addr;
+      intarch_t block_start = (intarch_t) all_memory[allocs][n];
+      intarch_t block_end   = (intarch_t) all_memory[allocs][n] + size;
+      intarch_t thisb       = (intarch_t) addr;
 
       if((thisb > block_start) && (thisb < block_end)) { return true;}
-
-//      if(((int)this_block >= (int)all_memory[allocs][n]) && ((int)this_block <= ((int)all_memory[allocs][n] + size))) return true;
     }
     return false;
-
-
-    // Previous method, retained for reference, however malloc_usable_size can segfault
-    if(((intarch_t)addr)%4 == 0) {  // all malloc'd blocks will be word aligned.
-      void *aligned_addr = (void *)(((intarch_t)addr) - (intarch_t)addr%4);
-
-      #ifdef __APPLE__
-      long int size = malloc_size(aligned_addr); // ask malloc for it's size.
-      #else
-      long int size = malloc_usable_size(aligned_addr);
-      #endif
-
-      if(size != 0) {
-        // This block was malloc'd
-        return false;
-      }
-    }
-
-    return true;
   }
 
   intarch_t alloc_size(void *addr) {
@@ -148,7 +131,7 @@ public:
 
   void free(void *addr) {
 
-    if(!is_tiallocated(addr)) {::free(addr); return;}
+    if(!is_tiallocated(addr)) {::free(((int8_t *)addr)-8); return;}
 
     small_block *this_block = get_tiblock_start(addr);
 
@@ -203,8 +186,18 @@ public:
     if(n_alloc_size == 0) return 0;
 
     if(n_alloc_size > max_tiallocation) {
-      void *a = malloc(n_alloc_size);
-      return a;
+      void *a = malloc(n_alloc_size+8);
+
+      // This marker lets us determine that it was a malloc block, not tialloc. (256 is too large an allocation for tialloc)
+      ((int8_t *)a)[0] = 0xFF;
+      ((int8_t *)a)[1] = 0xFF;
+      ((int8_t *)a)[2] = 0xFF;
+      ((int8_t *)a)[3] = 0xFF;
+      ((int8_t *)a)[4] = 0xFF;
+      ((int8_t *)a)[5] = 0xFF;
+      ((int8_t *)a)[6] = 0xFF;
+      ((int8_t *)a)[7] = 0xFF;
+      return ((int8_t *)a+8);
     }
 
     // are there any free items left?
@@ -250,11 +243,16 @@ public:
 
   void initialise(int n_alloc_size = 1) {
 
-    m_alloc_size = 1024*10; //1024*1024*10;
+    intarch_t m_alloc_size = 1024*100; 
+
     // malloc a bunch of memory
 
-    // memory should really only be local, class member for debugging.
-    uint8_t *memory = (uint8_t *)malloc(m_alloc_size); // 10Mb
+    // memory should really only be local, eventually.
+    uint8_t *memory = (uint8_t *)malloc(m_alloc_size); 
+
+ //   cout << "memory: " << (intarch_t) memory << endl;
+    
+    if(memory == NULL) {cerr << "allocation error" << endl;}
 
     all_memory[n_alloc_size].push_back(memory);
 
@@ -289,6 +287,7 @@ public:
 
   void dump() {
 
+    intarch_t m_alloc_size = 1024*100; 
     cout << "free_block_ptr[1]: " << free_block_ptr[1] << endl;
 
     cout << "Dump called" << endl;
