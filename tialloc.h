@@ -44,12 +44,13 @@ class tialloc {
   small_block *free_block_ptr[256]; // pointers to last_free_blocks
   vector<vector<uint8_t *> > all_memory;    // this isn't required, and should be removed from non-debug implementations.
   int max_tiallocation; ///< must be less than 255, ideally around 120.
-
+  int malpad;
   
   static tialloc *only_instance;
 
 private:
   tialloc() {
+    malpad = 256;
     max_tiallocation = 121;
     all_memory = vector<vector<uint8_t *> >(max_tiallocation+1,vector<uint8_t *>());
     for(int n=1;n<=max_tiallocation;n++) {
@@ -71,6 +72,8 @@ public:
     //if((s < 0) || (s > max_tiallocation) || (s == 0)) return false;
 
     small_block *this_block = get_tiblock_start(addr);
+    cout << "aaaddr    : " << (uint64_t) addr << endl;
+    cout << "this_block: " << (uint64_t) this_block << endl;
     if(this_block->alloc_size > max_tiallocation) return false;
                                              else return true;
 
@@ -131,7 +134,14 @@ public:
 
   void free(void *addr) {
 
-    if(!is_tiallocated(addr)) {::free(((int8_t *)addr)-8); return;}
+    if(!is_tiallocated(addr)) {
+      addr = get_tiblock_start(addr);
+      cout << "pad val: " << (int) (((uint8_t *) addr))[0] << endl;
+      addr = ((uint8_t *) addr) - (((uint8_t *) addr))[0];
+      cout << "freeing: " << (uint64_t) addr << endl; 
+      ::free(addr);
+      return;
+    }
 
     small_block *this_block = get_tiblock_start(addr);
 
@@ -186,23 +196,31 @@ public:
     if(n_alloc_size == 0) return 0;
 
     if(n_alloc_size > max_tiallocation) {
-      void *a = malloc(n_alloc_size+8);
+      void *a = malloc(n_alloc_size+276);
 
-      // This marker lets us determine that it was a malloc block, not tialloc. (256 is too large an allocation for tialloc)
-      ((int8_t *)a)[0] = 0xFF;
-      ((int8_t *)a)[1] = 0xFF;
-      ((int8_t *)a)[2] = 0xFF;
-      ((int8_t *)a)[3] = 0xFF;
-      ((int8_t *)a)[4] = 0xFF;
-      ((int8_t *)a)[5] = 0xFF;
-      ((int8_t *)a)[6] = 0xFF;
-      ((int8_t *)a)[7] = 0xFF;
-      return ((int8_t *)a+8);
+      cout << "malloced: " << (uint64_t) a << endl;
+      if(((intarch_t) a)%256 == 0) {
+        for(size_t n=0;n<24;n++) { ((uint8_t *)a)[n] = 0xFF; }
+        ((uint8_t *)a)[0] = 0;
+        cout << "1ret: " << (uint64_t) ((uint8_t *)a+24) << endl;
+        return ((uint8_t *)a+24);
+      } else {
+        uint8_t pad = 0;
+        for(;((intarch_t) a)%256 != 0;) { pad++; (*(uint8_t *)a) = 0xFF; a = ((uint8_t *)a)+1; }
+        for(size_t n=0;n<24;n++) { ((uint8_t *)a)[n] = 0xFF; }
+        (((uint8_t *)a))[0] = pad;
+        cout << "2ret: " << (uint64_t) ((uint8_t *)a+24) << endl;
+        return ((uint8_t *)a+24);
+      }
     }
 
     // are there any free items left?
     if(any_free(free_block_ptr[n_alloc_size])) {
 
+      cout << "size: " << n_alloc_size << endl;
+      cout << "freeblkptr: " << (uint64_t) free_block_ptr[n_alloc_size] << endl;
+      cout << "freeblkptr->freechainstart: " << (int) free_block_ptr[n_alloc_size]->free_chain_start << endl;
+      cout << "freeblkptr->freechainend  : " << (int) free_block_ptr[n_alloc_size]->free_chain_end << endl;
       // only one item left?
       if(free_block_ptr[n_alloc_size]->free_chain_start == free_block_ptr[n_alloc_size]->free_chain_end) {
         uint8_t ret_idx = free_block_ptr[n_alloc_size]->free_chain_end; // free_block_ptr->data[free_block_ptr->free_chain_end];
@@ -250,7 +268,9 @@ public:
     // memory should really only be local, eventually.
     uint8_t *memory = (uint8_t *)malloc(m_alloc_size); 
 
- //   cout << "memory: " << (intarch_t) memory << endl;
+    
+
+    cout << "memory: " << (intarch_t) memory << endl;
     
     if(memory == NULL) {cerr << "allocation error" << endl;}
 
@@ -263,6 +283,7 @@ public:
     t.next_free_block  = 0;
     t.alloc_size       = n_alloc_size;
     t.free_chain_start = 0;
+    cout << "alloc size: " << n_alloc_size << " fce: " << 244 - (244%n_alloc_size) - n_alloc_size << endl;
     t.free_chain_end   = 244 - (244%n_alloc_size) - n_alloc_size; // added - n_alloc_size
     for(int n=n_alloc_size;n<245;n=n+n_alloc_size) {
       t.data[n] = n-n_alloc_size;
@@ -280,6 +301,8 @@ public:
 
       current_addr = (void *) ((intarch_t) current_addr + 256);
     }
+
+    cout << "lastblk " << n_alloc_size << " : " <<  ((intarch_t) current_addr - 256) << endl;
 
     free_block_ptr[n_alloc_size] = (small_block *) ((intarch_t) current_addr - 256);
 
