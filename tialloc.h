@@ -85,9 +85,9 @@ public:
       return a->alloc_size;
     } else {
       #ifdef __APPLE__
-      return malloc_size(addr); // ask malloc for it's size.
+      return malloc_size(get_tiblock_start(addr)); // ask malloc for it's size.
       #else
-      return malloc_usable_size(addr);
+      return malloc_usable_size(get_tiblock_start(addr));
       #endif
     }
   }
@@ -157,20 +157,24 @@ public:
   }
 
   void *realloc(void *addr, intarch_t new_size) {
-   if(is_tiallocated(addr)) {
+   //if(is_tiallocated(addr)) {
 
      void *newaddr = alloc(new_size);
      int osize = alloc_size(addr);
 
-     for(size_t n=0;n<osize;n++) {
+     size_t size;
+     if(osize < new_size) size = osize;
+                     else size = new_size;
+
+     for(size_t n=0;n<size;n++) {
        *(((char *) newaddr)+n) = *(((char *) addr) + n);
      }
      free(addr);
      return newaddr;
 
-   } else {
-     return ::realloc(addr,new_size);
-   }
+   //} else {
+   //  return ::realloc(addr,new_size);
+   //}
   }
 
   void *alloc(intarch_t n_alloc_size=1) {

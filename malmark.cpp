@@ -15,10 +15,10 @@ int mallocmark() {
 
   srand(0);
 
-  for(size_t i=0;i<20000;i++) {
+  for(size_t i=0;i<1000;i++) {
     vector<void *> allocs;
     size_t total_size = 0;
-    for(size_t n=0;n<1000;n++) {
+    for(size_t n=0;n<100000;n++) {
 
       void *a = malloc((rand()%500)+1);
 
@@ -76,6 +76,6 @@ int tiallocmark() {
 
 
 int main() {
- // mallocmark();
+  mallocmark();
   tiallocmark();
 }
