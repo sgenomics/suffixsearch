@@ -10,7 +10,7 @@ searchmark: SuffixTree.h Transcode.h ChildStore.h SuffixNode.h
 	g++ -O3 searchmark.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o searchmark -m32 -L/usr/lib32
 
 malmark: malmark.cpp tialloc.cpp tialloc.h
-	g++ -O3 malmark.cpp tialloc.cpp -o malmark
+	g++ -O3 -march=native malmark.cpp tialloc.cpp -o malmark
 
 clean:
 	rm insert web insertfile

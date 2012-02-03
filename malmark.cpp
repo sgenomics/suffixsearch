@@ -25,7 +25,7 @@ int mallocmark() {
       allocs.push_back(a);
       ((char *)a)[0] = 4;
 
-      total_size += malloc_usable_size(a);
+      // total_size += malloc_usable_size(a);
     }
 
     random_shuffle(allocs.begin(),allocs.end());
@@ -43,6 +43,8 @@ int mallocmark() {
 
 int tiallocmark() {
 
+  void *a = tialloc::instance()->alloc((rand()%500)+1);
+  tialloc::instance()->free(a);
   time_t start_time = time(NULL);
 
   srand(0);
@@ -53,12 +55,11 @@ int tiallocmark() {
     for(size_t n=0;n<10000;n++) {
 
       void *a = tialloc::instance()->alloc((rand()%500)+1);
-      //void *a = tialloc::instance()->alloc((rand()%110)+1);
 
       allocs.push_back(a);
       ((char *)a)[0] = 4;
 
-      total_size += tialloc::instance()->alloc_size(a);
+      // total_size += tialloc::instance()->alloc_size(a);
     }
 
     random_shuffle(allocs.begin(),allocs.end());
@@ -75,6 +76,6 @@ int tiallocmark() {
 
 
 int main() {
-  //mallocmark();
+  mallocmark();
   tiallocmark();
 }
