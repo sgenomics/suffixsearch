@@ -49,12 +49,12 @@ int tiallocmark() {
 
   srand(0);
 
-  for(size_t i=0;i<8000;i++) {
+  for(size_t i=0;i<1000;i++) {
     vector<void *> allocs;
     size_t total_size = 0;
-    for(size_t n=0;n<1000;n++) {
+    for(size_t n=0;n<100000;n++) {
 
-      void *a = tialloc::instance()->alloc((rand()%100)+1);
+      void *a = tialloc::instance()->alloc((rand()%500)+1);
 
       allocs.push_back(a);
       ((char *)a)[0] = 4;
@@ -62,7 +62,7 @@ int tiallocmark() {
       // total_size += tialloc::instance()->alloc_size(a);
     }
 
- //   random_shuffle(allocs.begin(),allocs.end());
+    random_shuffle(allocs.begin(),allocs.end());
 
     for(size_t n=0;n<allocs.size();n++) {
       tialloc::instance()->free(allocs[n]);
