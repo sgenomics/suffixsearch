@@ -20,7 +20,7 @@ typedef uint32_t intarch_t;
 #include <iostream>
 #include <vector>
 #include <string.h>
-
+#include <stdlib.h>
 
 using namespace std;
 
@@ -67,7 +67,7 @@ public:
   // Return true if this block was allocated by tialloc, otherwise false (malloc'd)
   bool is_tiallocated(void *addr) {
 
-    if(((intarch_t)addr) != (((intarch_t)addr) & 0x7)) return true;
+    //if((((intarch_t)addr) & 0x7) > 0) return true;
     //if(((intarch_t)addr)%8 != 0) return true;
     //int s = malloc_usable_size(addr);
     //if((s < 0) || (s > max_tiallocation) || (s == 0)) return false;
@@ -121,6 +121,7 @@ public:
   void free(void *addr) {
 
     if(!is_tiallocated(addr)) {
+      cout << "free: " << (uint64_t) ((uint8_t *) addr)-24 << endl;
       ::free(((uint8_t *) addr)-24);
       return;
     }
@@ -176,7 +177,11 @@ public:
     if(n_alloc_size == 0) return 0;
 
     if(n_alloc_size > max_tiallocation) {
-      void *a = memalign (256,n_alloc_size+24);
+      void *a;
+      posix_memalign(&a,512,n_alloc_size+24);
+      cout << "alloc: " << (uint64_t) (uint8_t *)a << endl;
+
+      //void *a = memalign (256,n_alloc_size+24);
       //void *a = malloc(n_alloc_size+276);
 
       for(size_t n=0;n<24;n++) { ((uint8_t *)a)[n] = 0xFF; }
@@ -222,12 +227,14 @@ public:
 
     //cout << "Size of smallblock: " << sizeof(small_block);
 
-    intarch_t m_alloc_size = 1024*10000; 
+    intarch_t m_alloc_size = 1024*100; 
 
     // malloc a bunch of memory
-
     // memory should really only be local, eventually.
-    uint8_t *memory = (uint8_t *)memalign (256,m_alloc_size); 
+    //cout << "alloc size: " << n_alloc_size << endl;
+    void *m;// = (uint8_t *)memalign (256,m_alloc_size); 
+    posix_memalign(&m,512,m_alloc_size);
+    uint8_t *memory = (uint8_t *) m;
 
     //cout << "memory: " << (intarch_t) memory << endl;
     
