@@ -13,7 +13,6 @@
 #include "SuffixNodeStore.h"
 #include "SuffixNodeStoreMemVec.h"
 #include "SuffixNode.h"
-#include "ChildStore.h"
 #include "global_defs.h"
 
 #define suffixnode_t SuffixNode&
@@ -798,8 +797,6 @@ public:
 
     cout << "Unpopulated SuffixNode size is: " << sizeof(SuffixNode) << endl;
     cout << "Unpopulated SuffixTree size is: " << sizeof(SuffixTree) << endl;
-    cout << "Size of ChildStore            : " << sizeof(ChildStore) << endl;
-    cout << "Size of ChildStore pointer    : " << sizeof(ChildStore *) << endl;
   }
 
   bool validate_positions() {

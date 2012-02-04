@@ -472,8 +472,8 @@ class NormalSuffixNodeContainer {
         invalidation_count++;
         // add new children idx
 
-        if(s.m_children != 0) childlist_idx = c.push_back1(s.m_children->get_symbols());
-                         else childlist_idx = -1;
+        if(s.m_symbols != 0) childlist_idx = c.push_back1(s.get_symbols());
+                        else childlist_idx = -1;
         return;
       }
 
@@ -481,9 +481,9 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         if(cidx == -1) {
-          childlist_idx = c.push_back1(s.m_children->get_symbols());
+          childlist_idx = c.push_back1(s.get_symbols());
         } else {
-          c.set_children1(cidx,s.m_children->get_symbols());
+          c.set_children1(cidx,s.get_symbols());
           childlist_idx = cidx;
         }
       }
@@ -507,8 +507,8 @@ class NormalSuffixNodeContainer {
         childlist_idx = -1;
       } else {
         int32_t idx = -1;
-        if(s.m_children != 0) idx = c.push_back1(s.m_children->get_symbols());
-                         else idx = c.push_back(vector<SymbolPair>());
+        if(s.m_symbols != 0) idx = c.push_back1(s.get_symbols());
+                        else idx = c.push_back(vector<SymbolPair>());
                           
         childlist_idx = idx;
       }
@@ -542,8 +542,7 @@ class NormalSuffixNodeContainer {
       s.next_right_leaf = next_right_leaf;
       s.depth = depth;
       if(childlist_idx != -1) {
-        if(s.m_children == 0) s.m_children = new ChildStore();
-        s.m_children->set_symbols(c.get_children(childlist_idx));
+        s.set_symbols(c.get_children(childlist_idx));
       } else {
       }
 

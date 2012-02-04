@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "UnitTest.h"
+#include "test_suffixnode.h"
 #include "test_suffixtree_simple.h"
 #include "test_suffixtree_random.h"
 #include "test_suffixtree_time.h"
@@ -18,6 +19,7 @@ int main(int argc,char ** argv) {
   UnitTest utf("41J Tests");
 
   test_tialloc(utf);
+  test_suffixnode(utf);
 //  test_suffixtree_compact_vec(utf);
 //  test_objectstore(utf);
 //  test_suffixtree_suffixnodestore(utf);

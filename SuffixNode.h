@@ -7,24 +7,37 @@
 #include <map>
 #include <deque>
 #include <stdlib.h>
-#include "ChildStore.h"
 #include <stdint.h>
-
+#include "tialloc.h"
 
 using namespace std;
 
 #define symbol_size  41
 #define final_symbol 39
 
+class SymbolPair {
+  public:
+
+  SymbolPair(uint8_t s,int32_t i) : symbol(s),index(i) {
+  }
+
+  uint8_t symbol;
+  int32_t index;
+} __attribute__((__packed__));
+
 class SuffixNode {
 
 public:
 
   SuffixNode() {
-    m_children = 0;
+    label_start     = -1;
     label_end       = -1;
     next_left_leaf  = -1;
     next_right_leaf = -1;
+    depth           = -1;
+    parent          = -1;
+    m_symbols = 0;
+    m_symbols_size = 0;
   }
 
   ~SuffixNode() {
@@ -33,7 +46,8 @@ public:
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
 
     suffix_link = 0;
-    m_children = 0;
+    m_symbols = 0;
+    m_symbols_size = 0;
 
     label_end       = -1;
     next_left_leaf  = -1;
@@ -41,8 +55,8 @@ public:
   }
 
   bool is_leaf() {
-    if(m_children == 0) return true;
-    return m_children->is_leaf();
+    if(m_symbols_size == 0) return true;
+    return false;
   }
 
   int get_label_length() {
@@ -66,40 +80,48 @@ public:
   }
 
   void clear_children() {
-    if(m_children != 0) {m_children->free(); delete m_children;}
-    m_children = 0;
+    m_symbols_size = 0;
+    if(m_symbols != 0) tialloc::instance()->free(m_symbols);
+    m_symbols = 0;
   }
 
   void copy_children(SuffixNode &other) {
 
-    if(other.m_children == 0) {clear_children(); m_children = 0; return;}
+    clear_children();
+    if(other.m_symbols_size == 0) return;
 
-    if(m_children == 0) m_children = new ChildStore();
+    m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(other.m_symbols_size*sizeof(SymbolPair)));
+    m_symbols_size = other.m_symbols_size;
 
-    (*m_children) = (*(other.m_children));
+    for(size_t n=0;n<m_symbols_size;n++) {
+      m_symbols[n].symbol = other.m_symbols[n].symbol;
+      m_symbols[n].index  = other.m_symbols[n].index;
+    }
   }
 
-  void replace_children(int64_t old_id,int64_t new_id) {
-    for(int n=0;n<symbol_size;n++) {
-      if(get_child(n) == old_id) set_child(n,new_id);
+  void replace_children(int32_t old_id,int32_t new_id) {
+    for(int n=0;n<m_symbols_size;n++) {
+      if(m_symbols[n].index == old_id) m_symbols[n].index = new_id;
     }
   }
 
   int first_child() {
 
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(get_child(n) != -1) return n;
+    if(m_symbols_size == 0) return -1;
+
+    uint8_t min_symbol = 0xFF;
+    for(size_t n=0;n<m_symbols_size;n++) {
+      if(m_symbols[n].symbol <= min_symbol) min_symbol = m_symbols[n].symbol;
     }
 
-    return -1;
+    return min_symbol;
   }
 
   int find_child(int c) {
 
-    for(int64_t n=0;n<symbol_size;n++) {
-      if(get_child(n) == c) return n;
+    for(int n=0;n<m_symbols_size;n++) {
+      if(m_symbols[n].index == c) return n;
     }
-
     return -1;
   }
 
@@ -114,8 +136,7 @@ public:
   }
 
   int child_count() {
-    if(m_children != 0) return m_children->size(); else return 0;
-//    return m_children.size();
+    return m_symbols_size;
   }
 
   int get_parent() {
@@ -129,48 +150,81 @@ public:
     return label_end;
   }
 
-  int get_child(int n) {
-//    cout << "SuffixNode getting child: " << n << endl;
-    if(is_leaf()) return -1;
+  int get_child(uint8_t symbol) {
+    if(m_symbols_size == 0) return -1;
 
-    return m_children->get(n);
+    for(int n=0;n<m_symbols_size;n++) {
+      if(m_symbols[n].symbol == symbol) return m_symbols[n].index;
+    }
+    return -1;
   }
 
-  void set_child(int n,int m) {
-    if(m_children == 0) m_children = new ChildStore();
-    m_children->set(n,m);
+  int child_local_idx(uint8_t symbol) {
+    for(size_t n=0;n<m_symbols_size;n++) {
+      if(m_symbols[n].symbol == symbol) return n;
+    }
+    return -1;
+  }
+
+  void set_child(uint8_t n,int32_t m) {
+    if(m_symbols_size == 0) { 
+      m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(SymbolPair)*2);
+      m_symbols_size = 1;
+      m_symbols[0].symbol = n;
+      m_symbols[0].index  = m;
+    }
+
+    int child = child_local_idx(n);
+    if(child != -1) {
+      m_symbols[child].index = m;
+    } else {
+      m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+      m_symbols_size++;
+      m_symbols[m_symbols_size-1].symbol = n;
+      m_symbols[m_symbols_size-1].index  = m;
+    }
   }
 
   bool operator==(SuffixNode &other) {
-
     return equal(other); 
   }
 
   bool is_child(int32_t idx) {
-    if(m_children == 0) return false;
-    return m_children->is_child(idx);
+    for(size_t n=0;n<m_symbols_size;n++) if(m_symbols[n].index == idx) return true;
+    return false;
   }
 
   int32_t next_child(int32_t idx) {
-    if(m_children == 0) return -1;
-    return m_children->next_child(idx);
+    bool next=false;
+    for(size_t n=0;n<m_symbols_size;n++) {
+      if(next==true) {
+        return m_symbols[n].index;
+      }
+      if(m_symbols[n].index == idx) { next=true; }
+    }
+    return -1;
   }
 
   int32_t get_first_child() {
-    if(m_children ==0) return -1;
-    return m_children->get_first();
+    if(m_symbols_size==0) return -1;
+    return m_symbols[0].index;
   }
 
   int32_t get_last_child() {
-    if(m_children ==0) return -1;
-    return m_children->get_last();
+    if(m_symbols_size==0) return -1;
+    return m_symbols[m_symbols_size-1].index;
   }
 
   bool equal(SuffixNode &other,bool dump=false) {
     if(parent          != other.parent     )    { if(dump)  cout << "parent match failure" << endl;          return false; }
     if(label_start     != other.label_start)    { if(dump)  cout << "label_start match failure" << endl;     return false; }
     if(label_end       != other.label_end  )    { if(dump)  cout << "label_end match failure mine: " << label_end << " other: " << other.label_end << endl; return false; }
- if(m_children != 0)   if((m_children->equal(*(other.m_children),dump) == false))    { if(dump)  cout << "children match failure" << endl; return false; }
+// if(m_children != 0)   if((m_children->equal(*(other.m_children),dump) == false))    { if(dump)  cout << "children match failure" << endl; return false; }
+
+    if(m_symbols_size  != other.m_symbols_size) { if(dump)  cout << "children match failure" << endl; return false; }
+    for(size_t n=0;n<m_symbols_size;n++) { if(m_symbols[n].index != other.m_symbols[n].index) {if(dump)  cout << "children match failure" << endl; return false; }    }
+    for(size_t n=0;n<m_symbols_size;n++) { if(m_symbols[n].symbol != other.m_symbols[n].symbol) {if(dump)  cout << "children match failure" << endl; return false; }    }
+
     if(suffix_link     != other.suffix_link)    { if(dump)  cout << "suffix_link match failure" << endl;     return false; }
     if(next_left_leaf  != other.next_left_leaf) { if(dump)  cout << "next_left_leaf match failure" << endl;  return false; }
     if(next_right_leaf != other.next_right_leaf){ if(dump)  cout << "next_right_leaf match failure" << endl; return false; }
@@ -189,14 +243,33 @@ public:
     cout << "next_left_leaf : " << next_left_leaf << endl;
     cout << "next_right_leaf: " << next_right_leaf << endl;
     cout << "depth          : " << depth << endl;
-    cout << "children ptr   : " << m_children << endl;
-    if(m_children != 0) m_children->dump();
+    cout << "children      : ";
+    for(size_t n=0;n<m_symbols_size;n++) cout << (int) m_symbols[n].symbol << "," << m_symbols[n].index << " ";
+    cout << endl;
   }
+
+  const vector<SymbolPair> get_symbols() {
+    vector<SymbolPair> symbols;
+
+    for(size_t n=0;n<m_symbols_size;n++) symbols.push_back(symbols[n]);
+
+    return symbols;
+  }
+
+  void set_symbols(const vector<SymbolPair> &s) {
+    clear_children();
+
+    for(size_t n=0;n<s.size();n++) set_child(s[n].symbol,s[n].index);
+  }
+
+
+  SymbolPair *m_symbols;
+  char        m_symbols_size;
 
   int32_t parent;
   int32_t label_start;
   int32_t label_end  ;
-  ChildStore *m_children;
+  //ChildStore *m_children;
   int32_t suffix_link;
   int32_t next_left_leaf;
   int32_t next_right_leaf;

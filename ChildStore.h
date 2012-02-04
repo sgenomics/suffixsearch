@@ -168,7 +168,6 @@ public:
   }
 
 private:
-//  vector<SymbolPair> m_symbols;
   SymbolPair *m_symbols;
   char        m_symbols_size;
 } __attribute__((__packed__));

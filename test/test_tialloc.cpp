@@ -137,9 +137,9 @@ int test_tialloc(UnitTest &utf) {
 
   utf.begin_test_set("tialloc tests");
 
-//  test_tialloc_size10(utf);
+  test_tialloc_size10(utf);
   test_tialloc_size5to10(utf);
-//  test_tialloc_random(utf);
+  test_tialloc_random(utf);
 
   utf.end_test_set();
 }
