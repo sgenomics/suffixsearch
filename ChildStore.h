@@ -42,6 +42,7 @@ public:
         return;
       }
     }
+    if(index == -1) return;
 
     m_symbols_push_back(SymbolPair(symbol,index));
     return;

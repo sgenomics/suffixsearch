@@ -73,6 +73,9 @@ void test_suffixnode(UnitTest &utf) {
   s.set_child(3,4);
   s.set_child(2,-1);
 
+  utf.test_equality(s.find_child(8),1);
+  utf.test_equality(s.find_child(4),3);
+
   current = s.get_first_child();
   utf.test_equality(current,8);
   current = s.next_child(current);

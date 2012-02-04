@@ -99,31 +99,10 @@ public:
     }
   }
 
-/*
-  // TODO: check if this needs to be able to cope with new_id == -1
-  void replace_children(int32_t old_id,int32_t new_id) {
-    for(int n=0;n<m_symbols_size;n++) {
-      if(m_symbols[n].index == old_id) {set_child(old_id,new_id); n--;}
-    }
-  }
-*/
-/*
-  int first_child() {
-
-    if(m_symbols_size == 0) return -1;
-
-    uint8_t min_symbol = 0xFF;
-    for(size_t n=0;n<m_symbols_size;n++) {
-      if(m_symbols[n].symbol <= min_symbol) min_symbol = m_symbols[n].symbol;
-    }
-
-    return min_symbol;
-  }
-*/
   int find_child(int c) {
 
     for(int n=0;n<m_symbols_size;n++) {
-      if(m_symbols[n].index == c) return n;
+      if(m_symbols[n].index == c) return m_symbols[n].symbol;
     }
     return -1;
   }
