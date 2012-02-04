@@ -91,7 +91,7 @@ public:
       if(first_is_leaf(c_node)) {
 	label_all_left_most_down(unlabeled_left,c_node.get_first_child());
 	unlabeled_left.clear();
-        c_node = store.get(c);
+        // c_node = store.get(c); // WHY WAS THIS REQUIRED?
       }
 
       // right labeling.

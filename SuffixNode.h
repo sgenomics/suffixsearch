@@ -99,12 +99,15 @@ public:
     }
   }
 
+/*
+  // TODO: check if this needs to be able to cope with new_id == -1
   void replace_children(int32_t old_id,int32_t new_id) {
     for(int n=0;n<m_symbols_size;n++) {
-      if(m_symbols[n].index == old_id) m_symbols[n].index = new_id;
+      if(m_symbols[n].index == old_id) {set_child(old_id,new_id); n--;}
     }
   }
-
+*/
+/*
   int first_child() {
 
     if(m_symbols_size == 0) return -1;
@@ -116,7 +119,7 @@ public:
 
     return min_symbol;
   }
-
+*/
   int find_child(int c) {
 
     for(int n=0;n<m_symbols_size;n++) {
@@ -167,7 +170,8 @@ public:
   }
 
   void set_child(uint8_t n,int32_t m) {
-    if(m_symbols_size == 0) { 
+    if(m_symbols_size == 0) {
+      if(m == -1) return;
       m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(SymbolPair)*2);
       m_symbols_size = 1;
       m_symbols[0].symbol = n;
@@ -176,12 +180,21 @@ public:
 
     int child = child_local_idx(n);
     if(child != -1) {
-      m_symbols[child].index = m;
+      if(m != -1) {
+        m_symbols[child].index = m;
+      } else {
+        // index for -1 means erase the entry.
+        for(size_t i=child;i<(m_symbols_size-1);i++) {
+          m_symbols[i] = m_symbols[i+1];
+        }
+        m_symbols_size--;
+
+      }
     } else {
-      m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
-      m_symbols_size++;
-      m_symbols[m_symbols_size-1].symbol = n;
-      m_symbols[m_symbols_size-1].index  = m;
+        m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+        m_symbols_size++;
+        m_symbols[m_symbols_size-1].symbol = n;
+        m_symbols[m_symbols_size-1].index  = m;
     }
   }
 

@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "tialloc.h"
+#include "global_defs.h"
 
 using namespace std;
 
@@ -165,6 +166,17 @@ public:
     #else
     if(m_symbols != 0) ::free(m_symbols);
     #endif
+  }
+
+  ChildStore& operator=(ChildStore &other) {
+    copy_children(other);
+    return *this;
+  }
+
+  void copy_children(ChildStore &other) {
+    for(size_t n=0;n<other.m_symbols_size;n++) {
+      m_symbols_push_back(SymbolPair(other.m_symbols[n].symbol,other.m_symbols[n].index));
+    }
   }
 
 private:
