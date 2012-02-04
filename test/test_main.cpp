@@ -3,6 +3,7 @@
 #include <vector>
 #include <stdlib.h>
 #include "UnitTest.h"
+#include "../global_defs.h"
 #include "test_suffixnode.h"
 #include "test_suffixtree_simple.h"
 #include "test_suffixtree_random.h"
