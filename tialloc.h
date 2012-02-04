@@ -83,9 +83,9 @@ public:
       return a->alloc_size;
     } else {
       #ifdef __APPLE__
-      return malloc_size(get_tiblock_start(addr)); // ask malloc for it's size.
+      return malloc_size(get_tiblock_start(addr))-24; // ask malloc for it's size.
       #else
-      return malloc_usable_size(get_tiblock_start(addr));
+      return malloc_usable_size(get_tiblock_start(addr))-24;
       #endif
     }
   }
