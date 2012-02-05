@@ -22,6 +22,9 @@ class SuffixNodeStoreMemVec {
 public:
   SuffixNodeStoreMemVec() {
     compact_enabled = true;
+    storage_area = (SuffixNode *) malloc(sizeof(SuffixNode)*10000);
+    storage_area_size = 0;
+    storage_area_real_size = 10000;
   }
 
   void set_compactmode(bool compact_mode) {
@@ -40,9 +43,19 @@ public:
 
   size_t push_back(SuffixNode &s) {
 
-    storage_area.push_back(s);
+    //storage_area.push_back(s);
 
-    return storage_area.size()-1;
+    if(storage_area_real_size > storage_area_size) {
+      storage_area[storage_area_size] = s;
+      storage_area_size++;
+    } else {
+      storage_area_real_size += 10000;
+      storage_area = (SuffixNode *) realloc(storage_area,storage_area_real_size*(sizeof(SuffixNode)));
+      storage_area[storage_area_size] = s;
+      storage_area_size++;
+    }
+
+    return storage_area_size-1;
   }
 
   SuffixNode &get(int idx) {
@@ -53,7 +66,7 @@ public:
   }
 
   int size() {
-    return storage_area.size();
+    return storage_area_size;
   }
 
   int next_idx(int i) {
@@ -61,17 +74,17 @@ public:
   }
 
   int last_idx() {
-    return storage_area.size();
+    return storage_area_size-1;
   }
 
   void stats() {
     int leaf_count=0;
     int child_2=0;
     int child_3=0;
-    cout << "Storage area size: " << storage_area.size() << endl;
-    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].child_count() == 2) child_2++;
-    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].child_count() == 3) child_3++;
-    for(size_t n=0;n<storage_area.size();n++) if(storage_area[n].is_leaf()) leaf_count++;
+    cout << "Storage area size: " << storage_area_size << endl;
+    for(size_t n=0;n<storage_area_size;n++) if(storage_area[n].child_count() == 2) child_2++;
+    for(size_t n=0;n<storage_area_size;n++) if(storage_area[n].child_count() == 3) child_3++;
+    for(size_t n=0;n<storage_area_size;n++) if(storage_area[n].is_leaf()) leaf_count++;
     cout << "Leaf count: " << leaf_count << endl;
     cout << "child2    : " << child_2 << endl;
     cout << "child3    : " << child_3 << endl;
@@ -83,7 +96,10 @@ public:
   void compact() {
   }
 
-  vector<SuffixNode> storage_area;
+  SuffixNode *storage_area;
+  size_t      storage_area_size;
+  size_t      storage_area_real_size;
+  // vector<SuffixNode> storage_area;
 
   bool compact_enabled;
 };

@@ -22,7 +22,7 @@ int main(int argc,char ** argv) {
 
   st.finalise();
   st.compact();
-
+/*
   vector<char> t;
   string ss = argv[2];
   cout << "searching for: " << ss << endl;
@@ -33,12 +33,15 @@ int main(int argc,char ** argv) {
   bool r = st.exists(t);
   if(r == true) cout << "found" << endl;
   if(r == false) cout << "not found" << endl;
-
+*/
   //st.validate_tree(true);
-  st.process_positions();
-  vector<int> poss = st.all_occurs(t);
+  //st.process_positions();
+  //vector<int> poss = st.all_occurs(t);
 
   st.dump_stats();
 
-  for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
+  tialloc::instance()->dump_stats();
+
+  for(;;);
+  //for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 }

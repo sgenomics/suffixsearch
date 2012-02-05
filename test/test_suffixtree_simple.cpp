@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include "SuffixTree.h"
 #include "UnitTest.h"
+#include "global_defs.h"
 
 using namespace std;
 

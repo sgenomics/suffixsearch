@@ -47,12 +47,20 @@ class tialloc {
   
   static tialloc *only_instance;
 
+  vector<int> alloc_stats_allocs;
+  vector<int> alloc_stats_ints;
+
 private:
   tialloc() {
-    max_tiallocation = 121;
+
+    alloc_stats_allocs = vector<int>(256,0);
+    alloc_stats_ints   = vector<int>(256,0);
+
+    max_tiallocation = 220;
     all_memory = vector<vector<uint8_t *> >(max_tiallocation+1,vector<uint8_t *>());
     for(int n=1;n<=max_tiallocation;n++) {
-      initialise(n);
+      free_block_ptr[n] = 0;
+//      initialise(n);
     }
   }
 
@@ -174,6 +182,9 @@ public:
 
   void *alloc(intarch_t n_alloc_size=1) {
 
+    alloc_stats_allocs[n_alloc_size]++;
+
+    //cout << "alloc: " << n_alloc_size << endl;
     //cout << "enteralloc" << endl;
     //dump(n_alloc_size);
 
@@ -235,10 +246,11 @@ public:
   }
 
   void initialise(int n_alloc_size = 1) {
+    alloc_stats_ints[n_alloc_size]++;
 
     //cout << "Size of smallblock: " << sizeof(small_block);
 
-    intarch_t m_alloc_size = 1024*1000; 
+    intarch_t m_alloc_size = 1024*20; 
 
     // malloc a bunch of memory
     // memory should really only be local, eventually.
@@ -291,6 +303,15 @@ public:
 
     free_block_ptr[n_alloc_size] = (small_block *) ((intarch_t) current_addr - 256);
     //dump(n_alloc_size);
+  }
+
+  void dump_stats() {
+    int alloc_sum = 0;
+    for(size_t n=0;n<256;n++) {
+      cout << n << " " << alloc_stats_ints[n] << " " << alloc_stats_allocs[n] << endl;
+      alloc_sum += alloc_stats_ints[n];
+    }
+    cout << "total ints: " << alloc_sum << endl;
   }
 
   void dump(size_t alloc_size) {

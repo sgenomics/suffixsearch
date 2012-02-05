@@ -40,7 +40,19 @@ public:
     m_symbols_size = 0;
   }
 
+  SuffixNode(const SuffixNode& other) {
+    m_symbols = 0;
+    m_symbols_size = 0;
+    *this = other;
+  }
+
+
   ~SuffixNode() {
+ /*   if(t==1) {
+    }
+    t++;
+ */
+    clear_children();
   }
 
   SuffixNode(int parent_in,int label_start_in,int depth_in) : parent(parent_in),label_start(label_start_in), depth(depth_in) {
@@ -81,22 +93,34 @@ public:
 
   void clear_children() {
     m_symbols_size = 0;
+    #ifdef use_tialloc
     if(m_symbols != 0) tialloc::instance()->free(m_symbols);
+    #else
+    if(m_symbols != 0) free(m_symbols);
+    #endif
+    
     m_symbols = 0;
   }
 
-  void copy_children(SuffixNode &other) {
+  void copy_children(const SuffixNode &other) {
 
-    clear_children();
-    if(other.m_symbols_size == 0) return;
+    if(other.m_symbols_size == 0) {m_symbols_size = 0; clear_children(); return;}
 
-    m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(other.m_symbols_size*sizeof(SymbolPair)));
-    m_symbols_size = other.m_symbols_size;
+    if(other.m_symbols_size != m_symbols_size) {
+      clear_children();
+      #ifdef use_tialloc
+      m_symbols = (SymbolPair *) tialloc::instance()->alloc(other.m_symbols_size*sizeof(SymbolPair));
+      #else
+      m_symbols = (SymbolPair *) malloc(other.m_symbols_size*sizeof(SymbolPair));
+      #endif
+    }
 
-    for(size_t n=0;n<m_symbols_size;n++) {
+
+    for(size_t n=0;n<other.m_symbols_size;n++) {
       m_symbols[n].symbol = other.m_symbols[n].symbol;
       m_symbols[n].index  = other.m_symbols[n].index;
     }
+    m_symbols_size = other.m_symbols_size;
   }
 
   int find_child(int c) {
@@ -151,7 +175,12 @@ public:
   void set_child(uint8_t n,int32_t m) {
     if(m_symbols_size == 0) {
       if(m == -1) return;
+
+      #ifdef use_tialloc
       m_symbols = (SymbolPair *) tialloc::instance()->alloc(sizeof(SymbolPair)*2);
+      #else
+      m_symbols = (SymbolPair *) malloc(sizeof(SymbolPair)*2);
+      #endif
       m_symbols_size = 1;
       m_symbols[0].symbol = n;
       m_symbols[0].index  = m;
@@ -170,7 +199,12 @@ public:
 
       }
     } else {
+        #ifdef use_tialloc
         m_symbols = (SymbolPair *) tialloc::instance()->realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+        #else
+        m_symbols = (SymbolPair *) realloc(m_symbols,(m_symbols_size+1)*sizeof(SymbolPair));
+        #endif
+
         m_symbols_size++;
         m_symbols[m_symbols_size-1].symbol = n;
         m_symbols[m_symbols_size-1].index  = m;
@@ -252,6 +286,18 @@ public:
     clear_children();
 
     for(size_t n=0;n<s.size();n++) set_child(s[n].symbol,s[n].index);
+  }
+
+  SuffixNode &operator=(const SuffixNode &other) {
+    parent          = other.parent;
+    label_start     = other.label_start;
+    label_end       = other.label_end;
+    suffix_link     = other.suffix_link;
+    next_left_leaf  = other.next_left_leaf;
+    next_right_leaf = other.next_right_leaf;
+    depth           = other.depth;
+
+    copy_children(other);
   }
 
 
