@@ -88,7 +88,7 @@ public:
     table['z'] = 25;
   }
 
-  char convert(char in) {
+  char convert(unsigned char in) {
     return table[in];
   }
 

@@ -486,7 +486,7 @@ public:
     }
   }
 
-  void insert(char current_symbol,bool finalise=false) {
+  void insert(unsigned char current_symbol,bool finalise=false) {
 
     s.push_back(current_symbol);
     if(!finalise) current_symbol = transcoder.convert(current_symbol);

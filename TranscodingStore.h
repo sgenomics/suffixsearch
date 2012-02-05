@@ -15,7 +15,7 @@ public:
   TranscodingStore() {
   }
 
-  void push_back(char c) {
+  void push_back(unsigned char c) {
     m_store.push_back(c);
   }
 

@@ -48,10 +48,6 @@ public:
 
 
   ~SuffixNode() {
- /*   if(t==1) {
-    }
-    t++;
- */
     clear_children();
   }
 

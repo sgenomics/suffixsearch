@@ -14,7 +14,7 @@ int main(int argc,char ** argv) {
   SuffixTree st;
   //st.set_compactmode(false);
 
-  char s;
+  unsigned char s;
   for(;!input_file.eof();) {
     s = static_cast<char>(input_file.get());
     if(!input_file.eof()) st.insert(s);
@@ -35,13 +35,13 @@ int main(int argc,char ** argv) {
   if(r == false) cout << "not found" << endl;
 */
   //st.validate_tree(true);
-  //st.process_positions();
+  st.process_positions();
   //vector<int> poss = st.all_occurs(t);
 
   st.dump_stats();
 
   tialloc::instance()->dump_stats();
 
-  for(;;);
+  //for(;;);
   //for(int n=0;n<poss.size();n++) cout << "position: " << poss[n] << endl;
 }

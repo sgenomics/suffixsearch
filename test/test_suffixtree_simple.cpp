@@ -1014,6 +1014,27 @@ int test_suffixtree_simple(UnitTest &utf) {
     bool validation = s9.validate_tree();
     utf.test_equality(validation,true);
   }
+
+  if(runall) {
+    SuffixTree s9;
+    s9.insert(200);
+    s9.insert(100);
+    s9.insert('n');
+    s9.insert(50);
+    s9.insert(1);
+    s9.insert(160);
+    s9.finalise();
+
+    vector<char> chkstr9;
+    chkstr9.push_back(200);
+    chkstr9.push_back(100);
+    chkstr9.push_back('n');
+    bool res;
+
+    res = s9.exists(chkstr9);
+    utf.test_equality(res,true);
+  }
+
   utf.end_test_set();
 
 }
