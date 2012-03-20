@@ -198,7 +198,7 @@ public:
   }
 
   vector<int> all_occurs(vector<char> ss,size_t max_hits=-1) {
-    cout << "find all occurs..." << endl;
+    //cout << "find all occurs..." << endl;
     vector<int> res;
 
     for(size_t n=0;n<ss.size();n++) ss[n] =  transcoder.convert(ss[n]);

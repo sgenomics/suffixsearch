@@ -89,7 +89,12 @@ public:
   }
 
   char convert(unsigned char in) {
-    return table[in];
+
+    #ifdef NULLTRANSCODE
+      return in;
+    #else
+      return table[in];
+    #endif
   }
 
 };
