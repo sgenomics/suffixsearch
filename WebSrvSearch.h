@@ -119,7 +119,7 @@ public:
       size_t document_start = m_store.size();
 
       cout << "document uri: " << uri_string << endl;
-      cout << "document    : " << document << endl;
+      cout << "document    : " << document << "*****DOCEND*****" << endl;
 
       if(uri_string.compare("END") == 0) {
         close(ConnectFD);
@@ -201,7 +201,7 @@ public:
       endstr.push_back((char) 10);
 
       string s;
-      bool notfound = true;
+      //bool notfound = true;
       for(int n=0;;n++) {
         int read_size = read(ConnectFD, buf, 200);
 
@@ -304,7 +304,7 @@ public:
       for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
       bool found=false;
-      vector<int> foundpos = m_store.all_occurs(ss,1000);
+      vector<size_t> foundpos = m_store.all_occurs(ss,1000);
       cout << "found count: " << foundpos.size() << endl;
       if(foundpos.size() > 0) found=true;
 
@@ -313,7 +313,7 @@ public:
 	  cout << "found location: " << foundpos[i] << endl;
 	  string fnd = m_store.get_substr(foundpos[i]-50,foundpos[i]-1);
 	  if(fnd.size() < 50) {
-	    int spacers = 50-fnd.size();
+	    size_t spacers = 50-fnd.size();
 	    string spacer_string;
 	    for(size_t n=0;n<spacers;n++) {
 	      spacer_string += '_';
@@ -330,7 +330,7 @@ public:
 	  output_data += "</B>";
 	  fnd = m_store.get_substr(foundpos[i]+search_string.size(),foundpos[i]+50);
 	  if(fnd.size() < 50) {
-	    int spacers = 50-fnd.size();
+	    size_t spacers = 50-fnd.size();
 	    string spacer_string;
 	    for(size_t n=0;n<spacers;n++) {
 	      spacer_string += '_';

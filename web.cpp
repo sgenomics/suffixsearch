@@ -14,8 +14,8 @@ int main(int argc,char ** argv) {
 
   WebSrvSearch web(st,8080,8081);
   web.document_listener();
-
   st.finalise();
+
   cout << "built suffix tree" << endl;
 
   cout << "processing positions" << endl;
