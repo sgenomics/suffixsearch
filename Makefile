@@ -1,10 +1,12 @@
 
 insert: insert.cpp SuffixTree.h SuffixNode.h SuffixNodeStore.h SuffixNodeStore.cpp
 	g++ -g insert.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o insert
+
 insertfile: insertfile.cpp SuffixTree.h SuffixNode.h SuffixNodeStore.h SuffixNodeStore.cpp *.h *.cpp
 	g++ -O3 insertfile.cpp tialloc.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp -o insertfile
-web: tialloc.h tialloc.cpp web.cpp SuffixTree.h WebSrvSearch.h Transcode.h ChildStore.h SuffixNode.h ObjectStoreMem.h ObjectStoreDisk.h ObjectStoreMemVec.h SuffixNodeStore.h URIStore.h URIStore.cpp global_defs.h
-	g++ -O3 -Wall web.cpp ./tialloc.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp ./URIStore.cpp -o web
+
+web: ./suffixcore/tialloc/tialloc.h ./suffixcore/tialloc/tialloc.cpp web.cpp ./suffixcore/SuffixTree.h WebSrvSearch.h Transcode.h ./suffixcore/ChildStore.h ./suffixcore/SuffixNode.h ./suffixcore_optinoal/ObjectStoreMem.h ./suffixcore_optional/ObjectStoreDisk.h ./suffixcore_optional/ObjectStoreMemVec.h ./suffixcore/SuffixNodeStore.h URIStore.h URIStore.cpp global_defs.h
+	g++ -O3 -Wall web.cpp ./suffixcore/tialloc/tialloc.cpp ./suffixcore/SuffixNode.cpp ./suffixcore/SuffixNodeStore.cpp ./URIStore.cpp -o web
 
 searchmark: SuffixTree.h Transcode.h ChildStore.h SuffixNode.h
 	g++ -O3 searchmark.cpp ./SuffixNode.cpp ./SuffixNodeStore.cpp ./tialloc.cpp -o searchmark

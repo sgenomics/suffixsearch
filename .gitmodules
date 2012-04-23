@@ -1,3 +1,6 @@
 [submodule "suffixcore"]
 	path = suffixcore
 	url = git@github.com:sgenomics/suffixcore.git
+[submodule "suffixcore_optional"]
+	path = suffixcore_optional
+	url = git@github.com:sgenomics/suffixcore_optional.git
