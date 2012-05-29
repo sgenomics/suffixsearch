@@ -2,17 +2,19 @@
 #include <string>
 #include <vector>
 #include <stdlib.h>
-#include "SuffixTree.h"
-#include "WebSrvSearch.h"
 #include <fstream>
+#include "./suffixtrans/global_defs.h"
+#include "./suffixtrans/SearchTrans.h"
+#include "WebSrvSearch.h"
+
 
 using namespace std;
 
 int main(int argc,char ** argv) {
 
-  SuffixTree st;
+  SearchTrans st;
 
-  WebSrvSearch web(st,8080,8081);
+  WebSrvSearch<SearchTrans> web(st,8080,8081);
   web.document_listener();
   st.finalise();
 
