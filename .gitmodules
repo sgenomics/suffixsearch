@@ -4,3 +4,6 @@
 [submodule "suffixtrans"]
 	path = suffixtrans
 	url = git@github.com:sgenomics/suffixtrans.git
+[submodule "suffixcore_optional"]
+	path = suffixcore_optional
+	url = git@github.com:sgenomics/suffixcore_optional.git
