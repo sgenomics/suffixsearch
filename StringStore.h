@@ -1,4 +1,3 @@
-
 #ifndef STRINGSTORE
 #define STRINGSTORE
 
@@ -6,14 +5,11 @@
 #include <vector>
 #include "stringify.h"
 #include <string>
-#include "ObjectStoreMem.h"
-#include "ObjectStoreMemVec.h"
-#include "ObjectStoreDisk.h"
 #include "global_defs.h"
+#include <stdint.h>
 
 using namespace std;
 
-//template<template<class T> class object_store_type=ObjectStoreMem>
 class StringStore {
 
 public:
@@ -23,8 +19,8 @@ public:
     string out_string;
 
     for(size_t n=index;n<m_string_store.size();n++) {
-      if(m_string_store.get(n) != 0) {
-        out_string += m_string_store.get(n);
+      if(m_string_store.at(n) != 0) {
+        out_string += m_string_store.at(n);
       } else {
         break;
       }
@@ -44,7 +40,7 @@ public:
     return idx;
   }
 
-  object_store_type<char> m_string_store;
+  vector<uint8_t> m_string_store;
 };
 
 #endif

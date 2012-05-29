@@ -6,19 +6,19 @@
 #include <vector>
 #include <string.h>
 #include <stdio.h>
+#include <iostream>
 #include "stringify.h"
 #include "URIStore.h"
-#include "ObjectStoreMem.h"
-#include "ObjectStoreDisk.h"
 using namespace std;
 
 #include <netinet/in.h>
 #include <signal.h>
 
+template<class searcher_type>
 class WebSrvSearch {
 
 public:
-  WebSrvSearch(SuffixTree &store,int search_port,int document_port) : m_store(store),m_search_port(search_port),m_document_port(document_port) {
+  WebSrvSearch(searcher_type &store,int search_port,int document_port) : m_store(store),m_search_port(search_port),m_document_port(document_port) {
   }
 
   void start() {
@@ -76,7 +76,7 @@ public:
       endstr.push_back((char) 13);
       endstr.push_back((char) 10);
 
-      string document;
+      vector<uint8_t> document;
 
       //TODO: this needs fixing max uri size is 200.
       bool uri_unset=true;
@@ -98,28 +98,51 @@ public:
           uri_unset=false;
 
           //TODO: must modify to deal with documents larger than memory
-          document += s.substr(end+1,string::npos);
+          //document += s.substr(end+1,string::npos);
+          for(size_t i=end+1;i<s.size();i++) document.push_back(s[i]);
         } else {
           if(read_size < 1) break;
 	  buf[200] = 0;
           if(read_size < 200) buf[read_size+1] = 0;
-          document += buf;
+          //document += buf;
+          for(int i=0;i<=read_size;i++) document.push_back(buf[i]);
         }
+      }
+
+      if(notfound==true) {
+        char data[20000];
+        strcpy(data,"HTTP/1.0 500\n");
+        int val = write(ConnectFD,(void *) data,strlen(data));
+        if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;
+
+        strcpy(data,"Content-Type: text/html\n");
+        val = write(ConnectFD,(void *) data,strlen(data));
+        if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;
+        break;
       }
 
       // Send 200 OK
       char data[20000];
       strcpy(data,"HTTP/1.0 200\n");
       int val = write(ConnectFD,(void *) data,strlen(data));
+      if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
+
       strcpy(data,"Content-Type: text/html\n");
       val = write(ConnectFD,(void *) data,strlen(data));
+      if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;
       strcpy(data,(string("Content-Length: 0\n\n\n").c_str()));
       val = write(ConnectFD,(void *) data,strlen(data));
+      if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;
 
       size_t document_start = m_store.size();
 
       cout << "document uri: " << uri_string << endl;
-      cout << "document    : " << document << "*****DOCEND*****" << endl;
+      cout << "document starts: ";
+      for(size_t n=0;(n<document.size()) && (n<100);n++) {
+        cout << document[n];
+      }
+      cout << endl;
+      cout << "document size: " << document.size() << endl;
 
       if(uri_string.compare("END") == 0) {
         close(ConnectFD);
@@ -128,7 +151,7 @@ public:
 
       size_t document_length = document.size();
       m_uri_store.insert(document_start,document_length,uri_string);
-      m_store.insert(document);
+      for(size_t i=0;i<document.size();i++) m_store.insert(document[i]);
 
       close(ConnectFD);
     }
@@ -249,12 +272,18 @@ public:
     char data[20000];
     strcpy(data,"HTTP/1.0 200\n");
     int val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
+
+
     strcpy(data,"Content-Type: text/html\n");
     val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
     strcpy(data,(string("Content-Length: ") + stringify(output_data.size()) + "\n\n\n").c_str());
     val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
 
     val = write(ConnectFD,(void *) output_data.c_str(),output_data.size());
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
 
     close(ConnectFD);
   }
@@ -298,7 +327,7 @@ public:
     string output_data;
     output_data += "<tt>";
     if(notfound==false) {
-      vector<char> ss;
+      vector<uint8_t> ss;
       for(size_t n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
       cout << "search_string: " << search_string << endl;
       for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
@@ -361,17 +390,21 @@ public:
     char data[20000];
     strcpy(data,"HTTP/1.0 200\n");
     int val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
     strcpy(data,"Content-Type: text/html\n");
     val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
     strcpy(data,(string("Content-Length: ") + stringify(output_data.size()) + "\n\n\n").c_str());
     val = write(ConnectFD,(void *) data,strlen(data));
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
 
     val = write(ConnectFD,(void *) output_data.c_str(),output_data.size());
+    if(val == -1) cerr << "UNABLE TO WRITE TO BSD SOCKET" << endl;    
 
     close(ConnectFD);
   }
 
-  SuffixTree &m_store;
+  searcher_type &m_store;
   URIStore    m_uri_store;
   int         m_search_port;
   int         m_document_port;
