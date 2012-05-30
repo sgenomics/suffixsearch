@@ -1,0 +1,5 @@
+{ echo "uri=http://sgenomics.org"; cat ./datafiles/shaks12.txt; } | netcat -v -q 1 localhost 8081
+{ echo "uri=http://sgenomics.org"; cat ./datafiles/shaks12.txt; } | netcat -v -q 1 localhost 8081
+#{ echo "uri=http://www.bbc.co.uk"; cat bbc.html; } | nc localhost 8081
+#{ echo "uri=http://www.thinkgeek.com"; cat thinkgeek.html; } | nc localhost 8081
+{ echo "uri=END"; } | nc -v -q 1 localhost 8081

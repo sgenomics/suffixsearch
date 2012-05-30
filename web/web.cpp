@@ -3,7 +3,7 @@
 #include <vector>
 #include <stdlib.h>
 #include <fstream>
-#include "./suffixtrans/global_defs.h"
+#include "./global_defs.h"
 #include "./suffixtrans/SearchTrans.h"
 #include "WebSrvSearch.h"
 
