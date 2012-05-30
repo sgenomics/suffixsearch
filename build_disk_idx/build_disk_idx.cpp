@@ -43,6 +43,6 @@ int main(int argc,char ** argv) {
 
   SuffixNodeStoreDisk diskstore(argv[2]);
   diskstore.copy(st.get_store());
-  st.save_members(string(argv[2]) + "/object_variables");
+  st.save_members(string(argv[2]) + "/object_members");
   st.save_original_text(string(argv[2]) + "/original_text");
 }

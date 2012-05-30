@@ -28,6 +28,9 @@
 #define symbol_type uint16_t
 #define symbol_size  65534
 #define final_symbol 65535
+#define suffixnode_t SuffixNode&
+#define searchtrans_store_type vector<uint8_t>
+
 
 #define store_type vector<symbol_type>
 #include "SuffixNodeStoreMemVec.h"
