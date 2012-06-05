@@ -329,17 +329,17 @@ public:
     if(notfound==false) {
       vector<uint8_t> ss;
       for(size_t n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
-      cout << "search_string: " << search_string << endl;
+      //cout << "search_string: " << search_string << endl;
       for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
       bool found=false;
       vector<size_t> foundpos = m_store.all_occurs(ss,1000);
-      cout << "found count: " << foundpos.size() << endl;
+      //cout << "found count: " << foundpos.size() << endl;
       if(foundpos.size() > 0) found=true;
 
       if(found) {
 	for(size_t i=0;(i<foundpos.size()) && (i<1000);i++) {
-	  cout << "found location: " << foundpos[i] << endl;
+	  //cout << "found location: " << foundpos[i] << endl;
 	  string fnd = m_store.get_substr(foundpos[i]-50,foundpos[i]-1);
 	  if(fnd.size() < 50) {
 	    size_t spacers = 50-fnd.size();
@@ -350,7 +350,7 @@ public:
 	    fnd = spacer_string + fnd;
 	  }
 	  fnd = remove_nonalpha(fnd);
-	  cout << "fnd1 size: " << fnd.size() << endl;
+	  //cout << "fnd1 size: " << fnd.size() << endl;
 	  output_data += fnd;
 	  output_data += "<B>";
 	  fnd = m_store.get_substr(foundpos[i],foundpos[i]+search_string.size()-1);
@@ -367,7 +367,7 @@ public:
 	    fnd = fnd + spacer_string;
 	  }
 	  fnd = remove_nonalpha(fnd);
-	  cout << "fnd2 size: " << fnd.size() << endl;
+	  //cout << "fnd2 size: " << fnd.size() << endl;
 	  output_data += fnd;
 
 	  size_t start_index;
@@ -379,7 +379,7 @@ public:
 
 	  output_data += "<BR>\n";
 	}
-	cout << "fin write" << endl;
+	//cout << "fin write" << endl;
       }
       if(!found) output_data = "NOTFOUND"; 
     } else {
