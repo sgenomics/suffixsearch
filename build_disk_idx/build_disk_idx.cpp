@@ -54,8 +54,8 @@ int main(int argc,char ** argv) {
   st.compact();
   st.process_positions();
 
-  SuffixNodeStoreDisk diskstore(argv[2]);
-  diskstore.copy(st.get_store());
-  st.save_members(string(argv[2]) + "/object_members");
-  st.save_original_text(string(argv[2]) + "/original_text");
+//  SuffixNodeStoreDisk diskstore(argv[2]);
+//  diskstore.copy(st.get_store());
+//  st.save_members(string(argv[2]) + "/object_members");
+//  st.save_original_text(string(argv[2]) + "/original_text");
 }
