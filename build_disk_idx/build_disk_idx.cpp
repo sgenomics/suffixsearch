@@ -38,7 +38,7 @@ int main(int argc,char ** argv) {
     input_filelist >> filename;
 
     if(input_filelist.eof()) break;
-    indexfile << filename << " " << st.size() << endl;
+    indexfile << filename << " " << st.size();
 
 
     ifstream input_file(filename.c_str());
@@ -47,6 +47,7 @@ int main(int argc,char ** argv) {
       s = static_cast<char>(input_file.get());
       if(!input_file.eof()) st.insert(s);
     }
+    indexfile << " " << st.size() << endl;
   }
 
 
@@ -54,8 +55,8 @@ int main(int argc,char ** argv) {
   st.compact();
   st.process_positions();
 
-//  SuffixNodeStoreDisk diskstore(argv[2]);
-//  diskstore.copy(st.get_store());
-//  st.save_members(string(argv[2]) + "/object_members");
-//  st.save_original_text(string(argv[2]) + "/original_text");
+  SuffixNodeStoreDisk diskstore(argv[2]);
+  diskstore.copy(st.get_store());
+  st.save_members(string(argv[2]) + "/object_members");
+  st.save_original_text(string(argv[2]) + "/original_text");
 }
