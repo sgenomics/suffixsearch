@@ -29,7 +29,9 @@ int main(int argc,char ** argv) {
 
   ifstream input_filelist(argv[1]);
 
-  SearchTrans st;
+  SearchTrans *stp = new SearchTrans();
+  SearchTrans &st = *stp;
+  //SuffixTree st;
 
   ofstream indexfile((string(argv[2]) + "/document_index").c_str());
 
@@ -53,10 +55,22 @@ int main(int argc,char ** argv) {
 
   st.finalise();
   st.compact();
-  st.process_positions();
+  st.dump_stats();
+
+//  tialloc::instance()->dump_stats();
+
+//  cout << "tree dump" << endl;
+//  st.st.dump();
+
+//  cout << "store dump" << endl;
+//  st.st.store.dump();
+
+//  ProcessPositions<SuffixNodeStoreMemVec,SuffixNode &> propos(st.st.store);
+//  propos.process_positions();
 
   SuffixNodeStoreDisk diskstore(argv[2]);
   diskstore.copy(st.get_store());
   st.save_members(string(argv[2]) + "/object_members");
   st.save_original_text(string(argv[2]) + "/original_text");
+  delete stp;
 }
