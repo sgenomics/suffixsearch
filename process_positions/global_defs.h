@@ -29,13 +29,11 @@
 #define symbol_size  65534
 #define final_symbol 65535
 #define suffixnode_t SuffixNode
-#define searchtrans_store_type DiskVector<uint8_t>
+#define searchtrans_store_type vector<uint8_t>
 
-#define positions_store DiskVector<positions>
+#define positions_store vector<positions>
 
-#define store_type TranscodingDiskVector
+#define store_type vector<symbol_type>
 #include "SuffixNodeStoreDisk.h"
-#include "DiskVector.h"
-#include "TranscodingDiskVector.h"
 
 #endif

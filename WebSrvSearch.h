@@ -14,11 +14,11 @@ using namespace std;
 #include <netinet/in.h>
 #include <signal.h>
 
-template<class searcher_type>
+template<class searcher_type, class propos_type>
 class WebSrvSearch {
 
 public:
-  WebSrvSearch(searcher_type &store,int search_port,int document_port) : m_store(store),m_search_port(search_port),m_document_port(document_port) {
+  WebSrvSearch(searcher_type &store,propos_type &pp,int search_port,int document_port) : m_store(store),m_propos(pp),m_search_port(search_port),m_document_port(document_port) {
   }
 
   void start() {
@@ -333,7 +333,7 @@ public:
       for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
       bool found=false;
-      vector<size_t> foundpos = m_store.all_occurs(ss,1000);
+      vector<size_t> foundpos = m_store.all_occurs(ss,m_propos,1000);
       //cout << "found count: " << foundpos.size() << endl;
       if(foundpos.size() > 0) found=true;
 
@@ -405,6 +405,7 @@ public:
   }
 
   searcher_type &m_store;
+  propos_type   &m_propos;
   URIStore    m_uri_store;
   int         m_search_port;
   int         m_document_port;

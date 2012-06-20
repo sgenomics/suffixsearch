@@ -7,6 +7,8 @@
 #include "../suffixtrans/SearchTrans.h"
 #include "../WebSrvSearch.h"
 #include "SuffixTree.h"
+#include "DiskVector.h"
+#include "TranscodingDiskVector.h"
 
 using namespace std;
 
@@ -27,8 +29,11 @@ int main(int argc,char ** argv) {
   st.st.s = TranscodingDiskVector(string(argv[1]) + "/original_text");
   st.original_text = DiskVector<uint8_t>(string(argv[1]) + "/original_text");
 
+  DiskVector<positions> pos_store(string(argv[1]) + "/process_positions");
+  ProcessPositions<SuffixNodeStoreDisk,SuffixNode> pp(st.st.store,pos_store);
+
   st.dump_stats();
 
-  WebSrvSearch<SearchTrans> web(st,8080,8081);
+  WebSrvSearch<SearchTrans,ProcessPositions<SuffixNodeStoreDisk,SuffixNode> > web(st,pp,8080,8081);
   web.search_listener();
 }
