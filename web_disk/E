@@ -1,0 +1,125 @@
+g++ -O3 -Wall web_disk.cpp ../suffixcore/tialloc/tialloc.cpp ../suffixcore/SuffixNode.cpp ../URIStore.cpp -I../suffixcore -I../suffixtrans -I../suffixcore/tialloc ../suffixcore/SuffixNodeStoreMemVec.cpp ../suffixcore_optional/SuffixNodeStoreDisk.cpp -o build_disk_idx -I.. -I../suffixcore_optional -I../suffixcore -I.
+In file included from ../suffixcore/SuffixTree.h:27:0,
+                 from ../suffixtrans/SearchTrans.h:1,
+                 from web_disk.cpp:7:
+../suffixcore/SuffixNode.h: In member function ‘int32_t SuffixNode::get_depth_raw() const’:
+../suffixcore/SuffixNode.h:302:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+In file included from ../suffixtrans/SearchTrans.h:1:0,
+                 from web_disk.cpp:7:
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::label_all_left_most_down(std::vector<unsigned int>&, int32_t)’:
+../suffixcore/SuffixTree.h:58:51: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::first_is_leaf(SuffixNode&)’:
+../suffixcore/SuffixTree.h:68:34: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::last_is_leaf(SuffixNode&)’:
+../suffixcore/SuffixTree.h:76:34: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::process_positions()’:
+../suffixcore/SuffixTree.h:89:40: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:112:52: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘int SuffixTree::find_tree_position(std::vector<short unsigned int>)’:
+../suffixcore/SuffixTree.h:168:61: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+In file included from ../suffixtrans/SearchTrans.h:1:0,
+                 from web_disk.cpp:7:
+../suffixcore/SuffixTree.h: In member function ‘std::string SuffixTree::get_substr(uint32_t, uint32_t)’:
+../suffixcore/SuffixTree.h:191:18: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:193:16: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:193:32: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:195:19: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h: In member function ‘std::vector<long unsigned int> SuffixTree::all_occurs(std::vector<short unsigned int>, size_t)’:
+../suffixcore/SuffixTree.h:225:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:230:23: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:241:39: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:245:59: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h: In member function ‘int SuffixTree::exists_node(std::vector<short unsigned int>)’:
+../suffixcore/SuffixTree.h:278:61: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘int SuffixTree::extend2(int, int, int, bool&, int&, int&)’:
+../suffixcore/SuffixTree.h:299:66: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:306:67: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:324:72: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:335:67: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:345:46: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:355:49: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:378:69: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:380:86: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:384:41: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:385:41: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:445:67: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:474:63: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:486:65: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::insert(uint16_t, bool)’:
+../suffixcore/SuffixTree.h:502:7: error: ‘class TranscodingDiskVector’ has no member named ‘push_back’
+../suffixcore/SuffixTree.h:522:39: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:524:56: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:534:60: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:544:61: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:547:26: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:553:19: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:555:60: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:561:52: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:562:51: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:565:23: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:571:41: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h:588:56: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:601:82: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:602:77: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::dump(int)’:
+../suffixcore/SuffixTree.h:629:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::dump_child(int)’:
+../suffixcore/SuffixTree.h:641:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘std::string SuffixTree::get_path_label(int)’:
+../suffixcore/SuffixTree.h:673:49: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:680:55: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘std::string SuffixTree::get_label(int)’:
+../suffixcore/SuffixTree.h:693:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::validate_suffix_link(int64_t, bool)’:
+../suffixcore/SuffixTree.h:708:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::validate_parent(int64_t, bool)’:
+../suffixcore/SuffixTree.h:735:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:738:47: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::validate_depth(int, bool)’:
+../suffixcore/SuffixTree.h:753:37: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:762:39: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h: In member function ‘size_t SuffixTree::size()’:
+../suffixcore/SuffixTree.h:781:14: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h: In member function ‘void SuffixTree::dump_stats()’:
+../suffixcore/SuffixTree.h:785:34: error: ‘class TranscodingDiskVector’ has no member named ‘size’
+../suffixcore/SuffixTree.h: In member function ‘bool SuffixTree::validate_positions()’:
+../suffixcore/SuffixTree.h:799:39: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:805:51: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+../suffixcore/SuffixTree.h:812:52: error: invalid initialization of non-const reference of type ‘SuffixNode&’ from an rvalue of type ‘SuffixNode’
+web_disk.cpp: In function ‘int main(int, char**)’:
+web_disk.cpp:25:76: error: no match for ‘operator=’ in ‘st.SearchTrans::original_text = DiskVector<unsigned char>(std::operator+(const std::basic_string<_CharT, _Traits, _Alloc>&, const _CharT*) [with _CharT = char, _Traits = std::char_traits<char>, _Alloc = std::allocator<char>](((const char*)"/original_text")))’
+web_disk.cpp:25:76: note: candidate is:
+/usr/include/c++/4.6/bits/vector.tcc:161:5: note: std::vector<_Tp, _Alloc>& std::vector<_Tp, _Alloc>::operator=(const std::vector<_Tp, _Alloc>&) [with _Tp = unsigned char, _Alloc = std::allocator<unsigned char>]
+/usr/include/c++/4.6/bits/vector.tcc:161:5: note:   no known conversion for argument 1 from ‘DiskVector<unsigned char>’ to ‘const std::vector<unsigned char>&’
+../suffixcore/tialloc/tialloc.h: In member function ‘void* tialloc::alloc(intarch_t)’:
+../suffixcore/tialloc/tialloc.h:201:45: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::initialise(int)’:
+../suffixcore/tialloc/tialloc.h:267:40: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore_optional/TranscodingDiskVector.h: In member function ‘uint16_t TranscodingDiskVector::operator[](uint64_t)’:
+../suffixcore_optional/TranscodingDiskVector.h:38:47: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result [-Wunused-result]
+In file included from ../suffixcore/SuffixNode.cpp:17:0:
+../suffixcore/SuffixNode.h: In member function ‘int32_t SuffixNode::get_depth_raw() const’:
+../suffixcore/SuffixNode.h:302:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+In file included from ../suffixcore/SuffixNodeStoreMemVec.cpp:22:0:
+../suffixcore/SuffixNode.h: In member function ‘int32_t SuffixNode::get_depth_raw() const’:
+../suffixcore/SuffixNode.h:302:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h: In member function ‘void* tialloc::alloc(intarch_t)’:
+../suffixcore/tialloc/tialloc.h:201:45: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::initialise(int)’:
+../suffixcore/tialloc/tialloc.h:267:40: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+In file included from ../suffixcore_optional/SuffixNodeStoreDisk.cpp:22:0:
+../suffixcore/SuffixNode.h: In member function ‘int32_t SuffixNode::get_depth_raw() const’:
+../suffixcore/SuffixNode.h:302:27: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore_optional/SuffixNodeStoreDisk.cpp: In member function ‘uint64_t SuffixNodeStoreDisk::push_idx_entry(uint16_t, uint32_t)’:
+../suffixcore_optional/SuffixNodeStoreDisk.cpp:72:22: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+../suffixcore_optional/SuffixNodeStoreDisk.cpp: In member function ‘void SuffixNodeStoreDisk::get_idx_entry(uint32_t, uint16_t&, uint32_t&)’:
+../suffixcore_optional/SuffixNodeStoreDisk.cpp:88:32: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+../suffixcore_optional/SuffixNodeStoreDisk.cpp: In member function ‘void* SuffixNodeStoreDisk::read_data(uint16_t, uint32_t)’:
+../suffixcore_optional/SuffixNodeStoreDisk.cpp:110:53: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore/tialloc/tialloc.h: In member function ‘void* tialloc::alloc(intarch_t)’:
+../suffixcore/tialloc/tialloc.h:201:45: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::initialise(int)’:
+../suffixcore/tialloc/tialloc.h:267:40: warning: ignoring return value of ‘int posix_memalign(void**, size_t, size_t)’, declared with attribute warn_unused_result [-Wunused-result]
+../suffixcore_optional/SuffixNodeStoreDisk.cpp: In member function ‘void SuffixNodeStoreDisk::get_idx_entry(uint32_t, uint16_t&, uint32_t&)’:
+../suffixcore_optional/SuffixNodeStoreDisk.cpp:86:35: warning: ignoring return value of ‘size_t fread(void*, size_t, size_t, FILE*)’, declared with attribute warn_unused_result [-Wunused-result]
+make: *** [web_disk] Error 1

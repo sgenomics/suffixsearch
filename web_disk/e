@@ -1,0 +1,42 @@
+g++ -g -Wall web_disk.cpp ../suffixcore/tialloc/tialloc.cpp ../suffixcore/SuffixNode.cpp ../URIStore.cpp -I../suffixcore -I../suffixtrans -I../suffixcore/tialloc ../suffixcore_optional/SuffixNodeStoreDisk.cpp -o web_disk -I.. -I../suffixcore_optional -I../suffixcore -I.
+In file included from ../suffixcore_optional/SuffixNodeStoreDisk.h:22:0,
+                 from ./global_defs.h:36,
+                 from web_disk.cpp:6:
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::dump_stats()’:
+../suffixcore/tialloc/tialloc.h:352:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h:353:15: warning: unused variable ‘max’ [-Wunused-variable]
+web_disk.cpp: In function ‘int main(int, char**)’:
+web_disk.cpp:27:69: error: ‘TranscodingDiskVector’ was not declared in this scope
+web_disk.cpp:28:22: error: ‘DiskVector’ was not declared in this scope
+web_disk.cpp:28:40: error: expected primary-expression before ‘>’ token
+In file included from web_disk.cpp:8:0:
+../WebSrvSearch.h: In member function ‘void WebSrvSearch<searcher_type>::process_search(std::string, int) [with searcher_type = SearchTrans, std::string = std::basic_string<char>]’:
+../WebSrvSearch.h:241:45:   instantiated from ‘void WebSrvSearch<searcher_type>::search_listener() [with searcher_type = SearchTrans]’
+web_disk.cpp:33:23:   instantiated from here
+../WebSrvSearch.h:336:59: error: no matching function for call to ‘SearchTrans::all_occurs(std::vector<unsigned char>&, int)’
+../WebSrvSearch.h:336:59: note: candidate is:
+../suffixtrans/SearchTrans.h:104:18: note: std::vector<long unsigned int> SearchTrans::all_occurs(std::vector<unsigned char>, ProcessPositions<SuffixNodeStoreDisk, SuffixNode>&, size_t)
+../suffixtrans/SearchTrans.h:104:18: note:   no known conversion for argument 2 from ‘int’ to ‘ProcessPositions<SuffixNodeStoreDisk, SuffixNode>&’
+In file included from ../suffixcore/tialloc/tialloc.cpp:7:0:
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::dump_stats()’:
+../suffixcore/tialloc/tialloc.h:352:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h:353:15: warning: unused variable ‘max’ [-Wunused-variable]
+In file included from ../suffixcore_optional/SuffixNodeStoreDisk.h:22:0,
+                 from ./global_defs.h:36,
+                 from ../suffixcore/SuffixNode.cpp:16:
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::dump_stats()’:
+../suffixcore/tialloc/tialloc.h:352:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h:353:15: warning: unused variable ‘max’ [-Wunused-variable]
+In file included from ../suffixcore_optional/SuffixNodeStoreDisk.h:22:0,
+                 from ./global_defs.h:36,
+                 from ../StringStore.h:8,
+                 from ../URIStore.h:5,
+                 from ../URIStore.cpp:1:
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::dump_stats()’:
+../suffixcore/tialloc/tialloc.h:352:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h:353:15: warning: unused variable ‘max’ [-Wunused-variable]
+In file included from ../suffixcore_optional/SuffixNodeStoreDisk.cpp:19:0:
+../suffixcore/tialloc/tialloc.h: In member function ‘void tialloc::dump_stats()’:
+../suffixcore/tialloc/tialloc.h:352:26: warning: comparison between signed and unsigned integer expressions [-Wsign-compare]
+../suffixcore/tialloc/tialloc.h:353:15: warning: unused variable ‘max’ [-Wunused-variable]
+make: *** [web_disk] Error 1

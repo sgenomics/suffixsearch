@@ -33,7 +33,7 @@
 #define final_symbol 65535
 #define suffixnode_t SuffixNode&
 #define searchtrans_store_type vector<uint8_t>
-
+#define positions_store vector<positions>
 
 #define store_type vector<symbol_type>
 #include "SuffixNodeStoreMemVec.h"
