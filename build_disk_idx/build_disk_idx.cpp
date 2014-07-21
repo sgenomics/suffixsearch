@@ -23,7 +23,7 @@
 #include "SearchTrans.h"
 #include "SuffixNodeStoreDisk.h"
 #include "DiskVector.h" 
-
+#include <time.h>
 
 
 using namespace std;
@@ -62,21 +62,23 @@ int main(int argc,char ** argv) {
 
 //  tialloc::instance()->dump_stats();
 
+  cout << "store writing " << time(NULL) << endl;
   SuffixNodeStoreDisk diskstore(argv[2],true);
   diskstore.copy(st.get_store());
-  cout << "store write complete" << endl;
+  cout << "store write complete " << time(NULL) << endl;
   st.save_members(string(argv[2]) + "/object_members");
-  cout << "member write complete" << endl;
+  cout << "member write complete " << time(NULL) << endl;
 //  st.save_original_text(string(argv[2]) + "/original_text");
 //  cout << "original text write complete" << endl;
 
-  cout << "processing positions" << endl;
+  cout << "processing positions " << time(NULL) << endl;
   ProcessPositions<SuffixNodeStoreMemVec,SuffixNode &> propos(st.st.store);
   propos.process_positions();
 
-  cout << "writing processed positions" << endl;
+  cout << "writing processed positions " << time(NULL) << endl;
   DiskVector<positions> dvec(string(argv[2]) + "/process_positions",true);
   propos.copyto(dvec);
+  cout << "writen processed positions " << time(NULL) << endl;
 
   delete stp;
 }
