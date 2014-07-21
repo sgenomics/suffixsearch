@@ -62,20 +62,20 @@ int main(int argc,char ** argv) {
 
 //  tialloc::instance()->dump_stats();
 
-  SuffixNodeStoreDisk diskstore(argv[2]);
+  SuffixNodeStoreDisk diskstore(argv[2],true);
   diskstore.copy(st.get_store());
   cout << "store write complete" << endl;
   st.save_members(string(argv[2]) + "/object_members");
   cout << "member write complete" << endl;
-  st.save_original_text(string(argv[2]) + "/original_text");
-  cout << "original text write complete" << endl;
+//  st.save_original_text(string(argv[2]) + "/original_text");
+//  cout << "original text write complete" << endl;
 
   cout << "processing positions" << endl;
   ProcessPositions<SuffixNodeStoreMemVec,SuffixNode &> propos(st.st.store);
   propos.process_positions();
 
   cout << "writing processed positions" << endl;
-  DiskVector<positions> dvec(string(argv[2]) + "/process_positions");
+  DiskVector<positions> dvec(string(argv[2]) + "/process_positions",true);
   propos.copyto(dvec);
 
   delete stp;

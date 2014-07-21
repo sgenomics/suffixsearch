@@ -3,8 +3,8 @@
 #include <vector>
 #include <stdlib.h>
 #include <fstream>
-#include "./global_defs.h"
-#include "./suffixtrans/SearchTrans.h"
+#include "global_defs.h"
+#include "suffixtrans/SearchTrans.h"
 #include "WebSrvSearch.h"
 
 
@@ -14,7 +14,7 @@ int main(int argc,char ** argv) {
 
   SearchTrans st;
 
-  WebSrvSearch<SearchTrans> web(st,8080,8081);
+  WebSrvSearch<SearchTrans,ProcessPositions> web(st,8080,8081);
   web.document_listener();
   st.finalise();
 
