@@ -27,6 +27,8 @@
 
 using namespace std;
 
+bool docompress=true;
+
 int main(int argc,char ** argv) {
 
   cout << "execution begins " << time(NULL) << endl;
@@ -63,21 +65,22 @@ int main(int argc,char ** argv) {
 //  tialloc::instance()->dump_stats();
 
   cout << "store writing " << time(NULL) << endl;
-  SuffixNodeStoreDisk diskstore(argv[2],true);
+  SuffixNodeStoreDisk diskstore(argv[2],docompress);
   diskstore.copy(st.get_store());
   cout << "store write complete " << time(NULL) << endl;
   st.save_members(string(argv[2]) + "/object_members");
   cout << "member write complete " << time(NULL) << endl;
-//  st.save_original_text(string(argv[2]) + "/original_text");
-//  cout << "original text write complete" << endl;
+  st.save_original_text(string(argv[2]) + "/original_text");
+  cout << "original text write complete" << endl;
 
   cout << "processing positions " << time(NULL) << endl;
   ProcessPositions<SuffixNodeStoreMemVec,SuffixNode &> propos(st.st.store);
   propos.process_positions();
 
   cout << "writing processed positions " << time(NULL) << endl;
-  DiskVector<positions> dvec(string(argv[2]) + "/process_positions",true);
+  DiskVector<positions> dvec(string(argv[2]) + "/process_positions",docompress);
   propos.copyto(dvec);
+  dvec.close();
   cout << "writen processed positions " << time(NULL) << endl;
 
   delete stp;

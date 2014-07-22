@@ -33,6 +33,7 @@
 
 #define positions_store DiskVector<positions>
 
+//#define store_type vector<symbol_type>
 #define store_type TranscodingDiskVector
 #include "SuffixNodeStoreDisk.h"
 #include "DiskVector.h"
