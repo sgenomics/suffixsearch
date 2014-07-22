@@ -25,11 +25,11 @@
 #include "DiskVector.h" 
 #include <time.h>
 
-
 using namespace std;
 
 int main(int argc,char ** argv) {
 
+  cout << "execution begins " << time(NULL) << endl;
   ifstream input_filelist(argv[1]);
 
   SearchTrans *stp = new SearchTrans();
