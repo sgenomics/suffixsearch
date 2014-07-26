@@ -49,6 +49,7 @@ int main(int argc,char ** argv) {
     indexfile << filename << " " << st.size();
 
 
+    //cout << "processing file: " << filename << endl;
     ifstream input_file(filename.c_str());
     unsigned char s;
     if(input_file.is_open())
