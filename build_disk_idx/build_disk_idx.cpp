@@ -40,6 +40,7 @@ int main(int argc,char ** argv) {
 
   ofstream indexfile((string(argv[2]) + "/document_index").c_str());
 
+  uint32_t ccount = 0;
   for(;!input_filelist.eof();) {
     string filename;
     input_filelist >> filename;
@@ -53,6 +54,8 @@ int main(int argc,char ** argv) {
     for(;!input_file.eof();) {
       s = static_cast<char>(input_file.get());
       if(!input_file.eof()) st.insert(s);
+      ccount++;
+      if(ccount%1000000 == 0) cout << "inserted: " << ccount << endl;
     }
     indexfile << " " << st.size() << endl;
   }
