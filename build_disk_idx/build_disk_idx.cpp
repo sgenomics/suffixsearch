@@ -51,6 +51,7 @@ int main(int argc,char ** argv) {
 
     ifstream input_file(filename.c_str());
     unsigned char s;
+    if(input_file.is_open())
     for(;!input_file.eof();) {
       s = static_cast<char>(input_file.get());
       if(!input_file.eof()) st.insert(s);
