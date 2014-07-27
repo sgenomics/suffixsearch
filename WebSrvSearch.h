@@ -321,20 +321,21 @@ public:
     getline = s.find(endstr);
     size_t start = s.find("arch?q=");
     size_t end   = s.find("&",start);
+    cout << "req: " << s << endl;
     if(start != string::npos) {notfound=false; search_string = s.substr(start+7,end-start-7);}
  //   if(getline != string::npos) { break; }
+    cout << "search_string: " << search_string << endl;
 
     string output_data;
     output_data += "<tt>";
     if(notfound==false) {
       vector<uint8_t> ss;
       for(size_t n=0;n<search_string.size();n++) if(search_string[n] == '+') search_string[n] = ' ';
-      //cout << "search_string: " << search_string << endl;
       for(size_t n=0;n<search_string.size();n++) ss.push_back(search_string[n]); 
 
       bool found=false;
       vector<size_t> foundpos = m_store.all_occurs(ss,m_propos,1000);
-      //cout << "found count: " << foundpos.size() << endl;
+      cout << "found count: " << foundpos.size() << endl;
       if(foundpos.size() > 0) found=true;
 
       if(found) {

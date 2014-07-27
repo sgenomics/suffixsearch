@@ -1,1 +1,1 @@
-wget http://localhost:8080/shakesearch?q=green&submit=Run
+curl  http://localhost:8080/shakesearch?q=test\&submit=Run
